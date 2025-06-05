@@ -21,7 +21,18 @@
         <div class="col-lg-3 col-6">
             <!-- Segunda coluna (pode adicionar conteúdo aqui) -->
         </div>
+
+       
     </div> <!-- Fim da row -->
+
+    <div class="row">
+        <div class="col-lg-3 col-6">
+            <x-status-badge status="0" />
+            <!-- x-chamados-list :chamados=""  -->
+        </div>
+    </div>
+
+
 @stop
 
 @section('css')

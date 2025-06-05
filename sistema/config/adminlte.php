@@ -63,7 +63,7 @@ return [
     |
     */
 
-    'logo' => '<b>SAC</b>',
+    'logo' => 'SAC',
     'logo_img' => 'vendor/adminlte/dist/img/brasao-favicon.png',
     'logo_img_class' => 'brand-image img-circle elevation-3',
     'logo_img_xl' => null,
@@ -89,8 +89,8 @@ return [
             'path' => 'vendor/adminlte/dist/img/brasao-favicon.png',
             'alt' => 'Logo do Sistema de Abertura de Chamados',
             'class' => '',
-            'width' => 50,
-            'height' => 50,
+            'width' => 60,
+            'height' => 60,
         ],
     ],
 
