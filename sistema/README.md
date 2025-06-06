@@ -60,29 +60,4 @@ If you discover a security vulnerability within Laravel, please send an e-mail t
 
 The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
 
-##✅ Ordem correta dos comandos para iniciar o projeto Laravel com Docker (Sail)
-Clonar o projeto (se ainda não estiver na máquina):
-
-git clone <url-do-repositório>
-cd <pasta-do-projeto>
-
-Instalar as dependências com o Composer:
-composer install
-
-Copiar o arquivo .env.example para .env:
-cp .env.example .env
-
-Instalar o Sail (caso ainda não esteja instalado):
-composer require laravel/sail --dev
-
-Instalar o ambiente Docker com os serviços desejados (ex: MySQL):
-php artisan sail:install
-
-Subir os containers Docker (modo em segundo plano):
-./vendor/bin/sail up -d
-
-Gerar a chave da aplicação:
-./vendor/bin/sail artisan key:generate
-
-Rodar as migrations (se houver):
-./vendor/bin/sail artisan migrate
+e ser feito dentro do container com o comando php artisan key:generate, ou diretamente via Sail utilizando ./vendor/bin/sail artisan key:generate
