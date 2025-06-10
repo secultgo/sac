@@ -60,19 +60,4 @@ If you discover a security vulnerability within Laravel, please send an e-mail t
 
 The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
 
-
-## Passo a passo para configurar um projeto Laravel com Sail: ##
-
-Acesse o diretório do projeto com o comando cd /sistema.
-
-Instale as dependências do projeto executando composer install.
-
-Copie o arquivo de exemplo de variáveis de ambiente usando o comando cp .env.example .env.
-
-Em seguida, edite o arquivo .env para ajustar as variáveis de ambiente conforme necessário (como configurações do banco de dados, nome da aplicação, etc.).
-
-Gere a chave da aplicação. Isso pode ser feito dentro do container com o comando php artisan key:generate, ou diretamente via Sail utilizando ./vendor/bin/sail artisan key:generate.
-
-Por fim, inicie os serviços do ambiente com o comando ./vendor/bin/sail up -d.
-
-
+e ser feito dentro do container com o comando php artisan key:generate, ou diretamente via Sail utilizando ./vendor/bin/sail artisan key:generate
