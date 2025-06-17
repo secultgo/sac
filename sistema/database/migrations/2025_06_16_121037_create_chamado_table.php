@@ -31,9 +31,6 @@ return new class extends Migration
             $table->foreignId('servico_chamado_id')->constrained('servico_chamado', 'servico_chamado_id')->onDelete('no action')->onUpdate('no action');
             $table->foreignId('local_id')->constrained('local', 'local_id')->onDelete('no action')->onUpdate('no action');
             $table->foreignId('departamento_id')->constrained('departamento', 'departamento_id')->onDelete('no action')->onUpdate('no action');
-            
-            // CORREÇÃO: A FK 'lotacao_id' apontava para 'excluido_id' na tabela departamento, o que é incorreto.
-            // Corrigido para apontar para 'departamento_id'.
             $table->foreignId('lotacao_id')->constrained('departamento', 'departamento_id')->onDelete('no action')->onUpdate('no action');
         });
     }
