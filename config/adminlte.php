@@ -327,6 +327,11 @@ return [
             'label' => 4,
             'label_color' => 'success',
         ],
+        [
+            'text' => 'Departamentos',
+            'url'  => 'painel/departamentos',
+            'icon' => 'fas fa-building',
+        ],
         // ['header' => 'account_settings'],
         // [
         //     'text' => 'profile',

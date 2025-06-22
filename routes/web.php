@@ -8,6 +8,11 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+Route::prefix('painel')
+     ->group(function () {
+         Route::resource('departamentos', DepartamentoController::class);
+     });
+
 //('/teste', function () {
     //return view('painel.dashboard.index');
 //});
