@@ -12,13 +12,15 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('comentario_chamado', function (Blueprint $table) {
-            $table->id('comentario_chamado_id');
+            $table->increments('comentario_chamado_id');
             $table->text('comentario_chamado_comentario');
             $table->dateTime('comentario_chamado_data')->nullable();
+            $table->unsignedInteger('chamado_id');
             $table->text('comentario_chamado_anexo')->nullable();
-            
-            $table->foreignId('chamado_id')->constrained('chamado', 'chamado_id')->onDelete('no action')->onUpdate('no action');
-            $table->foreignId('usuario_id')->constrained('usuario', 'usuario_id')->onDelete('no action')->onUpdate('no action');
+            $table->unsignedInteger('usuario_id');
+
+            $table->foreign('chamado_id')->references('chamado_id')->on('chamado');
+            $table->foreign('usuario_id')->references('usuario_id')->on('usuario');
         });
     }
 

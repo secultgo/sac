@@ -12,11 +12,12 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('departamento', function (Blueprint $table) {
-            $table->id('departamento_id');
+            $table->increments('departamento_id');
             $table->string('departamento_nome', 100);
-            $table->string('departamento_sigla', 20);
-            $table->tinyInteger('departamento_chamado');
-            $table->foreignId('excluido_id')->constrained('excluido', 'excluido_id')->onDelete('no action')->onUpdate('no action');
+            $table->string('departamento_sigla', 20)->nullable();
+            $table->boolean('departamento_chamado')->default(false);
+            $table->unsignedInteger('excluido_id')->default(2);
+            $table->foreign('excluido_id')->references('excluido_id')->on('excluido');
         });
     }
 

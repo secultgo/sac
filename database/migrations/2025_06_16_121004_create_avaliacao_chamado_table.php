@@ -11,10 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('avalicao_chamado', function (Blueprint $table) {
-            $table->id('avaliacao_chamado_id');
-            $table->string('avalicao_chamado_nome', 45);
-            $table->text('avalicao_chamado_imagem')->nullable();
+        Schema::create('avaliacao_chamado', function (Blueprint $table) {
+            $table->increments('avaliacao_chamado_id');
+            $table->string('avaliacao_chamado_nome', 45);
+            $table->text('avaliacao_chamado_imagem')->nullable();
         });
     }
 
@@ -23,6 +23,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('avalicao_chamado');
+        Schema::dropIfExists('avaliacao_chamado');
     }
 };

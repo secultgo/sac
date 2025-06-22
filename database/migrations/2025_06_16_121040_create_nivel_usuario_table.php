@@ -12,9 +12,12 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('nivel_usuario', function (Blueprint $table) {
-            $table->id('nivel_usuario_id');
-            $table->foreignId('usuario_id')->constrained('usuario', 'usuario_id')->onDelete('no action')->onUpdate('no action');
-            $table->foreignId('nivel_id')->constrained('nivel', 'nivel_id')->onDelete('no action')->onUpdate('no action');
+            $table->increments('nivel_usuario_id');
+            $table->unsignedInteger('usuario_id');
+            $table->unsignedInteger('nivel_id');
+
+            $table->foreign('usuario_id')->references('usuario_id')->on('usuario');
+            $table->foreign('nivel_id')->references('nivel_id')->on('nivel');
         });
     }
 

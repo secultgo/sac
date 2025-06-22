@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('ldap', function (Blueprint $table) {
-            $table->id('ldap_id');
+            $table->increments('ldap_id');
             $table->string('ldap_server', 120);
             $table->string('ldap_user', 120);
             $table->string('ldap_pass', 120);

@@ -12,10 +12,13 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('problema', function (Blueprint $table) {
-            $table->id('problema_id');
-            $table->string('problema_nome', 50)->nullable();
-            $table->foreignId('departamento_id')->constrained('departamento', 'departamento_id')->onDelete('no action')->onUpdate('no action');
-            $table->foreignId('status_id')->constrained('status', 'status_id')->onDelete('no action')->onUpdate('no action');
+            $table->increments('problema_id');
+            $table->string('problema_nome', 50);
+            $table->unsignedInteger('departamento_id');
+            $table->unsignedInteger('status_id')->default(1);
+
+            $table->foreign('departamento_id')->references('departamento_id')->on('departamento');
+            $table->foreign('status_id')->references('status_id')->on('status');
         });
     }
 

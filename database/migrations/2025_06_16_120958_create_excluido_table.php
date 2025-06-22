@@ -12,8 +12,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('excluido', function (Blueprint $table) {
-            $table->id('excluido_id');
-            $table->string('excluido_nome', 50);
+            $table->increments('excluido_id');
+            $table->string('excluido_nome', 5);
         });
     }
 
