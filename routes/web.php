@@ -4,6 +4,7 @@ use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Painel\DepartamentoController;
 use App\Http\Controllers\Painel\ProblemaController;
+use App\Http\Controllers\Painel\ServicoChamadoController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -18,6 +19,8 @@ Route::prefix('painel')
             ->name('problemas.desativar');
          Route::put('problemas/{problema}/ativar', [ProblemaController::class, 'ativar'])
             ->name('problemas.ativar');
+
+        Route::resource('servicos', ServicoChamadoController::class);
      });
 
 //('/teste', function () {
