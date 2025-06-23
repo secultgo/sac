@@ -3,6 +3,7 @@
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Painel\DepartamentoController;
+use App\Http\Controllers\Painel\ProblemaController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -11,6 +12,12 @@ Route::get('/', function () {
 Route::prefix('painel')
      ->group(function () {
          Route::resource('departamentos', DepartamentoController::class);
+
+         Route::resource('problemas', ProblemaController::class);
+         Route::put('problemas/{problema}/desativar', [ProblemaController::class, 'desativar'])
+            ->name('problemas.desativar');
+         Route::put('problemas/{problema}/ativar', [ProblemaController::class, 'ativar'])
+            ->name('problemas.ativar');
      });
 
 //('/teste', function () {

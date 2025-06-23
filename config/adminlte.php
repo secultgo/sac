@@ -332,6 +332,11 @@ return [
             'url'  => 'painel/departamentos',
             'icon' => 'fas fa-building',
         ],
+        [
+            'text' => 'Problemas',
+            'url'  => 'painel/problemas',
+            'icon' => 'fas fa-exclamation-triangle',
+        ],
         // ['header' => 'account_settings'],
         // [
         //     'text' => 'profile',
