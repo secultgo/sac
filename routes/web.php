@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Painel\DepartamentoController;
 use App\Http\Controllers\Painel\ProblemaController;
 use App\Http\Controllers\Painel\ServicoChamadoController;
+use App\Http\Controllers\Painel\LocalController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -21,6 +22,8 @@ Route::prefix('painel')
             ->name('problemas.ativar');
 
         Route::resource('servicos', ServicoChamadoController::class);
+
+        Route::resource('locais', LocalController::class)->parameters(['locais' => 'local']);;
      });
 
 //('/teste', function () {

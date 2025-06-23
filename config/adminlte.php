@@ -342,6 +342,11 @@ return [
             'url'  => 'painel/servicos',
             'icon' => 'fas fa-cogs',
         ],
+        [
+            'text' => 'Locais',
+            'url'  => 'painel/locais',
+            'icon' => 'fas fa-map-marker-alt',
+        ],
         // ['header' => 'account_settings'],
         // [
         //     'text' => 'profile',
