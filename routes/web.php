@@ -6,6 +6,7 @@ use App\Http\Controllers\Painel\DepartamentoController;
 use App\Http\Controllers\Painel\ProblemaController;
 use App\Http\Controllers\Painel\ServicoChamadoController;
 use App\Http\Controllers\Painel\LocalController;
+use App\Http\Controllers\Painel\LdapController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -23,7 +24,9 @@ Route::prefix('painel')
 
         Route::resource('servicos', ServicoChamadoController::class)->parameters(['servicos' => 'servicosChamado']);
 
-        Route::resource('locais', LocalController::class)->parameters(['locais' => 'local']);;
+        Route::resource('locais', LocalController::class)->parameters(['locais' => 'local']);
+
+        Route::resource('ldap', LdapController::class);
      });
 
 //('/teste', function () {
