@@ -21,7 +21,7 @@ Route::prefix('painel')
          Route::put('problemas/{problema}/ativar', [ProblemaController::class, 'ativar'])
             ->name('problemas.ativar');
 
-        Route::resource('servicos', ServicoChamadoController::class);
+        Route::resource('servicos', ServicoChamadoController::class)->parameters(['servicos' => 'servicosChamado']);
 
         Route::resource('locais', LocalController::class)->parameters(['locais' => 'local']);;
      });
