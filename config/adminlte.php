@@ -348,9 +348,16 @@ return [
             'icon' => 'fas fa-map-marker-alt',
         ],
         [
-            'text' => 'LDAP',
-            'url'  => 'painel/ldap',
-            'icon' => 'fas fa-network-wired',
+            'text'    => 'Configurações',
+            'icon'    => 'fas fa-cogs',
+            'url'     => '#',
+            'submenu' => [
+                [
+                    'text' => 'LDAP',
+                    'url'  => 'painel/ldap',
+                    'icon' => 'fas fa-network-wired',
+                ],
+            ],
         ],
         // ['header' => 'account_settings'],
         // [
