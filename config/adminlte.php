@@ -347,6 +347,11 @@ return [
             'url'  => 'painel/locais',
             'icon' => 'fas fa-map-marker-alt',
         ],
+        [
+            'text' => 'LDAP',
+            'url'  => 'painel/ldap',
+            'icon' => 'fas fa-network-wired',
+        ],
         // ['header' => 'account_settings'],
         // [
         //     'text' => 'profile',
