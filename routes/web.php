@@ -6,25 +6,36 @@ use App\Http\Controllers\Painel\DepartamentoController;
 use App\Http\Controllers\Painel\ProblemaController;
 use App\Http\Controllers\Painel\ServicoChamadoController;
 use App\Http\Controllers\Painel\LocalController;
+use App\Http\Controllers\Painel\UserController;
 
 Route::get('/', function () {
     return view('welcome');
 });
 
-Route::prefix('painel')
-     ->group(function () {
-         Route::resource('departamentos', DepartamentoController::class);
+Route::prefix('painel')->group(function () {
+    Route::resource('departamentos', DepartamentoController::class);
 
-         Route::resource('problemas', ProblemaController::class);
-         Route::put('problemas/{problema}/desativar', [ProblemaController::class, 'desativar'])
-            ->name('problemas.desativar');
-         Route::put('problemas/{problema}/ativar', [ProblemaController::class, 'ativar'])
-            ->name('problemas.ativar');
+    Route::resource('problemas', ProblemaController::class);
+    Route::put('problemas/{problema}/desativar', [ProblemaController::class, 'desativar'])->name('problemas.desativar');
+    Route::put('problemas/{problema}/ativar', [ProblemaController::class, 'ativar'])->name('problemas.ativar');
 
-        Route::resource('servicos', ServicoChamadoController::class);
+    Route::resource('servicos', ServicoChamadoController::class);
+    Route::resource('locais', LocalController::class)->parameters(['locais' => 'local']);
 
-        Route::resource('locais', LocalController::class)->parameters(['locais' => 'local']);;
-     });
+    Route::get('/usuarios/{usuario}/edit-nivel', [UserController::class, 'edit_nivel'])->name('usuarios.edit_nivel');
+    Route::put('/usuarios/{usuario}/nivel', [UserController::class, 'updateNivel'])->name('usuarios.update_nivel');
+
+
+    Route::resource('usuarios', UserController::class)->names('usuarios')->except(['show']);
+
+    Route::put('/usuarios/{usuario}/ativar', [UserController::class, 'ativar'])->name('usuarios.ativar');
+    Route::put('/usuarios/{usuario}/desativar', [UserController::class, 'desativar'])->name('usuarios.desativar');
+    Route::get('/usuarios/importar-ldap', [UserController::class, 'importFromLdap'])->name('usuarios.importar.ldap');
+
+
+
+});
+
 
 //('/teste', function () {
     //return view('painel.dashboard.index');
@@ -45,3 +56,4 @@ Route::prefix('painel')
 //Auth::routes();
 
 //Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+

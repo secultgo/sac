@@ -1,0 +1,33 @@
+<?php
+
+namespace App\Http\Requests;
+
+use Illuminate\Foundation\Http\FormRequest;
+
+class UserRequest extends FormRequest
+{
+    /**
+     * Determine if the user is authorized to make this request.
+     */
+    public function authorize(): bool
+    {
+        return true;
+    }
+
+    /**
+     * Get the validation rules that apply to the request.
+     *
+     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
+     */
+    public function rules()
+{
+    return [
+        'usuario_nome'     => 'required|string|max:100',
+        'usuario_email'    => 'required|email|max:100|unique:usuario,usuario_email',
+        'usuario_senha'    => 'required|string|min:5',
+        'departamento_id'  => 'required|exists:departamento,departamento_id',
+        'usuario_ldap'     => 'required|in:0,1',
+    ];
+}
+
+}

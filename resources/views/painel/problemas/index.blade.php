@@ -9,7 +9,7 @@
 @section('content')
 @if(session('success'))
 <div class="alert alert-success">{{ session('success') }}</div>@endif
-<div class="card">
+<div class="card"> 
     <div class="card-header">
         <a href="{{ route('problemas.create') }}" class="btn btn-primary">
             <i class="fas fa-plus"></i> Novo
