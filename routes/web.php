@@ -7,6 +7,7 @@ use App\Http\Controllers\Painel\ProblemaController;
 use App\Http\Controllers\Painel\ServicoChamadoController;
 use App\Http\Controllers\Painel\LocalController;
 use App\Http\Controllers\Painel\LdapController;
+use App\Http\Controllers\Painel\ChamadoController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -27,6 +28,12 @@ Route::prefix('painel')
         Route::resource('locais', LocalController::class)->parameters(['locais' => 'local']);
 
         Route::resource('ldap', LdapController::class);
+
+        Route::get('chamados/create', [ChamadoController::class, 'create'])->name('chamados.create');
+        Route::post('chamados', [ChamadoController::class, 'store'])->name('chamados.store');
+        Route::get('chamados', function() { return view('painel.chamados.index'); })->name('chamados.index');
+        Route::get('chamados/problemas/{departamento}', [ChamadoController::class, 'problemasPorDepartamento'])->name('chamados.problemasPorDepartamento');
+        Route::get('chamados/servicos/{problema}', [ChamadoController::class, 'servicosPorProblema'])->name('chamados.servicosPorProblema');
      });
 
 //('/teste', function () {
