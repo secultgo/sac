@@ -51,6 +51,20 @@
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
                 </div>
+                                <div class="form-group mb-3">
+                    <label for="usuario_cpf">CPF</label>
+                    <input 
+                        type="text" 
+                        id="usuario_cpf"
+                        name="usuario_cpf" 
+                        value="{{ old('usuario_cpf', $usuario->usuario_cpf ?? '') }}" 
+                        class="form-control @error('usuario_cpf') is-invalid @enderror" 
+                        required
+                    >
+                    @error('usuario_cpf')
+                        <div class="invalid-feedback">{{ $message }}</div>
+                    @enderror
+                </div>
 
                 @if (!isset($usuario))
                     <div class="form-group mb-3">
@@ -101,16 +115,7 @@
                             {{ old('usuario_ldap', 0) == 0 ? 'checked' : '' }}>
                         <label class="form-check-label" for="ldap_local">Local</label>
                     </div>
-                    <div class="form-check">
-                        <input 
-                            class="form-check-input" 
-                            type="radio" 
-                            name="usuario_ldap" 
-                            id="ldap_ldap" 
-                            value="1" 
-                            {{ old('usuario_ldap') == 1 ? 'checked' : '' }}>
-                        <label class="form-check-label" for="ldap_ldap">LDAP</label>
-                    </div>
+                  
                     @error('usuario_ldap')
                         <div class="text-danger">{{ $message }}</div>
                     @enderror

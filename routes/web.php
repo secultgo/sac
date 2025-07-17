@@ -14,7 +14,6 @@ Route::get('/', function () {
 
 Route::prefix('painel')->group(function () {
     Route::resource('departamentos', DepartamentoController::class);
-
     Route::resource('problemas', ProblemaController::class);
     Route::put('problemas/{problema}/desativar', [ProblemaController::class, 'desativar'])->name('problemas.desativar');
     Route::put('problemas/{problema}/ativar', [ProblemaController::class, 'ativar'])->name('problemas.ativar');
@@ -27,6 +26,8 @@ Route::prefix('painel')->group(function () {
 
 
     Route::resource('usuarios', UserController::class)->names('usuarios')->except(['show']);
+    Route::get('/painel/usuarios', [UserController::class, 'index'])->name('painel.usuarios.index');
+
 
     Route::put('/usuarios/{usuario}/ativar', [UserController::class, 'ativar'])->name('usuarios.ativar');
     Route::put('/usuarios/{usuario}/desativar', [UserController::class, 'desativar'])->name('usuarios.desativar');

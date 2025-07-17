@@ -20,14 +20,18 @@ class UserRequest extends FormRequest
      * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
      */
     public function rules()
-{
-    return [
-        'usuario_nome'     => 'required|string|max:100',
-        'usuario_email'    => 'required|email|max:100|unique:usuario,usuario_email',
-        'usuario_senha'    => 'required|string|min:5',
-        'departamento_id'  => 'required|exists:departamento,departamento_id',
-        'usuario_ldap'     => 'required|in:0,1',
-    ];
-}
+    {
+        $usuarioId = $this->usuario_id ?? null;
+
+        return [
+            'usuario_nome'     => 'required|string|max:100',
+            'usuario_email'    => 'required|email|max:100|unique:usuario,usuario_email,' . $usuarioId . ',usuario_id',
+            'usuario_cpf'      => ['required', 'string', 'max:14', 'regex:/^\d{3}\.\d{3}\.\d{3}\-\d{2}$/', 'unique:usuario,usuario_cpf,' . $usuarioId . ',usuario_id'],
+            'usuario_senha'    => 'required|string|min:5',
+            'departamento_id'  => 'required|exists:departamento,departamento_id',
+            'usuario_ldap'     => 'required|in:0,1',
+        ];
+    }
+
 
 }

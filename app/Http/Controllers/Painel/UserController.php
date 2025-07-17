@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use App\Http\Requests\UserRequest;
 use App\Models\Nivel;
+use App\Models\Ldap;
 
 class UserController extends Controller
 {
@@ -31,6 +32,7 @@ class UserController extends Controller
             $usuario = User::create([
                 'usuario_nome'     => $data['usuario_nome'],
                 'usuario_email'    => $data['usuario_email'],
+                'usuario_cpf'      => $data['usuario_cpf'],
                 'usuario_senha'    => bcrypt($data['usuario_senha']),
                 'departamento_id'  => $data['departamento_id'],
                 'usuario_ldap'     => $data['usuario_ldap'],
@@ -56,11 +58,12 @@ class UserController extends Controller
     public function update(Request $request, User $usuario)
     {
         $request->validate([
-            'usuario_nome'  => 'nullable|string|max:100',
-            'usuario_email' => 'nullable|email|max:100',
-            'usuario_nivel' => 'required|exists:nivel,nivel_id',
+            'usuario_nome'   => 'required|string|max:100',
+            'usuario_email'  => 'required|email|max:100|unique:usuario,usuario_email,' . ($usuario->usuario_id ?? 'null') . ',usuario_id',
+            'usuario_cpf'    => ['required', 'string', 'max:14', 'regex:/^\d{3}\.\d{3}\.\d{3}\-\d{2}$/', 'unique:usuario,usuario_cpf,' . ($usuario->usuario_id ?? 'null') . ',usuario_id'],
+            'usuario_nivel'  => 'required|exists:nivel,nivel_id',
         ]);
-
+        
         $usuario->update([
             'usuario_nome'  => $request->usuario_nome ?? $usuario->usuario_nome,
             'usuario_email' => $request->usuario_email ?? $usuario->usuario_email,
@@ -120,11 +123,17 @@ class UserController extends Controller
 
     public function importFromLdap()
     {
-        $ldapServer = env('LDAP_SERVER');
-        $ldapUser = env('LDAP_USER');
-        $ldapPass = env('LDAP_PASS');
-        $ldapTree = env('LDAP_TREE');
-        $ldapFilter = env('LDAP_FILTER');
+        $ldapConfig = Ldap::first(); 
+
+        if (!$ldapConfig) {
+            return redirect()->back()->withErrors('Configuração LDAP não encontrada no banco.');
+        }
+
+        $ldapServer = $ldapConfig->ldap_server;
+        $ldapUser = $ldapConfig->ldap_user;
+        $ldapPass = $ldapConfig->ldap_pass;
+        $ldapTree = $ldapConfig->ldap_tree;
+        $ldapFilter = $ldapConfig->ldap_filter;
 
         // Conectar ao servidor LDAP
         $ldapconn = ldap_connect($ldapServer);
@@ -150,13 +159,13 @@ class UserController extends Controller
         $entries = ldap_get_entries($ldapconn, $result);
 
         // Atualizar usuários LDAP existentes para inativos antes da importação
-        User::where('is_ldap_user', true)->update(['status' => 0]);
+        User::where('usuario_ldap', true)->update(['status_id' => 0]);
 
         // Processar os dados do LDAP
         for ($i = 0; $i < $entries['count']; $i++) {
             $ldapUser = $entries[$i];
 
-            DB::beginTransaction();
+            //DB::beginTransaction();
             try {
                 // Verificar se o usuário já existe
                 $user = User::where('ldap_id', $ldapUser['usncreated'][0])->first();
@@ -169,7 +178,7 @@ class UserController extends Controller
                     'usuario_cpf' => $ldapUser['description'][0] ?? null, // CPF (caso esteja no campo 'description' do LDAP)
                     'usuario_celular' => $ldapUser['telephonenumber'][0] ?? null, // Telefone
                     'status_id' => 1, // Ativo
-                    'usuario_ldap' => true, // Indica que o usuário é LDAP
+                    'usuario_ldap' => 1, // Indica que o usuário é LDAP
                     'nivel_id' => 4, // Nível de permissão padrão (exemplo: Usuário)
                     'ldap_id' => $ldapUser['usncreated'][0], // Identificador único do LDAP
                 ];
@@ -182,16 +191,17 @@ class UserController extends Controller
                     $user->update($userData);
                 }
 
-                DB::commit();
+                //DB::commit();
             } catch (\Exception $e) {
-                DB::rollBack();
-                Log::error('Erro ao importar usuário LDAP: ' . $e->getMessage());
+                //DB::rollBack();
+                //Log::error('Erro ao importar usuário LDAP: ' . $e->getMessage());
             }
         }
 
         ldap_close($ldapconn);
 
-        return redirect()->route('admin.users.index')->with('success', 'Importação de usuários LDAP concluída.');
+        return redirect()->route('painel.usuarios.index')->with('success', 'Importação de usuários LDAP concluída.');
+    
     }
 
 }
