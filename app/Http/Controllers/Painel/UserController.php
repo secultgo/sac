@@ -142,6 +142,7 @@ class UserController extends Controller
 
     public function importFromLdap()
     {
+        $ldapConfig = Ldap::first();
         if (!$ldapConfig) {
             return redirect()->back()->withErrors('Configuração LDAP não encontrada no banco.');
         }
@@ -193,7 +194,13 @@ class UserController extends Controller
                     'excluido_id'      => 2,
                 ];
     
-                $usuario = User::create($userData);
+                $usuario = User::where('usuario_usuario', $ldapUser['samaccountname'][0])->first();
+                if ($usuario) {
+                    $usuario->update($userData);
+                } else {
+                    $usuario = User::create($userData);
+                }
+
     
                 if (!$usuario) {
                     throw new \Exception('Falha ao criar o usuário.');
