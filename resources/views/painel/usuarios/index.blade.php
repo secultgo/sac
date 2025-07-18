@@ -54,24 +54,27 @@
                                 {{ $nivelNome }}
                             </td>
                             <td class="text-right">
-                            @if($u->status_id == 1)
-                                <form action="{{ route('usuarios.desativar', $u->usuario_id) }}" method="POST" class="d-inline">
-                                    @csrf
-                                    @method('PUT')
-                                    <button class="btn btn-sm btn-default" title="Desativar">
-                                        <i class="fas fa-toggle-on"></i>
-                                    </button>
-                                </form>
-                            @else
-                                <form action="{{ route('usuarios.ativar', $u->usuario_id) }}" method="POST" class="d-inline">
-                                    @csrf
-                                    @method('PUT')
-                                    <button class="btn btn-sm btn-default" title="Ativar">
-                                        <i class="fas fa-toggle-off"></i>
-                                    </button>
-                                </form>
-                            @endif
+                                @if($u->status_id == 1)
+                                    <form action="{{ route('usuarios.desativar', $u->usuario_id) }}" method="POST" class="d-inline">
+                                        @csrf
+                                        @method('PUT')
+                                        <button class="btn btn-sm btn-default" title="Desativar">
+                                            <i class="fas fa-toggle-on"></i>
+                                        </button>
+                                    </form>
+                                @else
+                                    <form action="{{ route('usuarios.ativar', $u->usuario_id) }}" method="POST" class="d-inline">
+                                        @csrf
+                                        @method('PUT')
+                                        <button class="btn btn-sm btn-default" title="Ativar">
+                                            <i class="fas fa-toggle-off"></i>
+                                        </button>
+                                    </form>
+                                @endif
 
+                                <a href="{{ route('usuarios.edit_nivel', $u->usuario_id) }}" class="btn btn-sm btn-secondary" title="Editar Nível">
+                                    <i class="fas fa-user-shield"></i>
+                                </a>
 
                                 <a href="{{ route('usuarios.edit', $u->usuario_id) }}" class="btn btn-sm btn-primary" title="Editar">
                                     <i class="fas fa-edit"></i>
@@ -84,10 +87,6 @@
                                         <i class="fas fa-trash"></i>
                                     </button>
                                 </form>
-
-                                <a href="{{ route('usuarios.edit_nivel', $u->usuario_id) }}" class="btn btn-sm btn-secondary" title="Editar Nível">
-                                    <i class="fas fa-user-shield"></i>
-                                </a>
                             </td>
                         </tr>
                     @empty
