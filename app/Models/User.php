@@ -32,5 +32,9 @@ class User extends Authenticatable
     {
         return $this->usuario_senha;
     }
+    public function nivelUsuarios()
+    {
+        return $this->hasMany(NivelUsuario::class, 'usuario_id', 'usuario_id');
+    }
     
 }

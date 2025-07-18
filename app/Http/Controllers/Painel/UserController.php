@@ -11,6 +11,9 @@ use Illuminate\Support\Facades\Hash;
 use App\Http\Requests\UserRequest;
 use App\Models\Nivel;
 use App\Models\Ldap;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+
 
 class UserController extends Controller
 {
@@ -52,36 +55,52 @@ class UserController extends Controller
 
     public function edit(User $usuario)
     {
-        return view('painel.usuarios.edit', compact('usuario'));
+        $departamentos = Departamento::all();
+        $niveis = Nivel::all();
+        return view('painel.usuarios.edit', compact('usuario', 'departamentos', 'niveis'));
     }
 
     public function update(Request $request, User $usuario)
     {
-        $request->validate([
-            'usuario_nome'   => 'required|string|max:100',
-            'usuario_email'  => 'required|email|max:100|unique:usuario,usuario_email,' . ($usuario->usuario_id ?? 'null') . ',usuario_id',
-            'usuario_cpf'    => ['required', 'string', 'max:14', 'regex:/^\d{3}\.\d{3}\.\d{3}\-\d{2}$/', 'unique:usuario,usuario_cpf,' . ($usuario->usuario_id ?? 'null') . ',usuario_id'],
-            'usuario_nivel'  => 'required|exists:nivel,nivel_id',
-        ]);
         
-        $usuario->update([
-            'usuario_nome'  => $request->usuario_nome ?? $usuario->usuario_nome,
-            'usuario_email' => $request->usuario_email ?? $usuario->usuario_email,
-        ]);
+        try {
+            $request->validate([
+                'usuario_nome'     => 'required|string|max:100',
+                'usuario_email'    => 'required|email|max:100|unique:usuario,usuario_email,' . $usuario->usuario_id . ',usuario_id',
+                'usuario_cpf'      => ['required', 'string', 'max:14', 'regex:/^\d{3}\.\d{3}\.\d{3}\-\d{2}$/', 'unique:usuario,usuario_cpf,' . $usuario->usuario_id . ',usuario_id'],
+                'departamento_id'  => 'required|exists:departamento,departamento_id',
+                'usuario_ldap'     => 'required|in:0,1',
+                'usuario_nivel'    => 'required|exists:nivel,nivel_id',
+            ]);
 
-        \App\Models\NivelUsuario::updateOrCreate(
-            ['usuario_id' => $usuario->usuario_id],  
-            ['nivel_id' => $request->usuario_nivel]  
-        );
+            $usuario->update([
+                'usuario_nome'     => $request->usuario_nome,
+                'usuario_email'    => $request->usuario_email,
+                'usuario_cpf'      => $request->usuario_cpf,
+                'departamento_id'  => $request->departamento_id,
+                'usuario_ldap'     => $request->usuario_ldap,
+            ]);
 
-        return redirect()->route('usuarios.index')->with('success', 'Usuário atualizado com sucesso!');
+            \App\Models\NivelUsuario::updateOrCreate(
+                ['usuario_id' => $usuario->usuario_id],
+                ['nivel_id'   => $request->usuario_nivel]
+            );
+
+            return redirect()->route('usuarios.index')->with('success', 'Usuário atualizado com sucesso!');
+        } catch (\Exception $e) {
+            dd($e->getMessage());
+        }
     }
+
 
     public function destroy(User $usuario)
     {
+        $usuario->nivelUsuarios()->delete();
         $usuario->delete();
+
         return redirect()->route('usuarios.index')->with('success', 'Usuário deletado com sucesso!');
     }
+
 
     public function edit_nivel(User $usuario)
     {
@@ -165,7 +184,7 @@ class UserController extends Controller
         for ($i = 0; $i < $entries['count']; $i++) {
             $ldapUser = $entries[$i];
 
-            //DB::beginTransaction();
+            DB::beginTransaction();
             try {
                 // Verificar se o usuário já existe
                 $user = User::where('ldap_id', $ldapUser['usncreated'][0])->first();
@@ -182,7 +201,7 @@ class UserController extends Controller
                     'nivel_id' => 4, // Nível de permissão padrão (exemplo: Usuário)
                     'ldap_id' => $ldapUser['usncreated'][0], // Identificador único do LDAP
                 ];
-
+              
                 if (!$user) {
                     // Criar novo usuário
                     User::create($userData);
@@ -191,10 +210,10 @@ class UserController extends Controller
                     $user->update($userData);
                 }
 
-                //DB::commit();
+                DB::commit();
             } catch (\Exception $e) {
-                //DB::rollBack();
-                //Log::error('Erro ao importar usuário LDAP: ' . $e->getMessage());
+                DB::rollBack();
+                Log::error('Erro ao importar usuário LDAP: ' . $e->getMessage());
             }
         }
 

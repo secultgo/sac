@@ -11,7 +11,6 @@ class Ldap extends Model
     public $timestamps = false;
 
     protected $fillable = [
-        'ldap_id',
         'ldap_server',
         'ldap_user',
         'ldap_pass',
