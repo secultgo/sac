@@ -28,6 +28,7 @@ class UserRequest extends FormRequest
             return [
                 'usuario_nome'     => 'required|string|max:100',
                 'usuario_email'    => 'nullable|email|max:100|unique:usuario,usuario_email,' . $usuarioId . ',usuario_id',
+                'departamento_id'  => 'required|exists:departamento,departamento_id',
                 'usuario_cpf'      => 'nullable|string|max:14',
                 'usuario_ldap'     => 'required|in:0,1',
                 'status_id'        => 'required|exists:status,status_id',

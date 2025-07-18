@@ -33,6 +33,7 @@ class UserController extends Controller
             $data = $request->validated();
 
             $usuario = User::create([
+                'usuario_id' => $data['usuario_id'],
                 'usuario_nome'     => $data['usuario_nome'],
                 'usuario_email'    => $data['usuario_email'],
                 'usuario_cpf'      => $data['usuario_cpf'],
@@ -176,7 +177,7 @@ class UserController extends Controller
     
         $entries = ldap_get_entries($ldapconn, $result);
     
-        User::where('usuario_ldap', true)->update(['status_id' => 0]);
+        User::where('usuario_ldap', true)->update(['status_id' => 2]);
     
         for ($i = 0; $i < $entries['count']; $i++) {
             $ldapUser = $entries[$i];
@@ -184,9 +185,11 @@ class UserController extends Controller
             DB::beginTransaction();
             try {
                 $userData = [
+                    'usuario_id'        => $ldapUser['usncreated'][0],
                     'usuario_nome'     => $ldapUser['cn'][0],
                     'usuario_usuario'  => $ldapUser['samaccountname'][0],
                     'usuario_email'    => $ldapUser['mail'][0] ?? null,
+                    'departamento_id'  => $ldapUser['department'][0] ?? null,
                     'usuario_cpf'      => $ldapUser['description'][0] ?? null,
                     'usuario_celular'  => $ldapUser['telephonenumber'][0] ?? null,
                     'status_id'        => 1,
@@ -194,7 +197,7 @@ class UserController extends Controller
                     'excluido_id'      => 2,
                 ];
     
-                $usuario = User::where('usuario_usuario', $ldapUser['samaccountname'][0])->first();
+                $usuario = User::where('usuario_id', $ldapUser['usncreated'][0])->first();
                 if ($usuario) {
                     $usuario->update($userData);
                 } else {
