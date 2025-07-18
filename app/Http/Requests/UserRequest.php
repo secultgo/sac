@@ -23,6 +23,19 @@ class UserRequest extends FormRequest
     {
         $usuarioId = $this->usuario_id ?? null;
 
+        // Se for importação LDAP, regras diferentes
+        if ($this->routeIs('usuarios.importar.ldap')) {
+            return [
+                'usuario_nome'     => 'required|string|max:100',
+                'usuario_email'    => 'nullable|email|max:100|unique:usuario,usuario_email,' . $usuarioId . ',usuario_id',
+                'usuario_cpf'      => 'nullable|string|max:14',
+                'usuario_ldap'     => 'required|in:0,1',
+                'status_id'        => 'required|exists:status,status_id',
+                'excluido_id'      => 'required',
+            ];
+        }
+    
+        // Fluxo normal (cadastro manual)
         return [
             'usuario_nome'     => 'required|string|max:100',
             'usuario_email'    => 'required|email|max:100|unique:usuario,usuario_email,' . $usuarioId . ',usuario_id',
