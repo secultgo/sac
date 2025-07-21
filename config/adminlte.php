@@ -328,6 +328,13 @@ return [
             'label_color' => 'success',
         ],
         [
+            'text' => 'Meus Atendimentos',
+            'url' => 'admin/atendimentos',
+            'icon' => 'far fa-fw fa-folder-open',
+            'label' => 4,
+            'label_color' => 'success',
+        ],
+        [
             'text' => 'Departamentos',
             'url'  => 'painel/departamentos',
             'icon' => 'fas fa-building',

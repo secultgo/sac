@@ -7,6 +7,8 @@ use App\Http\Controllers\Painel\ProblemaController;
 use App\Http\Controllers\Painel\ServicoChamadoController;
 use App\Http\Controllers\Painel\LocalController;
 use App\Http\Controllers\Painel\LdapController;
+use App\Http\Controllers\painel\AtendimentoController;
+
 
 Route::get('/', function () {
     return view('welcome');
@@ -15,7 +17,6 @@ Route::get('/', function () {
 Route::prefix('painel')
      ->group(function () {
          Route::resource('departamentos', DepartamentoController::class);
-
          Route::resource('problemas', ProblemaController::class);
          Route::put('problemas/{problema}/desativar', [ProblemaController::class, 'desativar'])
             ->name('problemas.desativar');
@@ -27,6 +28,13 @@ Route::prefix('painel')
         Route::resource('locais', LocalController::class)->parameters(['locais' => 'local']);
 
         Route::resource('ldap', LdapController::class);
+     });
+
+Route::prefix('admin')
+     ->group(function (){
+        Route::resource('atendimentos', AtendimentoController::class);
+        //Route::get('ver/{id}', [AtendimentoController::class, 'ver'])->name('atendimentos.ver');
+        Route::get('ver', [AtendimentoController::class, 'ver'])->name('admin.ver');
      });
 
 //('/teste', function () {
