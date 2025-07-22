@@ -9,11 +9,21 @@
         </div>
     @endif
 
-    <form action="" method="POST">
+    @if ($errors->any())
+        <div class="alert alert-danger">
+            <ul class="mb-0">
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
+
+    <form action="{{ route('login.post') }}" method="POST">
         @csrf
 
         <div class="input-group mb-4">
-            <input type="email" name="email" class="form-control" placeholder="E-mail" required autofocus>
+            <input type="email" name="email" class="form-control" placeholder="E-mail" value="{{ old('email') }}" required autofocus>
             <div class="input-group-append">
                 <div class="input-group-text">
                     <span class="fas fa-envelope"></span>
@@ -31,11 +41,11 @@
         </div>
 
         <div class="d-flex justify-content-end">
-            <button type="submit" class="btn btn-primary">Entrar</button>
+            <button type="submit" class="btn btn-primary px-4">Entrar</button>
         </div>
     </form>
 
-    <p class="mb-1">
+    <p class="mb-1 text-right">
         <a href="">Esqueceu a senha?</a>
     </p>
 @endsection
