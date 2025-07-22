@@ -70,6 +70,8 @@ return [
     'logo_img_xl_class' => 'brand-image-xs',
     'logo_img_alt' => 'Logo do Sistema de Abertura de Chamados',
 
+    
+
     /*
     |--------------------------------------------------------------------------
     | Authentication Logo
@@ -84,13 +86,13 @@ return [
     */
 
     'auth_logo' => [
-        'enabled' => false,
+        'enabled' => true, 
         'img' => [
-            'path' => 'vendor/adminlte/dist/img/brasao-favicon.png',
+            'path' => 'vendor/adminlte/dist/img/SECULT-LOGO-2022.png',
             'alt' => 'Logo do Sistema de Abertura de Chamados',
             'class' => '',
-            'width' => 60,
-            'height' => 60,
+            'width' => 360,
+            'height' => 200,
         ],
     ],
 

@@ -12,6 +12,10 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+Route::get('/login', function () {
+    return view('painel.login.login_form');
+})->name('login');
+
 Route::prefix('painel')
      ->group(function () {
          Route::resource('departamentos', DepartamentoController::class);
