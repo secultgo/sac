@@ -33,8 +33,9 @@ Route::prefix('painel')
         Route::put('usuarios/{usuario}/nivel', [UserController::class, 'updateNivel'])->name('usuarios.update_nivel');
         Route::put('usuarios/{usuario}/ativar', [UserController::class, 'ativar'])->name('usuarios.ativar');
         Route::put('usuarios/{usuario}/desativar', [UserController::class, 'desativar'])->name('usuarios.desativar');
-        Route::get('usuarios/importar-ldap', [UserController::class, 'importFromLdap'])->name('usuarios.importar.ldap');
 
+        Route::get('usuarios/ldap', [UserController::class, 'importarLdap'])->name('usuarios.importar.ldap');
+        Route::post('usuarios/importar-ldap', [UserController::class, 'importFromLdap'])->name('usuarios.importar.ldap.post');
         Route::resource('ldap', LdapController::class);
      });
 

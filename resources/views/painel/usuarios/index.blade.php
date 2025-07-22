@@ -17,7 +17,7 @@
                 <i class="fas fa-plus"></i> Novo Usuário
             </a>
             <a href="{{ route('usuarios.importar.ldap') }}" class="btn btn-dark">
-                LDAP
+                <i class="fas fa-cloud-upload-alt"></i> Importar LDAP
             </a>
         </div>
 

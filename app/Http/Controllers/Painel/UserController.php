@@ -141,11 +141,19 @@ class UserController extends Controller
         return redirect()->route('usuarios.index')->with('success', 'Usuário desativado com sucesso!');
     }
 
-    public function importFromLdap()
+    public function importarLdap()
     {
-        $ldapConfig = Ldap::first();
+        $ldaps = Ldap::pluck('ldap_server');
+        return view('painel.usuarios.ldap', compact('ldaps'));
+    }
+
+    public function importFromLdap(Request $request)
+    {
+        $ldapServer = $request->input('ldap_server');
+    
+        $ldapConfig = Ldap::where('ldap_server', $ldapServer)->first();
         if (!$ldapConfig) {
-            return redirect()->back()->withErrors('Configuração LDAP não encontrada no banco.');
+            return redirect()->back()->withErrors('Servidor LDAP não encontrado no banco.');
         }
 
         $ldapServer = $ldapConfig->ldap_server;
