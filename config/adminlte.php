@@ -316,21 +316,14 @@ return [
             'text' => 'search',
         ],
         [
-            'text'    => 'Chamados',
-            'icon'    => 'fas fa-ticket-alt',
-            'url'     => '#',
-            'submenu' => [
-                [
-                    'text' => 'Novo Chamado',
-                    'url'  => 'painel/chamados/create',
-                    'icon' => 'fas fa-plus-circle',
-                ],
-                [
-                    'text' => 'Meus Chamados',
-                    'url' => 'painel/chamados',
-                    'icon' => 'far fa-fw fa-folder-open',
-                ],
-            ],
+            'text' => 'Novo Chamado',
+            'url'  => 'painel/chamados/create',
+            'icon' => 'fas fa-plus-circle',
+        ],
+        [
+            'text' => 'Meus Chamados',
+            'url' => 'painel/chamados',
+            'icon' => 'far fa-fw fa-folder-open',
         ],
         [
             'text' => 'Departamentos',
