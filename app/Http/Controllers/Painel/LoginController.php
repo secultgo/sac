@@ -4,7 +4,9 @@ namespace App\Http\Controllers\Painel;
 
 use App\Http\Controllers\Controller; 
 use Illuminate\Http\Request;
+use App\Models\User;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Session;
 
 class LoginController extends Controller
 {
@@ -18,25 +20,24 @@ class LoginController extends Controller
      */
     public function login(Request $request)
     {
-        // Validação básica
         $credentials = $request->validate([
-            'email' => ['required', 'email'],
-            'password' => ['required'],
+            'usuario_email' => ['required', 'email'],
+            'usuario_senha' => ['required'],
         ]);
 
-        // Tentativa de autenticação
-        if (Auth::attempt($credentials)) {
-            // Regenerar sessão para evitar fixação
-            $request->session()->regenerate();
+        // Procura o usuário pelo email
+        $user = User::where('usuario_email', $credentials['usuario_email'])->first();
 
-            // Redirecionar para o painel ou rota protegida
-            return redirect()->intended('painel');
+        // Verifica se o usuário existe e se a senha MD5 confere
+        if ($user && $user->usuario_senha === md5($credentials['usuario_senha'])) {
+            Auth::login($user);
+            $request->session()->regenerate();
+            return redirect()->intended('painel/usuarios');
         }
 
-        // Se falhar, volta com erro
         return back()->withErrors([
-            'email' => 'As credenciais informadas não conferem.',
-        ])->onlyInput('email');
+            'usuario_email' => 'As credenciais informadas não conferem.',
+        ])->onlyInput('usuario_email');
     }
 
     /**
@@ -45,7 +46,6 @@ class LoginController extends Controller
     public function logout(Request $request)
     {
         Auth::logout();
-
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 

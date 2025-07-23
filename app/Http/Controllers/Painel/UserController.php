@@ -27,31 +27,49 @@ class UserController extends Controller
         return view('painel.usuarios.index', compact('usuarios', 'departamentos', 'nivel_usuarios', 'niveis'));
     }
     
-    public function store(UserRequest $request)
+    function store(UserRequest $request)
     {
         try {
             $data = $request->validated();
 
-            $usuario = User::create([
-                'usuario_id' => $data['usuario_id'],
-                'usuario_nome'     => $data['usuario_nome'],
-                'usuario_email'    => $data['usuario_email'],
-                'usuario_cpf'      => $data['usuario_cpf'],
-                'usuario_senha'    => bcrypt($data['usuario_senha']),
-                'departamento_id'  => $data['departamento_id'],
-                'usuario_ldap'     => $data['usuario_ldap'],
-            ]);
-
-            NivelUsuario::create([
-                'usuario_id' => $usuario->usuario_id,
-                'nivel_id'   => 3, 
-            ]);
-
-            return redirect()->route('usuarios.index')->with('success', 'Usuário criado com sucesso!');
+            if (!empty($data['usuario_id'])) {
+                $usuario = User::create([
+                    'usuario_id' => $data['usuario_id'],
+                    'usuario_nome'     => $data['usuario_nome'],
+                    'usuario_email'    => $data['usuario_email'],
+                    'usuario_cpf'      => $data['usuario_cpf'],
+                    'usuario_senha'    => md5($data['usuario_senha']),
+                    'departamento_id'  => $data['departamento_id'],
+                    'usuario_ldap'     => $data['usuario_ldap'],
+                ]);
+    
+                NivelUsuario::create([
+                    'usuario_id' => $usuario->usuario_id,
+                    'nivel_id'   => 3, 
+                ]);
+    
+            } else {
+                $usuario = User::create([
+                    'usuario_nome'     => $data['usuario_nome'],
+                    'usuario_email'    => $data['usuario_email'],
+                    'usuario_cpf'      => $data['usuario_cpf'],
+                    'usuario_senha'    => md5($data['usuario_senha']),
+                    'departamento_id'  => $data['departamento_id'],
+                    'usuario_ldap'     => $data['usuario_ldap'],
+                ]);
+    
+                NivelUsuario::create([
+                    'usuario_id' => $usuario->usuario_id,
+                    'nivel_id'   => 3, 
+                ]);
+    
+            }
+           
+            return redirect()->route('painel.usuarios.index')->with('success', 'Usuário criado com sucesso!');
         } catch (\Exception $e) {
             dd($e->getMessage());
         }
-    }
+    } 
 
 
     public function edit(User $usuario)

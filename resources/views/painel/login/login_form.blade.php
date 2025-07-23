@@ -23,7 +23,7 @@
         @csrf
 
         <div class="input-group mb-4">
-            <input type="email" name="email" class="form-control" placeholder="E-mail" value="{{ old('email') }}" required autofocus>
+            <input type="email" name="usuario_email" class="form-control" placeholder="E-mail" value="{{ old('usuario_email') }}" required autofocus>
             <div class="input-group-append">
                 <div class="input-group-text">
                     <span class="fas fa-envelope"></span>
@@ -32,7 +32,7 @@
         </div>
 
         <div class="input-group mb-4">
-            <input type="password" name="password" class="form-control" placeholder="Senha" required>
+            <input type="password" name="usuario_senha" class="form-control" placeholder="Senha" required>
             <div class="input-group-append">
                 <div class="input-group-text">
                     <span class="fas fa-lock"></span>
