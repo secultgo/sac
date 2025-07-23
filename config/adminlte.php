@@ -348,6 +348,11 @@ return [
             'icon' => 'fas fa-map-marker-alt',
         ],
         [
+            'text' => 'Usuários',
+            'url'  => 'painel/usuarios',
+            'icon' => 'fas fa-users',
+        ],
+        [
             'text'    => 'Configurações',
             'icon'    => 'fas fa-cogs',
             'url'     => '#',
