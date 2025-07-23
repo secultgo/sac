@@ -6,6 +6,7 @@ use App\Http\Controllers\Painel\DepartamentoController;
 use App\Http\Controllers\Painel\ProblemaController;
 use App\Http\Controllers\Painel\ServicoChamadoController;
 use App\Http\Controllers\Painel\LocalController;
+use App\Http\Controllers\Painel\UserController;
 use App\Http\Controllers\Painel\LdapController;
 use App\Http\Controllers\Painel\LoginController;
 
@@ -31,6 +32,15 @@ Route::prefix('painel')
 
         Route::resource('locais', LocalController::class)->parameters(['locais' => 'local']);
 
+        Route::resource('usuarios', UserController::class)->names('usuarios')->except(['show']);
+        Route::get('usuarios', [UserController::class, 'index'])->name('painel.usuarios.index');
+        Route::get('usuarios/{usuario}/edit-nivel', [UserController::class, 'edit_nivel'])->name('usuarios.edit_nivel');
+        Route::put('usuarios/{usuario}/nivel', [UserController::class, 'updateNivel'])->name('usuarios.update_nivel');
+        Route::put('usuarios/{usuario}/ativar', [UserController::class, 'ativar'])->name('usuarios.ativar');
+        Route::put('usuarios/{usuario}/desativar', [UserController::class, 'desativar'])->name('usuarios.desativar');
+
+        Route::get('usuarios/ldap', [UserController::class, 'importarLdap'])->name('usuarios.importar.ldap');
+        Route::post('usuarios/importar-ldap', [UserController::class, 'importFromLdap'])->name('usuarios.importar.ldap.post');
         Route::resource('ldap', LdapController::class);
      });
 
