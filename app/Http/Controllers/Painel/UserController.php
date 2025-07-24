@@ -41,6 +41,7 @@ class UserController extends Controller
                     'usuario_senha'    => md5($data['usuario_senha']),
                     'departamento_id'  => $data['departamento_id'],
                     'usuario_ldap'     => $data['usuario_ldap'],
+                    'status_id' => $data['status_id'],
                 ]);
     
                 NivelUsuario::create([
@@ -98,6 +99,7 @@ class UserController extends Controller
                 'usuario_cpf'      => $request->usuario_cpf,
                 'departamento_id'  => $request->departamento_id,
                 'usuario_ldap'     => $request->usuario_ldap,
+                'status_id' => $request->status_id,
             ]);
 
             \App\Models\NivelUsuario::updateOrCreate(
@@ -150,13 +152,13 @@ class UserController extends Controller
     public function ativar(User $usuario)
     {
         $usuario->update(['status_id' => 1]); 
-        return redirect()->route('usuarios.index')->with('success', 'Usuário ativado com sucesso!');
+        return redirect()->route('painel.usuarios.index')->with('success', 'Usuário ativado com sucesso!');
     }
 
     public function desativar(User $usuario)
     {
         $usuario->update(['status_id' => 2]); 
-        return redirect()->route('usuarios.index')->with('success', 'Usuário desativado com sucesso!');
+        return redirect()->route('painel.usuarios.index')->with('success', 'Usuário desativado com sucesso!');
     }
 
     public function importarLdap()
