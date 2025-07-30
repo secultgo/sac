@@ -107,7 +107,7 @@ class UserController extends Controller
                 ['nivel_id'   => $request->usuario_nivel]
             );
 
-            return redirect()->route('usuarios.index')->with('success', 'Usuário atualizado com sucesso!');
+            return redirect()->route('painel.usuarios.index')->with('success', 'Usuário atualizado com sucesso!');
         } catch (\Exception $e) {
             dd($e->getMessage());
         }
@@ -119,7 +119,7 @@ class UserController extends Controller
         $usuario->nivelUsuarios()->delete();
         $usuario->delete();
 
-        return redirect()->route('usuarios.index')->with('success', 'Usuário deletado com sucesso!');
+        return redirect()->route('painel.usuarios.index')->with('success', 'Usuário deletado com sucesso!');
     }
 
 
@@ -146,7 +146,7 @@ class UserController extends Controller
             ['nivel_id' => $request->usuario_nivel]
         );
 
-        return redirect()->route('usuarios.index')->with('success', 'Nível do usuário atualizado com sucesso!');
+        return redirect()->route('painel.usuarios.index')->with('success', 'Nível do usuário atualizado com sucesso!');
     }
 
     public function ativar(User $usuario)
@@ -207,6 +207,10 @@ class UserController extends Controller
     
         User::where('usuario_ldap', true)->update(['status_id' => 2]);
     
+        $usuariosLdap = User::where('usuario_ldap', true)->pluck('usuario_id');
+        DB::table('nivel_usuario')->whereIn('usuario_id', $usuariosLdap)->delete();
+        User::where('usuario_ldap', true)->delete();
+        
         for ($i = 0; $i < $entries['count']; $i++) {
             $ldapUser = $entries[$i];
     
