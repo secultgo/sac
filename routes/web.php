@@ -8,6 +8,8 @@ use App\Http\Controllers\Painel\ServicoChamadoController;
 use App\Http\Controllers\Painel\LocalController;
 use App\Http\Controllers\Painel\UserController;
 use App\Http\Controllers\Painel\LdapController;
+use App\Http\Controllers\Painel\LoginController;
+use App\Http\Controllers\Painel\DashboardController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -38,6 +40,11 @@ Route::prefix('painel')
         Route::post('usuarios/importar-ldap', [UserController::class, 'importFromLdap'])->name('usuarios.importar.ldap.post');
         Route::resource('ldap', LdapController::class);
      });
+
+     Route::prefix('teste')->group(function () {
+        Route::get('/dashboard', [DashboardController::class, 'index'])->name('painel.dashboard.index');
+        Route::get('/meus-atendimentos', [DashboardController::class, 'meus'])->name('painel.dashboard.meus');
+    });
 
 //('/teste', function () {
     //return view('painel.dashboard.index');
