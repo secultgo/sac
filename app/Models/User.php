@@ -14,6 +14,7 @@ class User extends Authenticatable
     public $timestamps = false;
 
     protected $fillable = [
+        'usuario_id',
         'usuario_nome',
         'usuario_usuario',  
         'usuario_email',
