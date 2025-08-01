@@ -8,10 +8,15 @@ use App\Http\Controllers\Painel\ServicoChamadoController;
 use App\Http\Controllers\Painel\LocalController;
 use App\Http\Controllers\Painel\UserController;
 use App\Http\Controllers\Painel\LdapController;
+use App\Http\Controllers\Painel\LoginController;
 
 Route::get('/', function () {
     return view('welcome');
 });
+
+Route::get('/login', [LoginController::class, 'LoginForm'])->name('login');
+Route::post('/login', [LoginController::class, 'login'])->name('login.post');
+Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 
 Route::prefix('painel')
      ->group(function () {

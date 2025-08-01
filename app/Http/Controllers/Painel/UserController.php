@@ -27,31 +27,50 @@ class UserController extends Controller
         return view('painel.usuarios.index', compact('usuarios', 'departamentos', 'nivel_usuarios', 'niveis'));
     }
     
-    public function store(UserRequest $request)
+    function store(UserRequest $request)
     {
         try {
             $data = $request->validated();
 
-            $usuario = User::create([
-                'usuario_id' => $data['usuario_id'],
-                'usuario_nome'     => $data['usuario_nome'],
-                'usuario_email'    => $data['usuario_email'],
-                'usuario_cpf'      => $data['usuario_cpf'],
-                'usuario_senha'    => bcrypt($data['usuario_senha']),
-                'departamento_id'  => $data['departamento_id'],
-                'usuario_ldap'     => $data['usuario_ldap'],
-            ]);
-
-            NivelUsuario::create([
-                'usuario_id' => $usuario->usuario_id,
-                'nivel_id'   => 3, 
-            ]);
-
-            return redirect()->route('usuarios.index')->with('success', 'Usuário criado com sucesso!');
+            if (!empty($data['usuario_id'])) {
+                $usuario = User::create([
+                    'usuario_id' => $data['usuario_id'],
+                    'usuario_nome'     => $data['usuario_nome'],
+                    'usuario_email'    => $data['usuario_email'],
+                    'usuario_cpf'      => $data['usuario_cpf'],
+                    'usuario_senha'    => md5($data['usuario_senha']),
+                    'departamento_id'  => $data['departamento_id'],
+                    'usuario_ldap'     => $data['usuario_ldap'],
+                    'status_id' => $data['status_id'],
+                ]);
+    
+                NivelUsuario::create([
+                    'usuario_id' => $usuario->usuario_id,
+                    'nivel_id'   => 3, 
+                ]);
+    
+            } else {
+                $usuario = User::create([
+                    'usuario_nome'     => $data['usuario_nome'],
+                    'usuario_email'    => $data['usuario_email'],
+                    'usuario_cpf'      => $data['usuario_cpf'],
+                    'usuario_senha'    => md5($data['usuario_senha']),
+                    'departamento_id'  => $data['departamento_id'],
+                    'usuario_ldap'     => $data['usuario_ldap'],
+                ]);
+    
+                NivelUsuario::create([
+                    'usuario_id' => $usuario->usuario_id,
+                    'nivel_id'   => 3, 
+                ]);
+    
+            }
+           
+            return redirect()->route('painel.usuarios.index')->with('success', 'Usuário criado com sucesso!');
         } catch (\Exception $e) {
             dd($e->getMessage());
         }
-    }
+    } 
 
 
     public function edit(User $usuario)
@@ -80,6 +99,7 @@ class UserController extends Controller
                 'usuario_cpf'      => $request->usuario_cpf,
                 'departamento_id'  => $request->departamento_id,
                 'usuario_ldap'     => $request->usuario_ldap,
+                'status_id' => $request->status_id,
             ]);
 
             \App\Models\NivelUsuario::updateOrCreate(
@@ -87,7 +107,7 @@ class UserController extends Controller
                 ['nivel_id'   => $request->usuario_nivel]
             );
 
-            return redirect()->route('usuarios.index')->with('success', 'Usuário atualizado com sucesso!');
+            return redirect()->route('painel.usuarios.index')->with('success', 'Usuário atualizado com sucesso!');
         } catch (\Exception $e) {
             dd($e->getMessage());
         }
@@ -99,7 +119,7 @@ class UserController extends Controller
         $usuario->nivelUsuarios()->delete();
         $usuario->delete();
 
-        return redirect()->route('usuarios.index')->with('success', 'Usuário deletado com sucesso!');
+        return redirect()->route('painel.usuarios.index')->with('success', 'Usuário deletado com sucesso!');
     }
 
 
@@ -126,19 +146,19 @@ class UserController extends Controller
             ['nivel_id' => $request->usuario_nivel]
         );
 
-        return redirect()->route('usuarios.index')->with('success', 'Nível do usuário atualizado com sucesso!');
+        return redirect()->route('painel.usuarios.index')->with('success', 'Nível do usuário atualizado com sucesso!');
     }
 
     public function ativar(User $usuario)
     {
         $usuario->update(['status_id' => 1]); 
-        return redirect()->route('usuarios.index')->with('success', 'Usuário ativado com sucesso!');
+        return redirect()->route('painel.usuarios.index')->with('success', 'Usuário ativado com sucesso!');
     }
 
     public function desativar(User $usuario)
     {
         $usuario->update(['status_id' => 2]); 
-        return redirect()->route('usuarios.index')->with('success', 'Usuário desativado com sucesso!');
+        return redirect()->route('painel.usuarios.index')->with('success', 'Usuário desativado com sucesso!');
     }
 
     public function importarLdap()
@@ -187,6 +207,10 @@ class UserController extends Controller
     
         User::where('usuario_ldap', true)->update(['status_id' => 2]);
     
+        $usuariosLdap = User::where('usuario_ldap', true)->pluck('usuario_id');
+        DB::table('nivel_usuario')->whereIn('usuario_id', $usuariosLdap)->delete();
+        User::where('usuario_ldap', true)->delete();
+        
         for ($i = 0; $i < $entries['count']; $i++) {
             $ldapUser = $entries[$i];
     

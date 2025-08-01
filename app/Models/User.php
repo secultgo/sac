@@ -24,6 +24,7 @@ class User extends Authenticatable
         'usuario_ldap',
         'nivel_id',
         'ldap_id',
+        'usuario_senha',
     ];
     
     protected $hidden = [

@@ -122,7 +122,7 @@
                 </div>
 
                 <button type="submit" class="btn btn-success">Salvar</button>
-                <a href="{{ route('usuarios.index') }}" class="btn btn-secondary">Cancelar</a>
+                <a href="{{ route('painel.usuarios.index') }}" class="btn btn-secondary">Cancelar</a>
             </form>
         </div>
     </div>
