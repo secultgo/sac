@@ -34,7 +34,7 @@
                 </div>
 
                 <button type="submit" class="btn btn-primary">Salvar</button>
-                <a href="{{ route('painel.usuarios.index') }}" class="btn btn-secondary">Cancelar</a>
+                <a href="{{ route('usuarios.index') }}" class="btn btn-secondary">Cancelar</a>
             </form>
         </div>
     </div>

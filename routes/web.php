@@ -8,11 +8,12 @@ use App\Http\Controllers\Painel\ServicoChamadoController;
 use App\Http\Controllers\Painel\LocalController;
 use App\Http\Controllers\Painel\UserController;
 use App\Http\Controllers\Painel\LdapController;
+use App\Http\Controllers\Painel\ChamadoController;
 use App\Http\Controllers\Painel\LoginController;
 use App\Http\Controllers\Painel\DashboardController;
 
 Route::get('/', function () {
-    return view('welcome');
+    return redirect('/painel');
 });
 
 Route::get('/login', [LoginController::class, 'LoginForm'])->name('login');
@@ -20,7 +21,10 @@ Route::post('/login', [LoginController::class, 'login'])->name('login.post');
 Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 
 Route::prefix('painel')
+     ->middleware('auth')
      ->group(function () {
+         Route::get('/', [DashboardController::class, 'index'])->name('painel.dashboard');
+         
          Route::resource('departamentos', DepartamentoController::class);
 
          Route::resource('problemas', ProblemaController::class);
@@ -34,7 +38,6 @@ Route::prefix('painel')
         Route::resource('locais', LocalController::class)->parameters(['locais' => 'local']);
 
         Route::resource('usuarios', UserController::class)->names('usuarios')->except(['show']);
-        Route::get('usuarios', [UserController::class, 'index'])->name('painel.usuarios.index');
         Route::get('usuarios/{usuario}/edit-nivel', [UserController::class, 'edit_nivel'])->name('usuarios.edit_nivel');
         Route::put('usuarios/{usuario}/nivel', [UserController::class, 'updateNivel'])->name('usuarios.update_nivel');
         Route::put('usuarios/{usuario}/ativar', [UserController::class, 'ativar'])->name('usuarios.ativar');
@@ -43,6 +46,12 @@ Route::prefix('painel')
         Route::get('usuarios/ldap', [UserController::class, 'importarLdap'])->name('usuarios.importar.ldap');
         Route::post('usuarios/importar-ldap', [UserController::class, 'importFromLdap'])->name('usuarios.importar.ldap.post');
         Route::resource('ldap', LdapController::class);
+
+        Route::get('chamados/create', [ChamadoController::class, 'create'])->name('chamados.create');
+        Route::post('chamados', [ChamadoController::class, 'store'])->name('chamados.store');
+        Route::get('chamados', function() { return redirect()->route('painel.dashboard'); })->name('chamados.index');
+        Route::get('chamados/problemas/{departamento}', [ChamadoController::class, 'problemasPorDepartamento'])->name('chamados.problemasPorDepartamento');
+        Route::get('chamados/servicos/{problema}', [ChamadoController::class, 'servicosPorProblema'])->name('chamados.servicosPorProblema');
      });
 
 //('/teste', function () {

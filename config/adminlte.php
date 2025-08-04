@@ -70,8 +70,6 @@ return [
     'logo_img_xl_class' => 'brand-image-xs',
     'logo_img_alt' => 'Logo do Sistema de Abertura de Chamados',
 
-    
-
     /*
     |--------------------------------------------------------------------------
     | Authentication Logo
@@ -136,10 +134,10 @@ return [
     */
 
     'usermenu_enabled' => true,
-    'usermenu_header' => false,
+    'usermenu_header' => true,
     'usermenu_header_class' => 'bg-primary',
     'usermenu_image' => false,
-    'usermenu_desc' => false,
+    'usermenu_desc' => true,
     'usermenu_profile_url' => false,
 
     /*
@@ -301,33 +299,38 @@ return [
     */
 
     'menu' => [
+        // Navbar items - User menu
+        [
+            'type' => 'navbar-user-menu',
+            'topnav_right' => true,
+        ],
+        
         // Navbar items, será redirecionado para o centro da view dashboard index
-        [
-            'type' => 'navbar-search',  
-            'text' => 'Pesquisar',
-            'topnav_right' => true,
-        ],
-        [
-            'type' => 'fullscreen-widget',
-            'topnav_right' => true,
-        ],
+        // [
+        //     'type' => 'navbar-search',  
+        //     'text' => 'Pesquisar',
+        //     'topnav_right' => true,
+        // ],
+        // [
+        //     'type' => 'fullscreen-widget',
+        //     'topnav_right' => true,
+        // ],
 
         // Sidebar items:
         [
-            'type' => 'sidebar-menu-search',
-            'text' => 'search',
+            'text' => 'Início',
+            'url'  => 'painel',
+            'icon' => 'fas fa-home',
         ],
         [
-            'text' => 'Chamados',
-            'url' => 'admin/chamados',
-            'can' => 'manage-chamados',
+            'text' => 'Novo Chamado',
+            'url'  => 'painel/chamados/create',
+            'icon' => 'fas fa-plus-circle',
         ],
         [
             'text' => 'Meus Chamados',
-            'url' => 'admin/chamados',
+            'url' => 'painel/chamados',
             'icon' => 'far fa-fw fa-folder-open',
-            'label' => 4,
-            'label_color' => 'success',
         ],
         [
             'text' => 'Departamentos',
@@ -366,71 +369,6 @@ return [
                 ],
             ],
         ],
-        // ['header' => 'account_settings'],
-        // [
-        //     'text' => 'profile',
-        //     'url' => 'admin/settings',
-        //     'icon' => 'fas fa-fw fa-user',
-        // ],
-        // [
-        //     'text' => 'change_password',
-        //     'url' => 'admin/settings',
-        //     'icon' => 'fas fa-fw fa-lock',
-        // ],
-        // [
-        //     'text' => 'multilevel',
-        //     'icon' => 'fas fa-fw fa-share',
-        //     'submenu' => [
-        //         [
-        //             'text' => 'level_one',
-        //             'url' => '#',
-        //         ],
-        //         [
-        //             'text' => 'level_one',
-        //             'url' => '#',
-        //             'submenu' => [
-        //                 [
-        //                     'text' => 'level_two',
-        //                     'url' => '#',
-        //                 ],
-        //                 [
-        //                     'text' => 'level_two',
-        //                     'url' => '#',
-        //                     'submenu' => [
-        //                         [
-        //                             'text' => 'level_three',
-        //                             'url' => '#',
-        //                         ],
-        //                         [
-        //                             'text' => 'level_three',
-        //                             'url' => '#',
-        //                         ],
-        //                     ],
-        //                 ],
-        //             ],
-        //         ],
-        //         [
-        //             'text' => 'level_one',
-        //             'url' => '#',
-        //         ],
-        //     ],
-        // ],
-        // ['header' => 'labels'],
-        // [
-        //     'text' => 'important',
-        //     'icon_color' => 'red',
-        //     'url' => '#',
-        // ],
-        // [
-        //     'text' => 'warning',
-        //     'icon_color' => 'yellow',
-        //     'url' => '#',
-        // ],
-        // [
-        //     'text' => 'information',
-        //     'icon_color' => 'cyan',
-        //     'url' => '#',
-        // ],
     ],
 
     /*
