@@ -66,7 +66,7 @@ class UserController extends Controller
     
             }
            
-            return redirect()->route('painel.usuarios.index')->with('success', 'Usuário criado com sucesso!');
+            return redirect()->route('usuarios.index')->with('success', 'Usuário criado com sucesso!');
         } catch (\Exception $e) {
             dd($e->getMessage());
         }
@@ -107,7 +107,7 @@ class UserController extends Controller
                 ['nivel_id'   => $request->usuario_nivel]
             );
 
-            return redirect()->route('painel.usuarios.index')->with('success', 'Usuário atualizado com sucesso!');
+            return redirect()->route('usuarios.index')->with('success', 'Usuário atualizado com sucesso!');
         } catch (\Exception $e) {
             dd($e->getMessage());
         }
@@ -119,7 +119,7 @@ class UserController extends Controller
         $usuario->nivelUsuarios()->delete();
         $usuario->delete();
 
-        return redirect()->route('painel.usuarios.index')->with('success', 'Usuário deletado com sucesso!');
+        return redirect()->route('usuarios.index')->with('success', 'Usuário deletado com sucesso!');
     }
 
 
@@ -146,19 +146,19 @@ class UserController extends Controller
             ['nivel_id' => $request->usuario_nivel]
         );
 
-        return redirect()->route('painel.usuarios.index')->with('success', 'Nível do usuário atualizado com sucesso!');
+        return redirect()->route('usuarios.index')->with('success', 'Nível do usuário atualizado com sucesso!');
     }
 
     public function ativar(User $usuario)
     {
         $usuario->update(['status_id' => 1]); 
-        return redirect()->route('painel.usuarios.index')->with('success', 'Usuário ativado com sucesso!');
+        return redirect()->route('usuarios.index')->with('success', 'Usuário ativado com sucesso!');
     }
 
     public function desativar(User $usuario)
     {
         $usuario->update(['status_id' => 2]); 
-        return redirect()->route('painel.usuarios.index')->with('success', 'Usuário desativado com sucesso!');
+        return redirect()->route('usuarios.index')->with('success', 'Usuário desativado com sucesso!');
     }
 
     public function importarLdap()
@@ -186,7 +186,7 @@ class UserController extends Controller
         $ldapconn = ldap_connect($ldapServer);
     
         if (!$ldapconn) {
-            return redirect()->route('painel.usuarios.index')->with('error', 'Não foi possível conectar ao servidor LDAP.');
+            return redirect()->route('usuarios.index')->with('error', 'Não foi possível conectar ao servidor LDAP.');
         }
 
     
@@ -194,13 +194,13 @@ class UserController extends Controller
         ldap_set_option($ldapconn, LDAP_OPT_REFERRALS, 0);
     
         if (!ldap_bind($ldapconn, $ldapUser, $ldapPass)) {
-            return redirect()->route('painel.usuarios.index')->with('error', 'Falha na autenticação com o servidor LDAP.');
+            return redirect()->route('usuarios.index')->with('error', 'Falha na autenticação com o servidor LDAP.');
         }
     
         $result = ldap_search($ldapconn, $ldapTree, $ldapFilter);
     
         if (!$result) {
-            return redirect()->route('painel.usuarios.index')->with('error', 'Erro na consulta LDAP: ' . ldap_error($ldapconn));
+            return redirect()->route('usuarios.index')->with('error', 'Erro na consulta LDAP: ' . ldap_error($ldapconn));
         }
     
         $entries = ldap_get_entries($ldapconn, $result);
@@ -255,7 +255,7 @@ class UserController extends Controller
     
         ldap_close($ldapconn);
     
-        return redirect()->route('painel.usuarios.index')->with('success', 'Importação de usuários LDAP concluída.');
+        return redirect()->route('usuarios.index')->with('success', 'Importação de usuários LDAP concluída.');
     }
     
 

@@ -38,7 +38,6 @@ Route::prefix('painel')
         Route::resource('locais', LocalController::class)->parameters(['locais' => 'local']);
 
         Route::resource('usuarios', UserController::class)->names('usuarios')->except(['show']);
-        Route::get('usuarios', [UserController::class, 'index'])->name('painel.usuarios.index');
         Route::get('usuarios/{usuario}/edit-nivel', [UserController::class, 'edit_nivel'])->name('usuarios.edit_nivel');
         Route::put('usuarios/{usuario}/nivel', [UserController::class, 'updateNivel'])->name('usuarios.update_nivel');
         Route::put('usuarios/{usuario}/ativar', [UserController::class, 'ativar'])->name('usuarios.ativar');
@@ -50,7 +49,7 @@ Route::prefix('painel')
 
         Route::get('chamados/create', [ChamadoController::class, 'create'])->name('chamados.create');
         Route::post('chamados', [ChamadoController::class, 'store'])->name('chamados.store');
-        Route::get('chamados', function() { return view('painel.chamados.index'); })->name('chamados.index');
+        Route::get('chamados', function() { return redirect()->route('painel.dashboard'); })->name('chamados.index');
         Route::get('chamados/problemas/{departamento}', [ChamadoController::class, 'problemasPorDepartamento'])->name('chamados.problemasPorDepartamento');
         Route::get('chamados/servicos/{problema}', [ChamadoController::class, 'servicosPorProblema'])->name('chamados.servicosPorProblema');
      });

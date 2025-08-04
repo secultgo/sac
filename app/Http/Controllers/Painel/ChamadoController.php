@@ -57,7 +57,7 @@ class ChamadoController extends Controller
 
         $chamado->save();
 
-        return redirect()->route('chamados.index')->with('success', 'Chamado criado com sucesso!');
+        return redirect()->route('painel.dashboard')->with('success', 'Chamado criado com sucesso!');
     }
 
     /**
