@@ -208,10 +208,9 @@ class UserController extends Controller
         User::where('usuario_ldap', true)->update(['status_id' => 2]);
     
         $usuariosLdap = User::where('usuario_ldap', true)->pluck('usuario_id');
-        DB::table('nivel_usuario')->whereIn('usuario_id', $usuariosLdap)->delete();
-        User::where('usuario_ldap', true)->delete();
         
         for ($i = 0; $i < $entries['count']; $i++) {
+
             $ldapUser = $entries[$i];
     
             DB::beginTransaction();
@@ -234,6 +233,10 @@ class UserController extends Controller
                     $usuario->update($userData);
                 } else {
                     $usuario = User::create($userData);
+                    NivelUsuario::create([
+                        'usuario_id' => $usuario->usuario_id,
+                        'nivel_id'   => 3,
+                    ]);
                 }
 
     
@@ -241,10 +244,7 @@ class UserController extends Controller
                     throw new \Exception('Falha ao criar o usuário.');
                 }
     
-                NivelUsuario::create([
-                    'usuario_id' => $usuario->usuario_id,
-                    'nivel_id'   => 3,
-                ]);
+                
     
                 DB::commit();
             } catch (\Exception $e) {
