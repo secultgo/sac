@@ -191,5 +191,31 @@
 @stop
 
 @section('js')
-<script> console.log('Dashboard carregado'); </script>
+<script>
+console.log('Dashboard carregado');
+
+// Verificar se há notificação de chamado criado
+@if(session('chamado_id') && session('posicao_fila'))
+    Swal.fire({
+        title: 'Chamado Criado com Sucesso!',
+        html: `
+            <div style="text-align: left; padding: 20px;">
+                <p><strong>Seu chamado foi adicionado à fila de espera</strong></p>
+                <p>Todas as atualizações sobre o andamento do seu chamado serão registradas diretamente no chamado no SAC.</p>
+                <hr>
+                <p><strong>Sua posição na fila de atendimento:</strong> 
+                   <span style="color: #007bff; font-size: 18px; font-weight: bold;">{{ session('posicao_fila') }}</span>
+                </p>
+                <p><strong>Número do chamado:</strong> #{{ session('chamado_id') }}</p>
+            </div>
+        `,
+        icon: 'success',
+        confirmButtonText: 'Entendi',
+        confirmButtonColor: '#28a745',
+        allowOutsideClick: false,
+        allowEscapeKey: false,
+        width: '500px'
+    });
+@endif
+</script>
 @stop
