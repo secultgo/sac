@@ -12,7 +12,7 @@ use App\Http\Controllers\Painel\ChamadoController;
 use App\Http\Controllers\Painel\LoginController;
 
 Route::get('/', function () {
-    return view('welcome');
+    return redirect('/painel');
 });
 
 Route::get('/login', [LoginController::class, 'LoginForm'])->name('login');
