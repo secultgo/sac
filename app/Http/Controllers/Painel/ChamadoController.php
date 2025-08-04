@@ -43,6 +43,7 @@ class ChamadoController extends Controller
 
         $chamado = new Chamado($validated);
         $chamado->usuario_id = Auth::id();
+        $chamado->lotacao_id = Auth::user()->departamento_id;
         $chamado->status_chamado_id = 1;
         $chamado->chamado_ip = $request->ip(); // Captura o IP do usuário
 
