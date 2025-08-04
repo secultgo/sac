@@ -21,6 +21,7 @@ Route::post('/login', [LoginController::class, 'login'])->name('login.post');
 Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 
 Route::prefix('painel')
+     ->middleware('auth')
      ->group(function () {
          Route::get('/', [DashboardController::class, 'index'])->name('painel.dashboard');
          

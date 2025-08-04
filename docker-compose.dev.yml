@@ -24,7 +24,7 @@ services:
         volumes:
             - ./:/var/www
             - ./docker/nginx/:/etc/nginx/conf.d/
-            - ./docker/php-fpm/www.conf:/usr/local/etc/php-fpm.d/www.conf
+            #- ./docker/php-fpm/www.conf:/usr/local/etc/php-fpm.d/www.conf
         networks:
             - laravel
 

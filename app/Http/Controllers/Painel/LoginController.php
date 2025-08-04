@@ -33,7 +33,7 @@ class LoginController extends Controller
 
         if ($user) {
             Auth::login($user);
-            return redirect()->intended('painel/usuarios');
+            return redirect()->intended('/painel');
         } else {
             return back()->withErrors([
                 'usuario_email' => 'Usuário não encontrado.',
