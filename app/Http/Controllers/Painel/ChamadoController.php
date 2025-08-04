@@ -37,11 +37,23 @@ class ChamadoController extends Controller
             'departamento_id' => 'required|exists:departamento,departamento_id',
             'local_id' => 'required|exists:local,local_id',
             'servico_chamado_id' => 'required|exists:servico_chamado,servico_chamado_id',
+            'chamado_ip' => 'nullable|string|max:15',
+            'chamado_anexo' => 'nullable|file|max:10240|mimes:pdf,doc,docx,jpg,jpeg,png,txt',
         ]);
 
         $chamado = new Chamado($validated);
         $chamado->usuario_id = Auth::id();
         $chamado->status_chamado_id = 1;
+        $chamado->chamado_ip = $request->ip(); // Captura o IP do usuário
+
+        // Upload do arquivo se fornecido
+        if ($request->hasFile('chamado_anexo')) {
+            $file = $request->file('chamado_anexo');
+            $fileName = time() . '_' . $file->getClientOriginalName();
+            $file->move(public_path('uploads/chamado'), $fileName);
+            $chamado->chamado_anexo = $fileName;
+        }
+
         $chamado->save();
 
         return redirect()->route('chamados.index')->with('success', 'Chamado criado com sucesso!');

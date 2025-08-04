@@ -7,7 +7,7 @@
 @endsection
 
 @section('content')
-    <form action="{{ route('chamados.store') }}" method="POST">
+    <form action="{{ route('chamados.store') }}" method="POST" enctype="multipart/form-data">
         @csrf
         <div class="row">
             <div class="col-md-3">
@@ -52,6 +52,15 @@
         <div class="form-group">
             <label for="chamado_descricao">Descrição</label>
             <textarea name="chamado_descricao" id="chamado_descricao" class="form-control" required>{{ old('chamado_descricao') }}</textarea>
+        </div>
+        <div class="form-group">
+            <label for="chamado_ip">IP do Solicitante</label>
+            <input type="text" name="chamado_ip" id="chamado_ip" class="form-control" readonly value="{{ $_SERVER['REMOTE_ADDR'] ?? '' }}">
+        </div>
+        <div class="form-group">
+            <label for="chamado_anexo">Anexo (opcional)</label>
+            <input type="file" name="chamado_anexo" id="chamado_anexo" class="form-control-file" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png,.txt">
+            <small class="form-text text-muted">Arquivos permitidos: PDF, DOC, DOCX, JPG, JPEG, PNG, TXT (máx. 10MB)</small>
         </div>
         <button type="submit" class="btn btn-primary">Abrir Chamado</button>
     </form>
