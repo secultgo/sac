@@ -22,6 +22,8 @@ Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 
 Route::prefix('painel')
      ->group(function () {
+         Route::get('/', [DashboardController::class, 'index'])->name('painel.dashboard');
+         
          Route::resource('departamentos', DepartamentoController::class);
 
          Route::resource('problemas', ProblemaController::class);
