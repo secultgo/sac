@@ -318,6 +318,11 @@ return [
             'text' => 'search',
         ],
         [
+            'text' => 'Início',
+            'url'  => 'painel',
+            'icon' => 'fas fa-home',
+        ],
+        [
             'text' => 'Novo Chamado',
             'url'  => 'painel/chamados/create',
             'icon' => 'fas fa-plus-circle',
