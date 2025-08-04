@@ -41,11 +41,6 @@ Route::prefix('painel')
         Route::resource('ldap', LdapController::class);
      });
 
-     Route::prefix('teste')->group(function () {
-        Route::get('/dashboard', [DashboardController::class, 'index'])->name('painel.dashboard.index');
-        Route::get('/meus-atendimentos', [DashboardController::class, 'meus'])->name('painel.dashboard.meus');
-    });
-
 //('/teste', function () {
     //return view('painel.dashboard.index');
 //});
