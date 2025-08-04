@@ -302,21 +302,17 @@ return [
 
     'menu' => [
         // Navbar items, será redirecionado para o centro da view dashboard index
-        [
-            'type' => 'navbar-search',  
-            'text' => 'Pesquisar',
-            'topnav_right' => true,
-        ],
-        [
-            'type' => 'fullscreen-widget',
-            'topnav_right' => true,
-        ],
+        // [
+        //     'type' => 'navbar-search',  
+        //     'text' => 'Pesquisar',
+        //     'topnav_right' => true,
+        // ],
+        // [
+        //     'type' => 'fullscreen-widget',
+        //     'topnav_right' => true,
+        // ],
 
         // Sidebar items:
-        [
-            'type' => 'sidebar-menu-search',
-            'text' => 'search',
-        ],
         [
             'text' => 'Início',
             'url'  => 'painel',
