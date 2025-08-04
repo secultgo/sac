@@ -10,6 +10,7 @@ use App\Http\Controllers\Painel\UserController;
 use App\Http\Controllers\Painel\LdapController;
 use App\Http\Controllers\Painel\ChamadoController;
 use App\Http\Controllers\Painel\LoginController;
+use App\Http\Controllers\Painel\DashboardController;
 
 Route::get('/', function () {
     return redirect('/painel');
