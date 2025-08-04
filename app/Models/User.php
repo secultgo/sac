@@ -27,6 +27,9 @@ class User extends Authenticatable
         'ldap_id',
         'usuario_senha',
     ];
+
+    // Mapear o campo name para usuario_nome
+    protected $appends = ['name'];
     
     protected $hidden = [
         'usuario_senha',
@@ -36,6 +39,30 @@ class User extends Authenticatable
     {
         return $this->usuario_senha;
     }
+
+    // Método para o AdminLTE usar como nome do usuário
+    public function adminlte_desc()
+    {
+        return $this->usuario_nome;
+    }
+
+    public function adminlte_profile_url()
+    {
+        return '#';
+    }
+
+    // Getter padrão para o nome (usado pelo Laravel-AdminLTE)
+    public function getNameAttribute()
+    {
+        return $this->usuario_nome;
+    }
+
+    // Método getName que o AdminLTE pode usar
+    public function getName()
+    {
+        return $this->usuario_nome;
+    }
+    
     public function nivelUsuarios()
     {
         return $this->hasMany(NivelUsuario::class, 'usuario_id', 'usuario_id');

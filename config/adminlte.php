@@ -134,10 +134,10 @@ return [
     */
 
     'usermenu_enabled' => true,
-    'usermenu_header' => false,
+    'usermenu_header' => true,
     'usermenu_header_class' => 'bg-primary',
     'usermenu_image' => false,
-    'usermenu_desc' => false,
+    'usermenu_desc' => true,
     'usermenu_profile_url' => false,
 
     /*
@@ -299,6 +299,12 @@ return [
     */
 
     'menu' => [
+        // Navbar items - User menu
+        [
+            'type' => 'navbar-user-menu',
+            'topnav_right' => true,
+        ],
+        
         // Navbar items, será redirecionado para o centro da view dashboard index
         // [
         //     'type' => 'navbar-search',  
