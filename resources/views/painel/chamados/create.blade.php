@@ -10,6 +10,14 @@
     <form action="{{ route('chamados.store') }}" method="POST" enctype="multipart/form-data">
         @csrf
         <div class="row">
+            <div class="col-md-12">
+                <div class="form-group">
+                    <label for="usuario_nome">Solicitante</label>
+                    <input type="text" name="usuario_nome" id="usuario_nome" class="form-control" readonly value="{{ Auth::user()->usuario_nome }}">
+                </div>
+            </div>
+        </div>
+        <div class="row">
             <div class="col-md-3">
                 <div class="form-group">
                     <label for="departamento_id">Departamento</label>
