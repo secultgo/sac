@@ -16,11 +16,11 @@
     position: relative;
     padding-left: 30px;
     padding-bottom: 20px;
-    border-left: 2px solid #e9ecef;
+    margin-bottom: 15px;
 }
 
 .timeline-item:last-child {
-    border-left: none;
+    margin-bottom: 0;
 }
 
 .timeline-item::before {
@@ -32,6 +32,8 @@
     height: 10px;
     border-radius: 50%;
     background: #007bff;
+    border: 2px solid #fff;
+    box-shadow: 0 0 0 3px #007bff;
 }
 
 .attachment-item {
