@@ -39,148 +39,202 @@
 
 <div class="row mb-4">
     <div class="col-lg-3 col-6">
-        <div class="small-box bg-info">
+        <div class="small-box bg-danger">
             <div class="inner">
-                <h3>4551</h3>
-                <p>Total de Chamados</p>
+                <h3>{{ $contadores['abertos'] }}</h3>
+                <p>Chamados Abertos</p>
             </div>
-            <div class="icon"><i class="fas fa-list"></i></div>
-            <a href="#" class="small-box-footer">
-                Mais detalhes <i class="fas fa-arrow-circle-right"></i>
+            <div class="icon"><i class="fas fa-folder-open"></i></div>
+            <a href="{{ route('painel.dashboard', ['status' => 1]) }}" class="small-box-footer">
+                Ver abertos <i class="fas fa-arrow-circle-right"></i>
             </a>
         </div>
     </div>
     <div class="col-lg-3 col-6">
-        <div class="small-box bg-success">
+        <div class="small-box bg-warning">
             <div class="inner">
-                <h3>4529</h3>
-                <p>Chamados Fechados</p>
+                <h3>{{ $contadores['atendimento'] }}</h3>
+                <p>Em Atendimento</p>
             </div>
-            <div class="icon"><i class="fas fa-check"></i></div>
-            <a href="#" class="small-box-footer">
-                Mais detalhes <i class="fas fa-arrow-circle-right"></i>
+            <div class="icon"><i class="fas fa-user-clock"></i></div>
+            <a href="{{ route('painel.dashboard', ['status' => 2]) }}" class="small-box-footer">
+                Ver em atendimento <i class="fas fa-arrow-circle-right"></i>
+            </a>
+        </div>
+    </div>
+    <div class="col-lg-3 col-6">
+        <div class="small-box bg-secondary">
+            <div class="inner">
+                <h3>{{ $contadores['aguardando_usuario'] }}</h3>
+                <p>Aguardando Usuário</p>
+            </div>
+            <div class="icon"><i class="fas fa-user-clock"></i></div>
+            <a href="{{ route('painel.dashboard', ['status' => 6]) }}" class="small-box-footer">
+                Ver aguardando usuário <i class="fas fa-arrow-circle-right"></i>
             </a>
         </div>
     </div>
     <div class="col-lg-3 col-6">
         <div class="small-box bg-orange">
-        <div class="inner">
-            <h3>3</h3>
-            <p>Chamados Pendentes</p>
-        </div>
-        <div class="icon"><i class="fas fa-hourglass-half"></i></div>
-        <a href="#" class="small-box-footer">
-            Mais detalhes <i class="fas fa-arrow-circle-right"></i>
-        </a>
-    </div>
-
-    </div>
-    <div class="col-lg-3 col-6">
-        <div class="small-box bg-danger">
             <div class="inner">
-                <h3>19</h3>
-                <p>Chamados Abertos</p>
+                <h3>{{ $contadores['pendentes'] }}</h3>
+                <p>Chamados Pendentes</p>
             </div>
-            <div class="icon"><i class="fas fa-folder-open"></i></div>
-            <a href="#" class="small-box-footer">
-                Mais detalhes <i class="fas fa-arrow-circle-right"></i>
+            <div class="icon"><i class="fas fa-hourglass-half"></i></div>
+            <a href="{{ route('painel.dashboard', ['status' => 4]) }}" class="small-box-footer">
+                Ver pendentes <i class="fas fa-arrow-circle-right"></i>
             </a>
         </div>
     </div>
 </div>
 
-<!-- Tabela de Chamados -->
-<div class="card-header d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center flex-wrap">
-    <h3 class="card-title mb-2 mb-md-0">Chamados</h3>
+<div class="card">
+    <!-- Tabela de Chamados -->
+    <div class="card-header d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center flex-wrap">
+        <h3 class="card-title mb-2 mb-md-0">Chamados</h3>
 
-    <div class="d-flex flex-wrap justify-content-start">
-        <a href="?status=1" class="btn btn-sm btn-danger rounded-pill px-3 mr-2 mb-2">
-            Abertos <span class="badge badge-light ml-1">19</span>
-        </a>
-        <a href="?status=2" class="btn btn-sm btn-warning rounded-pill px-3 mr-2 mb-2">
-            Atendimento <span class="badge badge-light ml-1">XX</span>
-        </a>
-        <a href="?status=3" class="btn btn-sm btn-success rounded-pill px-3 mr-2 mb-2">
-            Fechados <span class="badge badge-light ml-1">4529</span>
-        </a>
-        <a href="?status=4" class="btn btn-sm bg-orange text-white rounded-pill px-3 mr-2 mb-2">
-            Pendentes <span class="badge badge-light ml-1">3</span>
-        </a>
-        <a href="?status=5" class="btn btn-sm btn-info rounded-pill px-3 mr-2 mb-2">
-            Resolvidos <span class="badge badge-light ml-1">XX</span>
-        </a>
-        <a href="?status=6" class="btn btn-sm btn-secondary rounded-pill px-3 mr-2 mb-2">
-            Aguardando Usuário <span class="badge badge-light ml-1">XX</span>
-        </a>
+        <div class="d-flex flex-wrap justify-content-start">
+            <a href="{{ route('painel.dashboard', ['status' => 1]) }}" class="btn btn-sm btn-danger rounded-pill px-3 mr-2 mb-2 {{ $statusFiltro == 1 ? 'active' : '' }}">
+                Abertos <span class="badge badge-light ml-1">{{ $contadores['abertos'] }}</span>
+            </a>
+            <a href="{{ route('painel.dashboard', ['status' => 2]) }}" class="btn btn-sm btn-warning rounded-pill px-3 mr-2 mb-2 {{ $statusFiltro == 2 ? 'active' : '' }}">
+                Atendimento <span class="badge badge-light ml-1">{{ $contadores['atendimento'] }}</span>
+            </a>
+            <a href="{{ route('painel.dashboard', ['status' => 6]) }}" class="btn btn-sm btn-secondary rounded-pill px-3 mr-2 mb-2 {{ $statusFiltro == 6 ? 'active' : '' }}">
+                Aguardando Usuário <span class="badge badge-light ml-1">{{ $contadores['aguardando_usuario'] }}</span>
+            </a>
+            <a href="{{ route('painel.dashboard', ['status' => 4]) }}" class="btn btn-sm bg-orange text-white rounded-pill px-3 mr-2 mb-2 {{ $statusFiltro == 4 ? 'active' : '' }}">
+                Pendentes <span class="badge badge-light ml-1">{{ $contadores['pendentes'] }}</span>
+            </a>
+        </div>
     </div>
-</div>
-
 
     <div class="card-body p-0">
-        <table class="table table-striped table-hover mb-0">
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Descrição</th>
-                    <th>Solicitante</th>
-                    <th>Lotação</th>
-                    <th>Local</th>
-                    <th>Telefone</th>
-                    <th>Responsável</th>
-                    <th>Data de Criação</th>
-                    <th>Data Atendimento</th>
-                    <th>Status</th>
-                    <th class="text-right">Ações</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>13843</td>
-                    <td class="descricao-limitada">
-                        Boa tarde. Gostaria de solicitar ao Luís e ao João, uma aplicação para facilitar a pesquisa no acervo fonográfico. Obrigada!
-                    </td>
-                    <td>Gisele Gomes Garcia</td>
-                    <td>Gerência de Museus, Bibliotecas, Instituto do Livro e Arquivo Histórico</td>
-                    <td>CENTRO CULTURAL MARIETTA TELLES MACHADO</td>
-                    <td>62 99121-8989</td>
-                    <td>Luis Felipe Pinheiro Peres de Santana</td>
-                    <td>10/06/2025 14:35:32</td>
-                    <td>11/06/2025 08:25:33</td>
-                    <td><span class="badge badge-warning">Atendimento</span></td>
-                    <td class="text-right">
-                        <div class="d-flex flex-wrap justify-content-end">
-                            <!-- Linha 1: 4 botões -->
-                            <div class="w-100 mb-1 d-flex justify-content-end flex-wrap">
-                                <a href="#" class="btn btn-sm btn-primary mr-1 mb-1" title="Ver">
-                                    <i class="fas fa-eye"></i>
-                                </a>
-                                <a href="#" class="btn btn-sm btn-secondary mr-1 mb-1" title="Comentário">
-                                    <i class="fas fa-comment-dots"></i>
-                                </a>
-                                <a href="#" class="btn btn-sm btn-warning mr-1 mb-1" title="Devolver ao Usuário">
-                                    <i class="fas fa-undo"></i>
-                                </a>
-                                <a href="#" class="btn btn-sm btn-info mr-1 mb-1" title="Pendência">
-                                    <i class="fas fa-hourglass-half"></i>
-                                </a>
+        @if($chamados->count() > 0)
+            <table class="table table-striped table-hover mb-0">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Descrição</th>
+                        <th>Solicitante</th>
+                        <th>Departamento</th>
+                        <th>Local</th>
+                        <th>Responsável</th>
+                        <th>Data de Criação</th>
+                        <th>Data Atendimento</th>
+                        <th>Status</th>
+                        <th class="text-right">Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach($chamados as $chamado)
+                    <tr>
+                        <td>{{ $chamado->chamado_id }}</td>
+                        <td class="descricao-limitada">
+                            {{ $chamado->chamado_descricao }}
+                        </td>
+                        <td>{{ $chamado->usuario->usuario_nome ?? 'N/A' }}</td>
+                        <td>{{ $chamado->departamento->departamento_nome ?? 'N/A' }}</td>
+                        <td>{{ $chamado->local->local_nome ?? 'N/A' }}</td>
+                        <td>{{ $chamado->responsavel->usuario_nome ?? 'Não atribuído' }}</td>
+                        <td>
+                            @if($chamado->chamado_abertura)
+                                {{ is_string($chamado->chamado_abertura) ? \Carbon\Carbon::parse($chamado->chamado_abertura)->format('d/m/Y H:i:s') : $chamado->chamado_abertura->format('d/m/Y H:i:s') }}
+                            @else
+                                N/A
+                            @endif
+                        </td>
+                        <td>
+                            @if($chamado->chamado_atendimento)
+                                {{ is_string($chamado->chamado_atendimento) ? \Carbon\Carbon::parse($chamado->chamado_atendimento)->format('d/m/Y H:i:s') : $chamado->chamado_atendimento->format('d/m/Y H:i:s') }}
+                            @else
+                                N/A
+                            @endif
+                        </td>
+                        <td>
+                            @switch($chamado->status_chamado_id)
+                                @case(1)
+                                    <span class="badge badge-danger">Aberto</span>
+                                    @break
+                                @case(2)
+                                    <span class="badge badge-warning">Atendimento</span>
+                                    @break
+                                @case(3)
+                                    <span class="badge badge-success">Fechado</span>
+                                    @break
+                                @case(4)
+                                    <span class="badge bg-orange">Pendente</span>
+                                    @break
+                                @case(5)
+                                    <span class="badge badge-info">Resolvido</span>
+                                    @break
+                                @case(6)
+                                    <span class="badge badge-secondary">Aguardando Usuário</span>
+                                    @break
+                                @default
+                                    <span class="badge badge-dark">Status {{ $chamado->status_chamado_id }}</span>
+                            @endswitch
+                        </td>
+                        <td class="text-right">
+                            <div class="d-flex flex-wrap justify-content-end">
+                                <!-- Linha 1: 4 botões -->
+                                <div class="w-100 mb-1 d-flex justify-content-end flex-wrap">
+                                    <a href="#" class="btn btn-sm btn-primary mr-1 mb-1" title="Ver">
+                                        <i class="fas fa-eye"></i>
+                                    </a>
+                                    <a href="#" class="btn btn-sm btn-secondary mr-1 mb-1" title="Comentário">
+                                        <i class="fas fa-comment-dots"></i>
+                                    </a>
+                                    <a href="#" class="btn btn-sm btn-warning mr-1 mb-1" title="Devolver ao Usuário">
+                                        <i class="fas fa-undo"></i>
+                                    </a>
+                                    <a href="#" class="btn btn-sm btn-info mr-1 mb-1" title="Pendência">
+                                        <i class="fas fa-hourglass-half"></i>
+                                    </a>
+                                </div>
+                                <!-- Linha 2: 3 botões -->
+                                <div class="w-100 d-flex justify-content-end flex-wrap">
+                                    <a href="#" class="btn btn-sm btn-dark mr-1 mb-1" title="Transferir de Departamento">
+                                        <i class="fas fa-exchange-alt"></i>
+                                    </a>
+                                    <a href="#" class="btn btn-sm btn-success mr-1 mb-1" title="Alterar Responsável">
+                                        <i class="fas fa-user-edit"></i>
+                                    </a>
+                                    <a href="#" class="btn btn-sm btn-danger mr-1 mb-1" title="Resolver">
+                                        <i class="fas fa-check"></i>
+                                    </a>
+                                </div>
                             </div>
-                            <!-- Linha 2: 3 botões -->
-                            <div class="w-100 d-flex justify-content-end flex-wrap">
-                                <a href="#" class="btn btn-sm btn-dark mr-1 mb-1" title="Transferir de Departamento">
-                                    <i class="fas fa-exchange-alt"></i>
-                                </a>
-                                <a href="#" class="btn btn-sm btn-success mr-1 mb-1" title="Alterar Responsável">
-                                    <i class="fas fa-user-edit"></i>
-                                </a>
-                                <a href="#" class="btn btn-sm btn-danger mr-1 mb-1" title="Resolver">
-                                    <i class="fas fa-check"></i>
-                                </a>
-                            </div>
-                        </div>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
+                        </td>
+                    </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        @else
+            <div class="card-body text-center">
+                <div class="alert alert-info">
+                    <h4><i class="fas fa-info-circle"></i> Nenhum chamado encontrado</h4>
+                    <p>
+                        @switch($statusFiltro)
+                            @case(1)
+                                Não há chamados abertos no momento.
+                                @break
+                            @case(2)
+                                Não há chamados em atendimento no momento.
+                                @break
+                            @case(6)
+                                Não há chamados aguardando usuário no momento.
+                                @break
+                            @case(4)
+                                Não há chamados pendentes no momento.
+                                @break
+                            @default
+                                Não há chamados cadastrados no momento.
+                        @endswitch
+                    </p>
+                </div>
+            </div>
+        @endif
     </div>
 </div>
 
@@ -188,6 +242,12 @@
 
 @section('css')
 <link rel="stylesheet" href="/css/admin_custom.css">
+<style>
+.btn.active {
+    box-shadow: 0 0 0 2px rgba(0,123,255,.5);
+    transform: scale(1.05);
+}
+</style>
 @stop
 
 @section('js')
