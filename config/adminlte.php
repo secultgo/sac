@@ -333,6 +333,11 @@ return [
             'icon' => 'far fa-fw fa-folder-open',
         ],
         [
+            'text' => 'Meus Atendimentos',
+            'url' => 'painel/meus-atendimentos',
+            'icon' => 'fas fa-headset',
+        ],
+        [
             'text' => 'Departamentos',
             'url'  => 'painel/departamentos',
             'icon' => 'fas fa-building',

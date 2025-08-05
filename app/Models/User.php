@@ -67,5 +67,16 @@ class User extends Authenticatable
     {
         return $this->hasMany(NivelUsuario::class, 'usuario_id', 'usuario_id');
     }
+
+    /**
+     * Verifica se o usuário tem permissão para atendimentos (nível 1 ou 2)
+     */
+    public function podeAtender()
+    {
+        return \DB::table('nivel_usuario')
+            ->where('usuario_id', $this->usuario_id)
+            ->whereIn('nivel_id', [1, 2])
+            ->exists();
+    }
     
 }

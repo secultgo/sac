@@ -42,7 +42,7 @@ class ChamadoController extends Controller
         ]);
 
         $chamado = new Chamado($validated);
-        $chamado->usuario_id = Auth::id();
+        $chamado->usuario_id = Auth::user()->usuario_id;
         $chamado->lotacao_id = Auth::user()->departamento_id;
         $chamado->status_chamado_id = 1;
         $chamado->chamado_ip = $request->ip(); // Captura o IP do usuário
@@ -66,6 +66,35 @@ class ChamadoController extends Controller
                         ->with('success', 'Chamado criado com sucesso!')
                         ->with('chamado_id', $chamado->chamado_id)
                         ->with('posicao_fila', $posicaoFila);
+    }
+
+    /**
+     * Exibe os chamados onde o usuário logado é o responsável.
+     */
+    public function meusAtendimentos(Request $request)
+    {
+        $statusFiltro = $request->get('status');
+        
+        $query = Chamado::with(['problema', 'departamento', 'local', 'usuario', 'servicoChamado', 'statusChamado'])
+                        ->where('responsavel_id', Auth::user()->usuario_id);
+        
+        if ($statusFiltro) {
+            $query->where('status_chamado_id', $statusFiltro);
+        }
+        
+        $chamados = $query->orderBy('chamado_abertura', 'desc')->get();
+        
+        // Contar chamados por status para os badges
+        $contadores = [
+            'abertos' => Chamado::where('responsavel_id', Auth::user()->usuario_id)->where('status_chamado_id', 1)->count(),
+            'atendimento' => Chamado::where('responsavel_id', Auth::user()->usuario_id)->where('status_chamado_id', 2)->count(),
+            'fechados' => Chamado::where('responsavel_id', Auth::user()->usuario_id)->where('status_chamado_id', 3)->count(),
+            'pendentes' => Chamado::where('responsavel_id', Auth::user()->usuario_id)->where('status_chamado_id', 4)->count(),
+            'resolvidos' => Chamado::where('responsavel_id', Auth::user()->usuario_id)->where('status_chamado_id', 5)->count(),
+            'aguardando_usuario' => Chamado::where('responsavel_id', Auth::user()->usuario_id)->where('status_chamado_id', 6)->count(),
+        ];
+        
+        return view('painel.meus-atendimentos.index', compact('chamados', 'contadores', 'statusFiltro'));
     }
 
     /**

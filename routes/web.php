@@ -50,6 +50,9 @@ Route::prefix('painel')
         Route::get('chamados/create', [ChamadoController::class, 'create'])->name('chamados.create');
         Route::post('chamados', [ChamadoController::class, 'store'])->name('chamados.store');
         Route::get('chamados', function() { return redirect()->route('painel.dashboard'); })->name('chamados.index');
+        Route::get('meus-atendimentos', [ChamadoController::class, 'meusAtendimentos'])
+            ->name('meus-atendimentos.index')
+            ->middleware('nivel.atendimento');
         Route::get('chamados/problemas/{departamento}', [ChamadoController::class, 'problemasPorDepartamento'])->name('chamados.problemasPorDepartamento');
         Route::get('chamados/servicos/{problema}', [ChamadoController::class, 'servicosPorProblema'])->name('chamados.servicosPorProblema');
      });
