@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Painel;
 use App\Http\Controllers\Controller;
 use App\Models\Chamado;
 use App\Models\ComentarioChamado;
+use App\Models\StatusChamado;
 use App\Models\Problema;
 use App\Models\Departamento;
 use App\Models\Local;
@@ -147,7 +148,7 @@ class ChamadoController extends Controller
         $chamado = Chamado::findOrFail($id);
         
         // Verifica se o chamado não está fechado
-        if ($chamado->status_chamado_id == 3) {
+        if ($chamado->status_chamado_id == StatusChamado::FECHADO) {
             return redirect()->back()->with('error', 'Não é possível adicionar comentários em chamados fechados.');
         }
 
@@ -168,5 +169,63 @@ class ChamadoController extends Controller
         ]);
 
         return redirect()->back()->with('success', 'Comentário adicionado com sucesso!');
+    }
+
+    /**
+     * Coloca o chamado em pendência
+     */
+    public function colocarPendencia(Request $request, $id)
+    {
+        $request->validate([
+            'motivo_pendencia' => 'required|string|max:1000'
+        ]);
+
+        $chamado = Chamado::findOrFail($id);
+        
+        // Verifica se o chamado está em atendimento para poder colocar em pendência
+        if ($chamado->status_chamado_id != StatusChamado::ATENDIMENTO) {
+            return redirect()->back()->with('error', 'Apenas chamados em atendimento podem ser colocados em pendência.');
+        }
+
+        // Atualiza o status para Pendente (4)
+        $chamado->status_chamado_id = StatusChamado::PENDENTE;
+        $chamado->save();
+
+        // Adiciona o comentário do usuário como motivo da pendência
+        ComentarioChamado::create([
+            'comentario_chamado_comentario' => $request->motivo_pendencia,
+            'comentario_chamado_data' => now(),
+            'chamado_id' => $id,
+            'usuario_id' => Auth::user()->usuario_id
+        ]);
+
+        return redirect()->back()->with('success', 'Chamado colocado em pendência com sucesso!');
+    }
+
+    /**
+     * Coloca o chamado em atendimento (de pendente para atendimento)
+     */
+    public function atenderChamado($id)
+    {
+        $chamado = Chamado::findOrFail($id);
+        
+        // Verifica se o chamado está pendente para poder atender
+        if ($chamado->status_chamado_id != StatusChamado::PENDENTE) {
+            return redirect()->back()->with('error', 'Apenas chamados pendentes podem ser colocados em atendimento.');
+        }
+
+        // Atualiza o status para Atendimento (2)
+        $chamado->status_chamado_id = StatusChamado::ATENDIMENTO;
+        $chamado->save();
+
+        // Adiciona um comentário automático
+        ComentarioChamado::create([
+            'comentario_chamado_comentario' => 'Chamado retomado do status pendente para atendimento por ' . Auth::user()->name,
+            'comentario_chamado_data' => now(),
+            'chamado_id' => $id,
+            'usuario_id' => Auth::user()->usuario_id
+        ]);
+
+        return redirect()->back()->with('success', 'Chamado colocado em atendimento com sucesso!');
     }
 }
