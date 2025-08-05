@@ -101,7 +101,7 @@
                             @if($evento['comentario']->comentario_chamado_anexo)
                                 <div class="mt-2">
                                     <i class="fas fa-paperclip text-muted"></i>
-                                    <a href="{{ asset('uploads/comentario/' . $evento['comentario']->comentario_chamado_anexo) }}" target="_blank" class="text-primary">
+                                    <a href="{{ asset('uploads/chamado/' . $evento['comentario']->comentario_chamado_anexo) }}" target="_blank" class="text-primary">
                                         {{ $evento['comentario']->comentario_chamado_anexo }}
                                     </a>
                                 </div>

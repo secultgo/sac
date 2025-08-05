@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Painel;
 
 use App\Http\Controllers\Controller;
 use App\Models\Chamado;
+use App\Models\ComentarioChamado;
 use App\Models\Problema;
 use App\Models\Departamento;
 use App\Models\Local;
@@ -131,5 +132,41 @@ class ChamadoController extends Controller
     {
         $servicos = ServicoChamado::where('problema_id', $problemaId)->orderBy('servico_chamado_nome')->get(['servico_chamado_id', 'servico_chamado_nome']);
         return response()->json($servicos);
+    }
+
+    /**
+     * Adiciona um comentário ao chamado.
+     */
+    public function adicionarComentario(Request $request, $id)
+    {
+        $request->validate([
+            'comentario' => 'required|string|max:1000',
+            'anexo' => 'nullable|file|mimes:jpg,jpeg,png,pdf,doc,docx,txt|max:5120' // 5MB max
+        ]);
+
+        $chamado = Chamado::findOrFail($id);
+        
+        // Verifica se o chamado não está fechado
+        if ($chamado->status_chamado_id == 3) {
+            return redirect()->back()->with('error', 'Não é possível adicionar comentários em chamados fechados.');
+        }
+
+        $anexo = null;
+        if ($request->hasFile('anexo')) {
+            $arquivo = $request->file('anexo');
+            $nomeArquivo = time() . '_' . $arquivo->getClientOriginalName();
+            $arquivo->move(public_path('uploads/chamado'), $nomeArquivo);
+            $anexo = $nomeArquivo;
+        }
+
+        ComentarioChamado::create([
+            'comentario_chamado_comentario' => $request->comentario,
+            'comentario_chamado_data' => now(),
+            'chamado_id' => $id,
+            'comentario_chamado_anexo' => $anexo,
+            'usuario_id' => Auth::user()->usuario_id
+        ]);
+
+        return redirect()->back()->with('success', 'Comentário adicionado com sucesso!');
     }
 }
