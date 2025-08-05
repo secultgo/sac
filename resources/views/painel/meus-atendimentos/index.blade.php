@@ -220,7 +220,30 @@
             <div class="card-body text-center">
                 <div class="alert alert-info">
                     <h4><i class="fas fa-info-circle"></i> Nenhum atendimento encontrado</h4>
-                    <p>Você não possui chamados em atendimento no momento.</p>
+                    <p>
+                        @switch($statusFiltro)
+                            @case(1)
+                                Você não possui chamados abertos no momento.
+                                @break
+                            @case(2)
+                                Você não possui chamados em atendimento no momento.
+                                @break
+                            @case(3)
+                                Você não possui chamados fechados no momento.
+                                @break
+                            @case(4)
+                                Você não possui chamados pendentes no momento.
+                                @break
+                            @case(5)
+                                Você não possui chamados resolvidos no momento.
+                                @break
+                            @case(6)
+                                Você não possui chamados aguardando usuário no momento.
+                                @break
+                            @default
+                                Você não possui chamados em atendimento no momento.
+                        @endswitch
+                    </p>
                 </div>
             </div>
         @endif
