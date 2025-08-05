@@ -1,5 +1,9 @@
 @extends('adminlte::page')
 
+@php
+use Illuminate\Support\Facades\Auth;
+@endphp
+
 @section('title', 'Meus Atendimentos')
 @section('content_header')
     <h1>Meus Atendimentos</h1>
@@ -180,33 +184,74 @@
                         </td>
                         <td class="text-right">
                             <div class="d-flex flex-wrap justify-content-end">
-                                <!-- Linha 1: 4 botões -->
-                                <div class="w-100 mb-1 d-flex justify-content-end flex-wrap">
-                                    <a href="{{ route('chamados.show', $chamado->chamado_id) }}" class="btn btn-sm btn-primary mr-1 mb-1" title="Ver">
-                                        <i class="fas fa-eye"></i>
-                                    </a>
-                                    <a href="#" class="btn btn-sm btn-secondary mr-1 mb-1" title="Comentário">
-                                        <i class="fas fa-comment-dots"></i>
-                                    </a>
-                                    <a href="#" class="btn btn-sm btn-warning mr-1 mb-1" title="Devolver ao Usuário">
-                                        <i class="fas fa-undo"></i>
-                                    </a>
-                                    <a href="#" class="btn btn-sm btn-info mr-1 mb-1" title="Pendência">
-                                        <i class="fas fa-hourglass-half"></i>
-                                    </a>
-                                </div>
-                                <!-- Linha 2: 3 botões -->
-                                <div class="w-100 d-flex justify-content-end flex-wrap">
-                                    <a href="#" class="btn btn-sm btn-dark mr-1 mb-1" title="Transferir de Departamento">
-                                        <i class="fas fa-exchange-alt"></i>
-                                    </a>
-                                    <a href="#" class="btn btn-sm btn-success mr-1 mb-1" title="Alterar Responsável">
-                                        <i class="fas fa-user-edit"></i>
-                                    </a>
-                                    <a href="#" class="btn btn-sm btn-danger mr-1 mb-1" title="Resolver">
-                                        <i class="fas fa-check"></i>
-                                    </a>
-                                </div>
+                                <!-- Botão Ver (sempre visível) -->
+                                <a href="{{ route('chamados.show', $chamado->chamado_id) }}" class="btn btn-sm btn-primary mr-1 mb-1" title="Ver">
+                                    <i class="fas fa-eye"></i>
+                                </a>
+
+                                <!-- Iniciar Atendimento - apenas para chamados ABERTOS -->
+                                @if($chamado->status_chamado_id == 1)
+                                <form action="{{ route('chamados.iniciar', $chamado->chamado_id) }}" method="POST" style="display: inline;">
+                                    @csrf
+                                    @method('PUT')
+                                    <button type="submit" class="btn btn-sm btn-warning mr-1 mb-1" title="Iniciar Atendimento">
+                                        <i class="fas fa-play"></i>
+                                    </button>
+                                </form>
+                                @endif
+
+                                <!-- Atender Chamado - apenas para chamados PENDENTES -->
+                                @if($chamado->status_chamado_id == 4)
+                                <form action="{{ route('chamados.atender', $chamado->chamado_id) }}" method="POST" style="display: inline;">
+                                    @csrf
+                                    @method('PUT')
+                                    <button type="submit" class="btn btn-sm btn-warning mr-1 mb-1" title="Atender Chamado">
+                                        <i class="fas fa-user-cog"></i>
+                                    </button>
+                                </form>
+                                @endif
+
+                                <!-- Adicionar Comentário - para chamados que não estão fechados, abertos ou resolvidos -->
+                                @if(!in_array($chamado->status_chamado_id, [3, 1, 5]) && $chamado->status_chamado_id != 6)
+                                <a href="{{ route('chamados.show', $chamado->chamado_id) }}" class="btn btn-sm btn-secondary mr-1 mb-1" title="Adicionar Comentário">
+                                    <i class="fas fa-comment-dots"></i>
+                                </a>
+                                @endif
+
+                                <!-- Colocar em Pendência - apenas para chamados em ATENDIMENTO (2) -->
+                                @if($chamado->status_chamado_id == 2)
+                                <a href="{{ route('chamados.show', $chamado->chamado_id) }}" class="btn btn-sm btn-info mr-1 mb-1" title="Colocar em Pendência">
+                                    <i class="fas fa-hourglass-half"></i>
+                                </a>
+                                @endif
+
+                                <!-- Devolver ao Usuário - para chamados em ATENDIMENTO (2) ou PENDENTE (4) -->
+                                @if(in_array($chamado->status_chamado_id, [2, 4]))
+                                <a href="{{ route('chamados.show', $chamado->chamado_id) }}" class="btn btn-sm btn-warning mr-1 mb-1" title="Devolver ao Usuário">
+                                    <i class="fas fa-undo"></i>
+                                </a>
+                                @endif
+
+                                <!-- Resolver Chamado - para ATENDIMENTO (2), PENDENTE (4) e AGUARDANDO_USUARIO (6) -->
+                                @if(in_array($chamado->status_chamado_id, [2, 4, 6]))
+                                <a href="{{ route('chamados.show', $chamado->chamado_id) }}" class="btn btn-sm btn-success mr-1 mb-1" title="Resolver Chamado">
+                                    <i class="fas fa-check"></i>
+                                </a>
+                                @endif
+
+                                <!-- Transferir Departamento - não disponível para FECHADO (3) e RESOLVIDO (5) -->
+                                @if(!in_array($chamado->status_chamado_id, [3, 5]))
+                                <a href="{{ route('chamados.show', $chamado->chamado_id) }}" class="btn btn-sm btn-dark mr-1 mb-1" title="Transferir Departamento">
+                                    <i class="fas fa-exchange-alt"></i>
+                                </a>
+                                @endif
+
+                                <!-- Alterar Responsável - não disponível para FECHADO (3), ABERTO (1) e RESOLVIDO (5) -->
+                                @if(!in_array($chamado->status_chamado_id, [3, 1, 5]))
+                                <a href="{{ route('chamados.show', $chamado->chamado_id) }}" class="btn btn-sm btn-outline-primary mr-1 mb-1" title="Alterar Responsável">
+                                    <i class="fas fa-user-edit"></i>
+                                </a>
+                                @endif
                             </div>
                         </td>
                     </tr>
