@@ -98,6 +98,24 @@ class ChamadoController extends Controller
     }
 
     /**
+     * Exibe os detalhes de um chamado específico.
+     */
+    public function show($id)
+    {
+        $chamado = Chamado::with([
+            'usuario', 
+            'responsavel', 
+            'problema', 
+            'departamento', 
+            'local', 
+            'servicoChamado', 
+            'statusChamado'
+        ])->findOrFail($id);
+        
+        return view('painel.chamados.show', compact('chamado'));
+    }
+
+    /**
      * Retorna os problemas de um departamento (AJAX).
      */
     public function problemasPorDepartamento($departamentoId)

@@ -179,7 +179,7 @@
                             <div class="d-flex flex-wrap justify-content-end">
                                 <!-- Linha 1: 4 botões -->
                                 <div class="w-100 mb-1 d-flex justify-content-end flex-wrap">
-                                    <a href="#" class="btn btn-sm btn-primary mr-1 mb-1" title="Ver">
+                                    <a href="{{ route('chamados.show', $chamado->chamado_id) }}" class="btn btn-sm btn-primary mr-1 mb-1" title="Ver">
                                         <i class="fas fa-eye"></i>
                                     </a>
                                     <a href="#" class="btn btn-sm btn-secondary mr-1 mb-1" title="Comentário">
@@ -252,8 +252,6 @@
 
 @section('js')
 <script>
-console.log('Dashboard carregado');
-
 // Verificar se há notificação de chamado criado
 @if(session('chamado_id') && session('posicao_fila'))
     Swal.fire({
