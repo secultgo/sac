@@ -14,7 +14,7 @@
 
 .timeline-item {
     position: relative;
-    padding-left: 30px;
+    padding-left: 40px;
     padding-bottom: 20px;
     margin-bottom: 15px;
 }

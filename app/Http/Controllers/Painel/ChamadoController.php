@@ -108,7 +108,8 @@ class ChamadoController extends Controller
             'departamento', 
             'local', 
             'servicoChamado', 
-            'statusChamado'
+            'statusChamado',
+            'comentarios.usuario'
         ])->findOrFail($id);
         
         return view('painel.chamados.show', compact('chamado'));
