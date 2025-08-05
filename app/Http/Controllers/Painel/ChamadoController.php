@@ -57,7 +57,15 @@ class ChamadoController extends Controller
 
         $chamado->save();
 
-        return redirect()->route('painel.dashboard')->with('success', 'Chamado criado com sucesso!');
+        // Calcular posição na fila (chamados abertos para o mesmo departamento)
+        $posicaoFila = Chamado::where('departamento_id', $request->departamento_id)
+                             ->where('status_chamado_id', 1) // Status 1 = Aberto
+                             ->count();
+
+        return redirect()->route('painel.dashboard')
+                        ->with('success', 'Chamado criado com sucesso!')
+                        ->with('chamado_id', $chamado->chamado_id)
+                        ->with('posicao_fila', $posicaoFila);
     }
 
     /**
