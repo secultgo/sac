@@ -60,14 +60,14 @@
         </div>
     </div>
     <div class="col-lg-3 col-6">
-        <div class="small-box bg-success">
+        <div class="small-box bg-secondary">
             <div class="inner">
-                <h3>{{ $contadores['fechados'] }}</h3>
-                <p>Atendimentos Fechados</p>
+                <h3>{{ $contadores['aguardando_usuario'] }}</h3>
+                <p>Aguardando Usuário</p>
             </div>
-            <div class="icon"><i class="fas fa-check"></i></div>
-            <a href="{{ route('meus-atendimentos.index', ['status' => 3]) }}" class="small-box-footer">
-                Ver fechados <i class="fas fa-arrow-circle-right"></i>
+            <div class="icon"><i class="fas fa-user-clock"></i></div>
+            <a href="{{ route('meus-atendimentos.index', ['status' => 6]) }}" class="small-box-footer">
+                Ver aguardando usuário <i class="fas fa-arrow-circle-right"></i>
             </a>
         </div>
     </div>
