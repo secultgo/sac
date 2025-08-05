@@ -53,6 +53,7 @@ Route::prefix('painel')
         Route::post('chamados/{chamado}/comentarios', [ChamadoController::class, 'adicionarComentario'])->name('chamados.comentarios.store');
         Route::put('chamados/{chamado}/pendencia', [ChamadoController::class, 'colocarPendencia'])->name('chamados.pendencia');
         Route::put('chamados/{chamado}/atender', [ChamadoController::class, 'atenderChamado'])->name('chamados.atender');
+        Route::put('chamados/{chamado}/transferir', [ChamadoController::class, 'transferirDepartamento'])->name('chamados.transferir');
         Route::get('chamados', function() { return redirect()->route('painel.dashboard'); })->name('chamados.index');
         Route::get('meus-atendimentos', [ChamadoController::class, 'meusAtendimentos'])
             ->name('meus-atendimentos.index')

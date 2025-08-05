@@ -228,4 +228,59 @@ class ChamadoController extends Controller
 
         return redirect()->back()->with('success', 'Chamado colocado em atendimento com sucesso!');
     }
+
+    /**
+     * Transfere o chamado para outro departamento
+     */
+    public function transferirDepartamento(Request $request, $id)
+    {
+        $request->validate([
+            'novo_departamento_id' => 'required|exists:departamento,departamento_id',
+            'motivo_transferencia' => 'required|string|max:1000'
+        ]);
+
+        $chamado = Chamado::findOrFail($id);
+        
+        // Verifica se o chamado não está fechado
+        if ($chamado->status_chamado_id == StatusChamado::FECHADO) {
+            return redirect()->back()->with('error', 'Chamados fechados não podem ser transferidos.');
+        }
+
+        // Verifica se não está tentando transferir para o mesmo departamento
+        if ($chamado->departamento_id == $request->novo_departamento_id) {
+            return redirect()->back()->with('error', 'O chamado já está no departamento selecionado.');
+        }
+
+        $departamentoAntigo = $chamado->departamento->departamento_nome;
+        $departamentoNovo = Departamento::find($request->novo_departamento_id)->departamento_nome;
+
+        // Atualiza o departamento do chamado
+        $chamado->departamento_id = $request->novo_departamento_id;
+        $chamado->responsavel_id = null; // Remove o responsável atual
+        
+        // Se não estava em atendimento, volta para aberto
+        if ($chamado->status_chamado_id == StatusChamado::ATENDIMENTO || $chamado->status_chamado_id == StatusChamado::PENDENTE) {
+            $chamado->status_chamado_id = StatusChamado::ABERTO;
+        }
+        
+        $chamado->save();
+
+        // Adiciona o comentário da transferência
+        ComentarioChamado::create([
+            'comentario_chamado_comentario' => $request->motivo_transferencia,
+            'comentario_chamado_data' => now(),
+            'chamado_id' => $id,
+            'usuario_id' => Auth::user()->usuario_id
+        ]);
+
+        // Adiciona comentário automático sobre a transferência
+        ComentarioChamado::create([
+            'comentario_chamado_comentario' => "Chamado transferido de {$departamentoAntigo} para {$departamentoNovo} por " . Auth::user()->name,
+            'comentario_chamado_data' => now(),
+            'chamado_id' => $id,
+            'usuario_id' => Auth::user()->usuario_id
+        ]);
+
+        return redirect()->route('painel.dashboard')->with('success', 'Chamado transferido com sucesso!');
+    }
 }
