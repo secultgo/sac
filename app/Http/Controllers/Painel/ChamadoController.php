@@ -230,6 +230,35 @@ class ChamadoController extends Controller
     }
 
     /**
+     * Inicia o atendimento de um chamado (de aberto para atendimento)
+     */
+    public function iniciarAtendimento($id)
+    {
+        $chamado = Chamado::findOrFail($id);
+        
+        // Verifica se o chamado está aberto para poder iniciar atendimento
+        if ($chamado->status_chamado_id != StatusChamado::ABERTO) {
+            return redirect()->back()->with('error', 'Apenas chamados abertos podem ter o atendimento iniciado.');
+        }
+
+        // Atualiza o status para Atendimento (2) e define o responsável
+        $chamado->status_chamado_id = StatusChamado::ATENDIMENTO;
+        $chamado->responsavel_id = Auth::user()->usuario_id;
+        $chamado->chamado_atendimento = now();
+        $chamado->save();
+
+        // Adiciona um comentário automático
+        ComentarioChamado::create([
+            'comentario_chamado_comentario' => 'Atendimento iniciado por ' . Auth::user()->name,
+            'comentario_chamado_data' => now(),
+            'chamado_id' => $id,
+            'usuario_id' => Auth::user()->usuario_id
+        ]);
+
+        return redirect()->back()->with('success', 'Atendimento do chamado iniciado com sucesso!');
+    }
+
+    /**
      * Transfere o chamado para outro departamento
      */
     public function transferirDepartamento(Request $request, $id)

@@ -35,9 +35,13 @@ use App\Models\StatusChamado;
             <div class="card-body">
                 <div class="d-grid gap-2">
                     @if($chamado->status_chamado_id == StatusChamado::ABERTO)
-                    <button class="btn btn-warning btn-block mb-2">
-                        <i class="fas fa-play"></i> Iniciar Atendimento
-                    </button>
+                    <form action="{{ route('chamados.iniciar', $chamado->chamado_id) }}" method="POST" style="display: inline;">
+                        @csrf
+                        @method('PUT')
+                        <button type="submit" class="btn btn-warning btn-block mb-2">
+                            <i class="fas fa-play"></i> Iniciar Atendimento
+                        </button>
+                    </form>
                     @endif
 
                     @if($chamado->status_chamado_id == StatusChamado::PENDENTE)
