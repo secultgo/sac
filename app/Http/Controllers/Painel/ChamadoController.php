@@ -160,6 +160,23 @@ class ChamadoController extends Controller
             $anexo = $nomeArquivo;
         }
 
+        // Se o chamado estava aguardando resposta do usuário e quem está comentando é o solicitante,
+        // volta o status para atendimento
+        if ($chamado->status_chamado_id == StatusChamado::AGUARDANDO_USUARIO && 
+            $chamado->usuario_id == Auth::user()->usuario_id) {
+            
+            $chamado->status_chamado_id = StatusChamado::ATENDIMENTO;
+            $chamado->save();
+            
+            // Adiciona comentário automático sobre o retorno do atendimento
+            ComentarioChamado::create([
+                'comentario_chamado_comentario' => 'Usuário respondeu - Chamado retornou para atendimento automaticamente.',
+                'comentario_chamado_data' => now(),
+                'chamado_id' => $id,
+                'usuario_id' => Auth::user()->usuario_id
+            ]);
+        }
+
         ComentarioChamado::create([
             'comentario_chamado_comentario' => $request->comentario,
             'comentario_chamado_data' => now(),
@@ -438,5 +455,36 @@ class ChamadoController extends Controller
         ]);
 
         return redirect()->route('painel.dashboard')->with('success', 'Chamado transferido com sucesso!');
+    }
+
+    /**
+     * Exibe os chamados criados pelo usuário logado
+     */
+    public function meusChamados(Request $request)
+    {
+        $statusFiltro = $request->get('status');
+        
+        $query = Chamado::with(['problema', 'departamento', 'local', 'responsavel', 'servicoChamado', 'statusChamado'])
+                        ->where('usuario_id', Auth::user()->usuario_id);
+        
+        // Aplica filtro de status se fornecido
+        if ($statusFiltro) {
+            $query->where('status_chamado_id', $statusFiltro);
+        }
+        
+        $chamados = $query->orderBy('chamado_abertura', 'desc')->get();
+        
+        // Contar chamados por status para os badges (apenas do usuário logado)
+        $contadores = [
+            'abertos' => Chamado::where('usuario_id', Auth::user()->usuario_id)->where('status_chamado_id', 1)->count(),
+            'atendimento' => Chamado::where('usuario_id', Auth::user()->usuario_id)->where('status_chamado_id', 2)->count(),
+            'fechados' => Chamado::where('usuario_id', Auth::user()->usuario_id)->where('status_chamado_id', 3)->count(),
+            'pendentes' => Chamado::where('usuario_id', Auth::user()->usuario_id)->where('status_chamado_id', 4)->count(),
+            'resolvidos' => Chamado::where('usuario_id', Auth::user()->usuario_id)->where('status_chamado_id', 5)->count(),
+            'aguardando_usuario' => Chamado::where('usuario_id', Auth::user()->usuario_id)->where('status_chamado_id', 6)->count(),
+            'cancelados' => Chamado::where('usuario_id', Auth::user()->usuario_id)->where('status_chamado_id', 7)->count(),
+        ];
+        
+        return view('painel.chamados.meus-chamados', compact('chamados', 'contadores', 'statusFiltro'));
     }
 }

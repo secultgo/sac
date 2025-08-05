@@ -329,7 +329,7 @@ return [
         ],
         [
             'text' => 'Meus Chamados',
-            'url' => 'painel/chamados',
+            'url' => 'painel/meus-chamados',
             'icon' => 'far fa-fw fa-folder-open',
         ],
         [

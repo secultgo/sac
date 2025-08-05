@@ -62,6 +62,7 @@ Route::prefix('painel')
         Route::get('meus-atendimentos', [ChamadoController::class, 'meusAtendimentos'])
             ->name('meus-atendimentos.index')
             ->middleware('nivel.atendimento');
+        Route::get('meus-chamados', [ChamadoController::class, 'meusChamados'])->name('meus-chamados.index');
         Route::get('chamados/problemas/{departamento}', [ChamadoController::class, 'problemasPorDepartamento'])->name('chamados.problemasPorDepartamento');
         Route::get('chamados/servicos/{problema}', [ChamadoController::class, 'servicosPorProblema'])->name('chamados.servicosPorProblema');
      });
