@@ -50,7 +50,7 @@ use App\Models\StatusChamado;
                     </form>
                     @endif
 
-                    @if($chamado->status_chamado_id != StatusChamado::FECHADO)
+                    @if(!in_array($chamado->status_chamado_id, [StatusChamado::FECHADO, StatusChamado::ABERTO]))
                     <button class="btn btn-primary btn-block mb-2" data-toggle="modal" data-target="#modalComentario">
                         <i class="fas fa-comment-dots"></i> Adicionar Comentário
                     </button>
@@ -78,7 +78,9 @@ use App\Models\StatusChamado;
                     <button class="btn btn-dark btn-block mb-2">
                         <i class="fas fa-exchange-alt"></i> Transferir Departamento
                     </button>
+                    @endif
 
+                    @if(!in_array($chamado->status_chamado_id, [StatusChamado::FECHADO, StatusChamado::ABERTO]))
                     <button class="btn btn-outline-primary btn-block mb-2">
                         <i class="fas fa-user-edit"></i> Alterar Responsável
                     </button>
