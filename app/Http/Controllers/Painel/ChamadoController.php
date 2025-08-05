@@ -338,6 +338,54 @@ class ChamadoController extends Controller
     }
 
     /**
+     * Altera o responsável do chamado
+     */
+    public function alterarResponsavel(Request $request, $id)
+    {
+        $request->validate([
+            'novo_responsavel_id' => 'required|exists:usuario,usuario_id',
+            'motivo_alteracao' => 'required|string|max:1000'
+        ]);
+
+        $chamado = Chamado::findOrFail($id);
+        
+        // Verifica se o chamado pode ter o responsável alterado
+        if (!in_array($chamado->status_chamado_id, [StatusChamado::ATENDIMENTO, StatusChamado::PENDENTE, StatusChamado::AGUARDANDO_USUARIO])) {
+            return redirect()->back()->with('error', 'Apenas chamados em atendimento, pendentes ou aguardando usuário podem ter o responsável alterado.');
+        }
+
+        // Verifica se não está tentando alterar para o mesmo responsável
+        if ($chamado->responsavel_id == $request->novo_responsavel_id) {
+            return redirect()->back()->with('error', 'O chamado já está com o responsável selecionado.');
+        }
+
+        $responsavelAntigo = $chamado->responsavel ? $chamado->responsavel->name : 'Nenhum';
+        $responsavelNovo = User::find($request->novo_responsavel_id)->name;
+
+        // Atualiza o responsável do chamado
+        $chamado->responsavel_id = $request->novo_responsavel_id;
+        $chamado->save();
+
+        // Adiciona o comentário do motivo da alteração
+        ComentarioChamado::create([
+            'comentario_chamado_comentario' => $request->motivo_alteracao,
+            'comentario_chamado_data' => now(),
+            'chamado_id' => $id,
+            'usuario_id' => Auth::user()->usuario_id
+        ]);
+
+        // Adiciona comentário automático sobre a alteração
+        ComentarioChamado::create([
+            'comentario_chamado_comentario' => "Responsável alterado de {$responsavelAntigo} para {$responsavelNovo} por " . Auth::user()->name,
+            'comentario_chamado_data' => now(),
+            'chamado_id' => $id,
+            'usuario_id' => Auth::user()->usuario_id
+        ]);
+
+        return redirect()->back()->with('success', 'Responsável alterado com sucesso!');
+    }
+
+    /**
      * Transfere o chamado para outro departamento
      */
     public function transferirDepartamento(Request $request, $id)
