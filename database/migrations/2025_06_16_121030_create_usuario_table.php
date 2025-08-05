@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string('usuario_senha', 64)->nullable();
             $table->timestamp('usuario_registro')->useCurrent();
             $table->string('usuario_foto', 255)->nullable();
+            $table->unsignedInteger('status_id')->default(1);
             $table->unsignedInteger('departamento_id')->nullable();
             $table->unsignedInteger('excluido_id')->default(2);
             $table->string('usuario_nascimento', 45)->nullable();
@@ -37,6 +38,7 @@ return new class extends Migration
             $table->string('usuario_bairro', 45)->nullable();
             $table->boolean('usuario_ldap')->default(false);
 
+            $table->foreign('status_id')->references('status_id')->on('status');
             $table->foreign('departamento_id')->references('departamento_id')->on('departamento');
             $table->foreign('excluido_id')->references('excluido_id')->on('excluido');
         });
