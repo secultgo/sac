@@ -30,9 +30,11 @@
             </div>
             <div class="card-body">
                 <div class="d-grid gap-2">
+                    @if($chamado->status_chamado_id != 3)
                     <button class="btn btn-primary btn-block mb-2">
                         <i class="fas fa-comment-dots"></i> Adicionar Comentário
                     </button>
+                    @endif
                     
                     @if($chamado->status_chamado_id == 1)
                     <button class="btn btn-warning btn-block mb-2">
@@ -58,6 +60,7 @@
                     </button>
                     @endif
 
+                    @if($chamado->status_chamado_id != 3)
                     <button class="btn btn-dark btn-block mb-2">
                         <i class="fas fa-exchange-alt"></i> Transferir Departamento
                     </button>
@@ -65,6 +68,13 @@
                     <button class="btn btn-outline-primary btn-block mb-2">
                         <i class="fas fa-user-edit"></i> Alterar Responsável
                     </button>
+                    @endif
+
+                    @if($chamado->status_chamado_id == 3)
+                    <div class="alert alert-info mb-0">
+                        <i class="fas fa-info-circle"></i> Chamado fechado - Nenhuma ação disponível
+                    </div>
+                    @endif
                 </div>
             </div>
         </div>
