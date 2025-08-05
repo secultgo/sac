@@ -86,7 +86,6 @@ class ChamadoController extends Controller
         
         // Contar chamados por status para os badges
         $contadores = [
-            'abertos' => Chamado::where('responsavel_id', Auth::user()->usuario_id)->where('status_chamado_id', 1)->count(),
             'atendimento' => Chamado::where('responsavel_id', Auth::user()->usuario_id)->where('status_chamado_id', 2)->count(),
             'fechados' => Chamado::where('responsavel_id', Auth::user()->usuario_id)->where('status_chamado_id', 3)->count(),
             'pendentes' => Chamado::where('responsavel_id', Auth::user()->usuario_id)->where('status_chamado_id', 4)->count(),
@@ -94,7 +93,7 @@ class ChamadoController extends Controller
             'aguardando_usuario' => Chamado::where('responsavel_id', Auth::user()->usuario_id)->where('status_chamado_id', 6)->count(),
         ];
         
-        return view('painel.meus-atendimentos.index', compact('chamados', 'contadores', 'statusFiltro'));
+        return view('painel.chamados.meus-atendimentos', compact('chamados', 'contadores', 'statusFiltro'));
     }
 
     /**
