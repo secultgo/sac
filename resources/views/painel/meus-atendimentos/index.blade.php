@@ -91,11 +91,14 @@
         <h3 class="card-title mb-2 mb-md-0">Meus Atendimentos</h3>
 
         <div class="d-flex flex-wrap justify-content-start">
+            <a href="{{ route('meus-atendimentos.index') }}" class="btn btn-sm btn-primary rounded-pill px-3 mr-2 mb-2 {{ !request('status') ? 'active' : '' }}">
+                Todos
+            </a>
             <a href="{{ route('meus-atendimentos.index', ['status' => 2]) }}" class="btn btn-sm btn-warning rounded-pill px-3 mr-2 mb-2 {{ $statusFiltro == 2 ? 'active' : '' }}">
                 Atendimento <span class="badge badge-light ml-1">{{ $contadores['atendimento'] }}</span>
             </a>
-            <a href="{{ route('meus-atendimentos.index', ['status' => 3]) }}" class="btn btn-sm btn-success rounded-pill px-3 mr-2 mb-2 {{ $statusFiltro == 3 ? 'active' : '' }}">
-                Fechados <span class="badge badge-light ml-1">{{ $contadores['fechados'] }}</span>
+            <a href="{{ route('meus-atendimentos.index', ['status' => 6]) }}" class="btn btn-sm btn-secondary rounded-pill px-3 mr-2 mb-2 {{ $statusFiltro == 6 ? 'active' : '' }}">
+                Aguardando Usuário <span class="badge badge-light ml-1">{{ $contadores['aguardando_usuario'] }}</span>
             </a>
             <a href="{{ route('meus-atendimentos.index', ['status' => 4]) }}" class="btn btn-sm bg-orange text-white rounded-pill px-3 mr-2 mb-2 {{ $statusFiltro == 4 ? 'active' : '' }}">
                 Pendentes <span class="badge badge-light ml-1">{{ $contadores['pendentes'] }}</span>
@@ -103,11 +106,8 @@
             <a href="{{ route('meus-atendimentos.index', ['status' => 5]) }}" class="btn btn-sm btn-info rounded-pill px-3 mr-2 mb-2 {{ $statusFiltro == 5 ? 'active' : '' }}">
                 Resolvidos <span class="badge badge-light ml-1">{{ $contadores['resolvidos'] }}</span>
             </a>
-            <a href="{{ route('meus-atendimentos.index', ['status' => 6]) }}" class="btn btn-sm btn-secondary rounded-pill px-3 mr-2 mb-2 {{ $statusFiltro == 6 ? 'active' : '' }}">
-                Aguardando Usuário <span class="badge badge-light ml-1">{{ $contadores['aguardando_usuario'] }}</span>
-            </a>
-            <a href="{{ route('meus-atendimentos.index') }}" class="btn btn-sm btn-primary rounded-pill px-3 mr-2 mb-2 {{ !request('status') ? 'active' : '' }}">
-                Todos
+            <a href="{{ route('meus-atendimentos.index', ['status' => 3]) }}" class="btn btn-sm btn-success rounded-pill px-3 mr-2 mb-2 {{ $statusFiltro == 3 ? 'active' : '' }}">
+                Fechados <span class="badge badge-light ml-1">{{ $contadores['fechados'] }}</span>
             </a>
         </div>
     </div>
