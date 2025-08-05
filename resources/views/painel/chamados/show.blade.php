@@ -102,12 +102,45 @@
                     </div>
                     <div class="col-6">
                         @if($chamado->chamado_abertura)
-                            {{ is_string($chamado->chamado_abertura) ? \Carbon\Carbon::parse($chamado->chamado_abertura)->format('d/m/Y') : $chamado->chamado_abertura->format('d/m/Y') }}
+                            {{ is_string($chamado->chamado_abertura) ? \Carbon\Carbon::parse($chamado->chamado_abertura)->format('d/m/Y H:i:s') : $chamado->chamado_abertura->format('d/m/Y H:i:s') }}
                         @else
                             N/A
                         @endif
                     </div>
                 </div>
+                @if($chamado->chamado_atendimento)
+                <hr>
+                <div class="row">
+                    <div class="col-6">
+                        <strong>Atendimento em:</strong>
+                    </div>
+                    <div class="col-6">
+                        {{ is_string($chamado->chamado_atendimento) ? \Carbon\Carbon::parse($chamado->chamado_atendimento)->format('d/m/Y H:i:s') : $chamado->chamado_atendimento->format('d/m/Y H:i:s') }}
+                    </div>
+                </div>
+                @endif
+                @if($chamado->chamado_resolvido)
+                <hr>
+                <div class="row">
+                    <div class="col-6">
+                        <strong>Resolvido em:</strong>
+                    </div>
+                    <div class="col-6">
+                        {{ is_string($chamado->chamado_resolvido) ? \Carbon\Carbon::parse($chamado->chamado_resolvido)->format('d/m/Y H:i:s') : $chamado->chamado_resolvido->format('d/m/Y H:i:s') }}
+                    </div>
+                </div>
+                @endif
+                @if($chamado->chamado_fechado)
+                <hr>
+                <div class="row">
+                    <div class="col-6">
+                        <strong>Fechado em:</strong>
+                    </div>
+                    <div class="col-6">
+                        {{ is_string($chamado->chamado_fechado) ? \Carbon\Carbon::parse($chamado->chamado_fechado)->format('d/m/Y H:i:s') : $chamado->chamado_fechado->format('d/m/Y H:i:s') }}
+                    </div>
+                </div>
+                @endif
                 @if($chamado->chamado_atendimento)
                 <hr>
                 <div class="row">
@@ -141,7 +174,7 @@
                             
                             $tempoFormatado = trim($tempoFormatado);
                         @endphp
-                        {{ $tempoFormatado }}
+                        <span class="badge badge-info">{{ $tempoFormatado }}</span>
                     </div>
                 </div>
                 @endif
