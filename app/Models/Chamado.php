@@ -30,4 +30,48 @@ class Chamado extends Model
         'departamento_id',
         'lotacao_id',
     ];
+
+    protected $casts = [
+        'chamado_abertura' => 'datetime',
+        'chamado_atendimento' => 'datetime',
+        'chamado_fechado' => 'datetime',
+        'chamado_resolvido' => 'datetime',
+        'chamado_pendente' => 'datetime',
+    ];
+
+    // Relacionamentos
+    public function usuario()
+    {
+        return $this->belongsTo(User::class, 'usuario_id', 'usuario_id');
+    }
+
+    public function responsavel()
+    {
+        return $this->belongsTo(User::class, 'responsavel_id', 'usuario_id');
+    }
+
+    public function problema()
+    {
+        return $this->belongsTo(Problema::class, 'problema_id', 'problema_id');
+    }
+
+    public function departamento()
+    {
+        return $this->belongsTo(Departamento::class, 'departamento_id', 'departamento_id');
+    }
+
+    public function local()
+    {
+        return $this->belongsTo(Local::class, 'local_id', 'local_id');
+    }
+
+    public function servicoChamado()
+    {
+        return $this->belongsTo(ServicoChamado::class, 'servico_chamado_id', 'servico_chamado_id');
+    }
+
+    public function statusChamado()
+    {
+        return $this->belongsTo(Status::class, 'status_chamado_id', 'status_id');
+    }
 }

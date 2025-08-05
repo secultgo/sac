@@ -1,8 +1,8 @@
 @extends('adminlte::page')
 
-@section('title', 'Dashboard')
+@section('title', 'Meus Atendimentos')
 @section('content_header')
-    <h1>Dashboard Painel de Controle</h1>
+    <h1>Meus Atendimentos</h1>
 @stop
 
 @section('content')
@@ -29,24 +29,21 @@
     color: white !important; /* garantir texto branco */
 }
 
-
-
 .bg-orange .small-box-footer {
     color: white !important; /* texto do footer branco */
 }
-
 </style>
 
 <div class="row mb-4">
     <div class="col-lg-3 col-6">
-        <div class="small-box bg-danger">
+        <div class="small-box bg-info">
             <div class="inner">
-                <h3>{{ $contadores['abertos'] }}</h3>
-                <p>Chamados Abertos</p>
+                <h3>{{ $contadores['atendimento'] + $contadores['fechados'] + $contadores['pendentes'] + $contadores['resolvidos'] + $contadores['aguardando_usuario'] }}</h3>
+                <p>Total de Atendimentos</p>
             </div>
-            <div class="icon"><i class="fas fa-folder-open"></i></div>
-            <a href="{{ route('painel.dashboard', ['status' => 1]) }}" class="small-box-footer">
-                Ver abertos <i class="fas fa-arrow-circle-right"></i>
+            <div class="icon"><i class="fas fa-headset"></i></div>
+            <a href="{{ route('meus-atendimentos.index') }}" class="small-box-footer">
+                Ver todos <i class="fas fa-arrow-circle-right"></i>
             </a>
         </div>
     </div>
@@ -57,7 +54,7 @@
                 <p>Em Atendimento</p>
             </div>
             <div class="icon"><i class="fas fa-user-clock"></i></div>
-            <a href="{{ route('painel.dashboard', ['status' => 2]) }}" class="small-box-footer">
+            <a href="{{ route('meus-atendimentos.index', ['status' => 2]) }}" class="small-box-footer">
                 Ver em atendimento <i class="fas fa-arrow-circle-right"></i>
             </a>
         </div>
@@ -69,7 +66,7 @@
                 <p>Aguardando Usuário</p>
             </div>
             <div class="icon"><i class="fas fa-user-clock"></i></div>
-            <a href="{{ route('painel.dashboard', ['status' => 6]) }}" class="small-box-footer">
+            <a href="{{ route('meus-atendimentos.index', ['status' => 6]) }}" class="small-box-footer">
                 Ver aguardando usuário <i class="fas fa-arrow-circle-right"></i>
             </a>
         </div>
@@ -78,10 +75,10 @@
         <div class="small-box bg-orange">
             <div class="inner">
                 <h3>{{ $contadores['pendentes'] }}</h3>
-                <p>Chamados Pendentes</p>
+                <p>Atendimentos Pendentes</p>
             </div>
             <div class="icon"><i class="fas fa-hourglass-half"></i></div>
-            <a href="{{ route('painel.dashboard', ['status' => 4]) }}" class="small-box-footer">
+            <a href="{{ route('meus-atendimentos.index', ['status' => 4]) }}" class="small-box-footer">
                 Ver pendentes <i class="fas fa-arrow-circle-right"></i>
             </a>
         </div>
@@ -91,20 +88,26 @@
 <div class="card">
     <!-- Tabela de Chamados -->
     <div class="card-header d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center flex-wrap">
-        <h3 class="card-title mb-2 mb-md-0">Chamados</h3>
+        <h3 class="card-title mb-2 mb-md-0">Meus Atendimentos</h3>
 
         <div class="d-flex flex-wrap justify-content-start">
-            <a href="{{ route('painel.dashboard', ['status' => 1]) }}" class="btn btn-sm btn-danger rounded-pill px-3 mr-2 mb-2 {{ $statusFiltro == 1 ? 'active' : '' }}">
-                Abertos <span class="badge badge-light ml-1">{{ $contadores['abertos'] }}</span>
+            <a href="{{ route('meus-atendimentos.index') }}" class="btn btn-sm btn-primary rounded-pill px-3 mr-2 mb-2 {{ !request('status') ? 'active' : '' }}">
+                Todos
             </a>
-            <a href="{{ route('painel.dashboard', ['status' => 2]) }}" class="btn btn-sm btn-warning rounded-pill px-3 mr-2 mb-2 {{ $statusFiltro == 2 ? 'active' : '' }}">
+            <a href="{{ route('meus-atendimentos.index', ['status' => 2]) }}" class="btn btn-sm btn-warning rounded-pill px-3 mr-2 mb-2 {{ $statusFiltro == 2 ? 'active' : '' }}">
                 Atendimento <span class="badge badge-light ml-1">{{ $contadores['atendimento'] }}</span>
             </a>
-            <a href="{{ route('painel.dashboard', ['status' => 6]) }}" class="btn btn-sm btn-secondary rounded-pill px-3 mr-2 mb-2 {{ $statusFiltro == 6 ? 'active' : '' }}">
+            <a href="{{ route('meus-atendimentos.index', ['status' => 6]) }}" class="btn btn-sm btn-secondary rounded-pill px-3 mr-2 mb-2 {{ $statusFiltro == 6 ? 'active' : '' }}">
                 Aguardando Usuário <span class="badge badge-light ml-1">{{ $contadores['aguardando_usuario'] }}</span>
             </a>
-            <a href="{{ route('painel.dashboard', ['status' => 4]) }}" class="btn btn-sm bg-orange text-white rounded-pill px-3 mr-2 mb-2 {{ $statusFiltro == 4 ? 'active' : '' }}">
+            <a href="{{ route('meus-atendimentos.index', ['status' => 4]) }}" class="btn btn-sm bg-orange text-white rounded-pill px-3 mr-2 mb-2 {{ $statusFiltro == 4 ? 'active' : '' }}">
                 Pendentes <span class="badge badge-light ml-1">{{ $contadores['pendentes'] }}</span>
+            </a>
+            <a href="{{ route('meus-atendimentos.index', ['status' => 5]) }}" class="btn btn-sm btn-info rounded-pill px-3 mr-2 mb-2 {{ $statusFiltro == 5 ? 'active' : '' }}">
+                Resolvidos <span class="badge badge-light ml-1">{{ $contadores['resolvidos'] }}</span>
+            </a>
+            <a href="{{ route('meus-atendimentos.index', ['status' => 3]) }}" class="btn btn-sm btn-success rounded-pill px-3 mr-2 mb-2 {{ $statusFiltro == 3 ? 'active' : '' }}">
+                Fechados <span class="badge badge-light ml-1">{{ $contadores['fechados'] }}</span>
             </a>
         </div>
     </div>
@@ -119,7 +122,7 @@
                         <th>Solicitante</th>
                         <th>Departamento</th>
                         <th>Local</th>
-                        <th>Responsável</th>
+                        <th>Problema</th>
                         <th>Data de Criação</th>
                         <th>Data Atendimento</th>
                         <th>Status</th>
@@ -136,7 +139,7 @@
                         <td>{{ $chamado->usuario->usuario_nome ?? 'N/A' }}</td>
                         <td>{{ $chamado->departamento->departamento_nome ?? 'N/A' }}</td>
                         <td>{{ $chamado->local->local_nome ?? 'N/A' }}</td>
-                        <td>{{ $chamado->responsavel->usuario_nome ?? 'Não atribuído' }}</td>
+                        <td>{{ $chamado->problema->problema_nome ?? 'N/A' }}</td>
                         <td>
                             @if($chamado->chamado_abertura)
                                 {{ is_string($chamado->chamado_abertura) ? \Carbon\Carbon::parse($chamado->chamado_abertura)->format('d/m/Y H:i:s') : $chamado->chamado_abertura->format('d/m/Y H:i:s') }}
@@ -213,23 +216,26 @@
         @else
             <div class="card-body text-center">
                 <div class="alert alert-info">
-                    <h4><i class="fas fa-info-circle"></i> Nenhum chamado encontrado</h4>
+                    <h4><i class="fas fa-info-circle"></i> Nenhum atendimento encontrado</h4>
                     <p>
                         @switch($statusFiltro)
-                            @case(1)
-                                Não há chamados abertos no momento.
-                                @break
                             @case(2)
-                                Não há chamados em atendimento no momento.
+                                Você não possui chamados em atendimento no momento.
                                 @break
-                            @case(6)
-                                Não há chamados aguardando usuário no momento.
+                            @case(3)
+                                Você não possui chamados fechados no momento.
                                 @break
                             @case(4)
-                                Não há chamados pendentes no momento.
+                                Você não possui chamados pendentes no momento.
+                                @break
+                            @case(5)
+                                Você não possui chamados resolvidos no momento.
+                                @break
+                            @case(6)
+                                Você não possui chamados aguardando usuário no momento.
                                 @break
                             @default
-                                Não há chamados cadastrados no momento.
+                                Você não possui chamados em atendimento no momento.
                         @endswitch
                     </p>
                 </div>
@@ -252,30 +258,6 @@
 
 @section('js')
 <script>
-console.log('Dashboard carregado');
-
-// Verificar se há notificação de chamado criado
-@if(session('chamado_id') && session('posicao_fila'))
-    Swal.fire({
-        title: 'Chamado Criado com Sucesso!',
-        html: `
-            <div style="text-align: left; padding: 20px;">
-                <p><strong>Seu chamado foi adicionado à fila de espera</strong></p>
-                <p>Todas as atualizações sobre o andamento do seu chamado serão registradas diretamente no chamado no SAC.</p>
-                <hr>
-                <p><strong>Sua posição na fila de atendimento:</strong> 
-                   <span style="color: #007bff; font-size: 18px; font-weight: bold;">{{ session('posicao_fila') }}</span>
-                </p>
-                <p><strong>Número do chamado:</strong> #{{ session('chamado_id') }}</p>
-            </div>
-        `,
-        icon: 'success',
-        confirmButtonText: 'Entendi',
-        confirmButtonColor: '#28a745',
-        allowOutsideClick: false,
-        allowEscapeKey: false,
-        width: '500px'
-    });
-@endif
+console.log('Meus Atendimentos carregado');
 </script>
 @stop
