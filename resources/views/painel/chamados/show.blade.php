@@ -232,18 +232,54 @@
 @section('js')
 <script>
 $(document).ready(function() {
+    // Função para mostrar notificações com fallback
+    function showNotification(message, type) {
+        // Tenta usar toastr primeiro
+        if (typeof toastr !== 'undefined') {
+            if (type === 'success') {
+                toastr.success(message);
+            } else if (type === 'error') {
+                toastr.error(message);
+            }
+        } 
+        // Fallback para SweetAlert2 se disponível
+        else if (typeof Swal !== 'undefined') {
+            Swal.fire({
+                icon: type,
+                title: type === 'success' ? 'Sucesso!' : 'Erro!',
+                text: message,
+                toast: true,
+                position: 'top-end',
+                showConfirmButton: false,
+                timer: 5000,
+                timerProgressBar: true
+            });
+        }
+        // Fallback final para alert nativo
+        else {
+            alert(message);
+        }
+    }
+    
     @if(session('success'))
-        toastr.success('{{ session('success') }}');
+        showNotification('{{ session('success') }}', 'success');
     @endif
     
     @if(session('error'))
-        toastr.error('{{ session('error') }}');
+        showNotification('{{ session('error') }}', 'error');
     @endif
     
     @if($errors->any())
         @foreach($errors->all() as $error)
-            toastr.error('{{ $error }}');
+            showNotification('{{ $error }}', 'error');
         @endforeach
+    @endif
+    
+    // Fechar modal após sucesso
+    @if(session('success'))
+        $('#modalComentario').modal('hide');
+        // Limpar o formulário
+        $('#modalComentario form')[0].reset();
     @endif
 });
 </script>
