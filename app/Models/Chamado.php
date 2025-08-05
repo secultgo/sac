@@ -79,4 +79,9 @@ class Chamado extends Model
     {
         return $this->hasMany(ComentarioChamado::class, 'chamado_id', 'chamado_id')->orderBy('comentario_chamado_data');
     }
+
+    public function avaliacaoChamado()
+    {
+        return $this->belongsTo(AvaliacaoChamado::class, 'avaliacao_chamado_id', 'avaliacao_chamado_id');
+    }
 }

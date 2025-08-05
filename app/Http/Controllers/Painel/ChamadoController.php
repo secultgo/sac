@@ -11,6 +11,7 @@ use App\Models\Departamento;
 use App\Models\Local;
 use App\Models\ServicoChamado;
 use App\Models\User;
+use App\Models\AvaliacaoChamado;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -478,5 +479,69 @@ class ChamadoController extends Controller
         ];
         
         return view('painel.chamados.meus-chamados', compact('chamados', 'contadores', 'statusFiltro'));
+    }
+
+    /**
+     * Avalia um chamado resolvido
+     */
+    public function avaliarChamado(Request $request, $id)
+    {
+        // Validação básica
+        $rules = [
+            'avaliacao' => 'required|integer|exists:avaliacao_chamado,avaliacao_chamado_id',
+            'comentario_avaliacao' => 'nullable|string|max:1000'
+        ];
+
+        // Se a avaliação for Regular (3) ou Ruim (4), comentário é obrigatório
+        if (in_array($request->avaliacao, [3, 4])) {
+            $rules['comentario_avaliacao'] = 'required|string|min:10|max:1000';
+        }
+
+        $request->validate($rules, [
+            'comentario_avaliacao.required' => 'Por favor, deixe um comentário explicando sua avaliação.',
+            'comentario_avaliacao.min' => 'O comentário deve ter pelo menos 10 caracteres.',
+            'avaliacao.exists' => 'Avaliação inválida.'
+        ]);
+
+        $chamado = Chamado::findOrFail($id);
+        
+        // Verifica se o chamado está resolvido e se o usuário logado é quem abriu o chamado
+        if ($chamado->status_chamado_id != StatusChamado::RESOLVIDO) {
+            return redirect()->back()->with('error', 'Apenas chamados resolvidos podem ser avaliados.');
+        }
+
+        if ($chamado->usuario_id != Auth::user()->usuario_id) {
+            return redirect()->back()->with('error', 'Você só pode avaliar seus próprios chamados.');
+        }
+
+        // Atualiza o chamado com a avaliação
+        $chamado->avaliacao_chamado_id = $request->avaliacao;
+        $chamado->chamado_comentario_avaliacao = $request->comentario_avaliacao;
+        $chamado->status_chamado_id = StatusChamado::FECHADO;
+        $chamado->chamado_fechado = now();
+        $chamado->save();
+
+        // Adiciona comentário da avaliação se houver
+        if ($request->comentario_avaliacao) {
+            ComentarioChamado::create([
+                'comentario_chamado_comentario' => 'Avaliação do usuário: ' . $request->comentario_avaliacao,
+                'comentario_chamado_data' => now(),
+                'chamado_id' => $id,
+                'usuario_id' => Auth::user()->usuario_id
+            ]);
+        }
+
+        // Busca o nome da avaliação do banco
+        $avaliacaoNome = AvaliacaoChamado::find($request->avaliacao)->avaliacao_chamado_nome ?? 'Avaliação';
+
+        // Adiciona comentário automático sobre o fechamento
+        ComentarioChamado::create([
+            'comentario_chamado_comentario' => 'Chamado avaliado como "' . $avaliacaoNome . '" e fechado automaticamente pelo usuário ' . Auth::user()->name . '.',
+            'comentario_chamado_data' => now(),
+            'chamado_id' => $id,
+            'usuario_id' => Auth::user()->usuario_id
+        ]);
+
+        return redirect()->back()->with('success', 'Avaliação enviada com sucesso! Obrigado pelo seu feedback.');
     }
 }

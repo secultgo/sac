@@ -4,6 +4,7 @@
 use App\Models\StatusChamado;
 use App\Models\Departamento;
 use App\Models\User;
+use App\Models\AvaliacaoChamado;
 use Illuminate\Support\Facades\Auth;
 @endphp
 
@@ -94,6 +95,12 @@ use Illuminate\Support\Facades\Auth;
                     @if(!in_array($chamado->status_chamado_id, [StatusChamado::FECHADO, StatusChamado::ABERTO, StatusChamado::RESOLVIDO]) && Auth::user()->departamento_id == $chamado->departamento_id)
                     <button class="btn btn-outline-primary btn-block mb-2" data-toggle="modal" data-target="#modalAlterarResponsavel">
                         <i class="fas fa-user-edit"></i> Alterar Responsável
+                    </button>
+                    @endif
+
+                    @if($chamado->status_chamado_id == StatusChamado::RESOLVIDO && Auth::user()->usuario_id == $chamado->usuario_id)
+                    <button class="btn btn-warning btn-block mb-2" data-toggle="modal" data-target="#modalAvaliarChamado">
+                        <i class="fas fa-star"></i> Avaliar Atendimento
                     </button>
                     @endif
 
@@ -520,10 +527,124 @@ use Illuminate\Support\Facades\Auth;
     </div>
 </div>
 
+<!-- Modal para Avaliar Chamado -->
+<div class="modal fade" id="modalAvaliarChamado" tabindex="-1" role="dialog" aria-labelledby="modalAvaliarChamadoLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <form action="{{ route('chamados.avaliar', $chamado->chamado_id) }}" method="POST">
+                @csrf
+                @method('PUT')
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalAvaliarChamadoLabel">
+                        <i class="fas fa-star"></i> Avaliar Atendimento
+                    </h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="alert alert-success">
+                        <i class="fas fa-check-circle"></i>
+                        <strong>Seu chamado foi resolvido!</strong> Avalie o atendimento recebido.
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="avaliacao">Avaliação do Atendimento <span class="text-danger">*</span></label>
+                        <div class="rating-container">
+                            @foreach(AvaliacaoChamado::orderBy('avaliacao_chamado_id', 'asc')->get() as $avaliacao)
+                            <div class="radio">
+                                <label for="{{ $avaliacao->avaliacao_chamado_id }}">
+                                    <input type="radio" name="avaliacao" id="{{ $avaliacao->avaliacao_chamado_id }}" value="{{ $avaliacao->avaliacao_chamado_id }}" required>
+                                    @if($avaliacao->avaliacao_chamado_imagem)
+                                        {!! $avaliacao->avaliacao_chamado_imagem !!}
+                                    @endif
+                                    <p>{{ $avaliacao->avaliacao_chamado_nome }}</p>
+                                </label>
+                            </div>
+                            @endforeach
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="comentarioAvaliacao">Comentário sobre o Atendimento <span class="opcional-text">(Opcional)</span></label>
+                        <textarea class="form-control" id="comentarioAvaliacao" name="comentario_avaliacao" rows="4" placeholder="Deixe um comentário sobre o atendimento recebido..."></textarea>
+                        <small class="form-text text-muted">
+                            Seu feedback nos ajuda a melhorar nossos serviços.
+                        </small>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">
+                        <i class="fas fa-times"></i> Cancelar
+                    </button>
+                    <button type="submit" class="btn btn-warning">
+                        <i class="fas fa-star"></i> Enviar Avaliação
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
 @stop
 
 @section('css')
 <link rel="stylesheet" href="/css/admin_custom.css">
+<style>
+.rating-container .radio {
+    margin-bottom: 15px;
+}
+.rating-container .radio label {
+    cursor: pointer;
+    padding: 10px 15px;
+    border-radius: 8px;
+    transition: all 0.2s;
+    display: block;
+    border: 2px solid #e9ecef;
+    background-color: #f8f9fa;
+}
+.rating-container .radio label:hover {
+    border-color: #ffc107;
+    background-color: #fff3cd;
+}
+.rating-container .radio input[type="radio"]:checked + label,
+.rating-container .radio input[type="radio"]:checked ~ label {
+    background-color: #ffc107;
+    border-color: #ffc107;
+    color: #212529;
+    font-weight: bold;
+}
+.rating-container .radio input[type="radio"]:checked + label i,
+.rating-container .radio input[type="radio"]:checked ~ label i {
+    color: #ffffff !important;
+}
+.rating-container .radio input[type="radio"] {
+    margin-right: 10px;
+}
+.rating-container i.fa-chamado {
+    font-size: 24px;
+    margin-right: 10px;
+    transition: color 0.2s;
+}
+.rating-container img {
+    width: 24px;
+    height: 24px;
+    margin-right: 10px;
+}
+.rating-container p {
+    margin: 5px 0 0 0;
+    font-size: 14px;
+    display: inline;
+}
+
+/* Estilos para ícones de avaliação */
+.fa-2 { font-size: 2em; }
+.fa-3 { font-size: 4em; }
+.fa-4 { font-size: 7em; }
+.fa-5 { font-size: 12em; }
+.fa-6 { font-size: 20em; }
+.fa-chamado { font-size: 10.5em; }
+</style>
 @stop
 
 @section('js')
@@ -558,6 +679,42 @@ $(document).ready(function() {
         }
     }
     
+    // Validação do comentário obrigatório para avaliações Regular (3) e Ruim (4)
+    $('#modalAvaliarChamado form').on('submit', function(e) {
+        var avaliacaoSelecionada = $('input[name="avaliacao"]:checked').val();
+        var comentario = $('#comentarioAvaliacao').val().trim();
+        
+        // Se selecionou Regular (3) ou Ruim (4) e não preencheu comentário
+        if ((avaliacaoSelecionada == '3' || avaliacaoSelecionada == '4') && comentario === '') {
+            e.preventDefault();
+            showNotification('Por favor, deixe um comentário explicando sua avaliação.', 'error');
+            $('#comentarioAvaliacao').focus();
+            return false;
+        }
+    });
+    
+    // Atualizar indicação visual do campo comentário baseado na avaliação
+    $('input[name="avaliacao"]').on('change', function() {
+        var avaliacaoSelecionada = $(this).val();
+        var comentarioLabel = $('label[for="comentarioAvaliacao"]');
+        var comentarioField = $('#comentarioAvaliacao');
+        var opcionalText = $('.opcional-text');
+        
+        if (avaliacaoSelecionada == '3' || avaliacaoSelecionada == '4') {
+            // Tornar obrigatório visualmente
+            if (!comentarioLabel.find('.text-danger').length) {
+                comentarioLabel.append(' <span class="text-danger">*</span>');
+            }
+            opcionalText.html('(Obrigatório)').addClass('text-danger');
+            comentarioField.attr('placeholder', 'Por favor, explique sua avaliação (obrigatório)');
+        } else {
+            // Remover obrigatoriedade visual
+            comentarioLabel.find('.text-danger').remove();
+            opcionalText.html('(Opcional)').removeClass('text-danger');
+            comentarioField.attr('placeholder', 'Deixe um comentário sobre o atendimento recebido...');
+        }
+    });
+    
     @if(session('success'))
         showNotification('{{ session('success') }}', 'success');
     @endif
@@ -581,6 +738,7 @@ $(document).ready(function() {
         $('#modalResolver').modal('hide');
         $('#modalAlterarResponsavel').modal('hide');
         $('#modalResponderUsuario').modal('hide');
+        $('#modalAvaliarChamado').modal('hide');
         // Limpar os formulários
         $('#modalComentario form')[0].reset();
         $('#modalPendencia form')[0].reset();
@@ -589,6 +747,7 @@ $(document).ready(function() {
         $('#modalResolver form')[0].reset();
         $('#modalAlterarResponsavel form')[0].reset();
         $('#modalResponderUsuario form')[0].reset();
+        $('#modalAvaliarChamado form')[0].reset();
     @endif
 });
 </script>
