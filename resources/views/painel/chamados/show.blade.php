@@ -4,6 +4,7 @@
 use App\Models\StatusChamado;
 use App\Models\Departamento;
 use App\Models\User;
+use Illuminate\Support\Facades\Auth;
 @endphp
 
 @section('title', 'Chamado #' . $chamado->chamado_id)
@@ -62,31 +63,31 @@ use App\Models\User;
                     </button>
                     @endif
 
-                    @if($chamado->status_chamado_id == StatusChamado::ATENDIMENTO)
+                    @if($chamado->status_chamado_id == StatusChamado::ATENDIMENTO && Auth::user()->departamento_id == $chamado->departamento_id)
                     <button class="btn btn-info btn-block mb-2" data-toggle="modal" data-target="#modalPendencia">
                         <i class="fas fa-hourglass-half"></i> Colocar em Pendência
                     </button>
                     @endif
 
-                    @if(in_array($chamado->status_chamado_id, [StatusChamado::ATENDIMENTO, StatusChamado::PENDENTE]))
+                    @if(in_array($chamado->status_chamado_id, [StatusChamado::ATENDIMENTO, StatusChamado::PENDENTE]) && Auth::user()->departamento_id == $chamado->departamento_id)
                     <button class="btn btn-secondary btn-block mb-2" data-toggle="modal" data-target="#modalDevolver">
                         <i class="fas fa-undo"></i> Devolver ao Usuário
                     </button>
                     @endif
 
-                    @if(in_array($chamado->status_chamado_id, [StatusChamado::ATENDIMENTO, StatusChamado::PENDENTE, StatusChamado::AGUARDANDO_USUARIO]))
+                    @if(in_array($chamado->status_chamado_id, [StatusChamado::ATENDIMENTO, StatusChamado::PENDENTE, StatusChamado::AGUARDANDO_USUARIO]) && Auth::user()->departamento_id == $chamado->departamento_id)
                     <button class="btn btn-success btn-block mb-2" data-toggle="modal" data-target="#modalResolver">
                         <i class="fas fa-check"></i> Resolver Chamado
                     </button>
                     @endif
 
-                    @if(!in_array($chamado->status_chamado_id, [StatusChamado::FECHADO, StatusChamado::RESOLVIDO]))
+                    @if(!in_array($chamado->status_chamado_id, [StatusChamado::FECHADO, StatusChamado::RESOLVIDO]) && Auth::user()->departamento_id == $chamado->departamento_id)
                     <button class="btn btn-dark btn-block mb-2" data-toggle="modal" data-target="#modalTransferir">
                         <i class="fas fa-exchange-alt"></i> Transferir Departamento
                     </button>
                     @endif
 
-                    @if(!in_array($chamado->status_chamado_id, [StatusChamado::FECHADO, StatusChamado::ABERTO, StatusChamado::RESOLVIDO]))
+                    @if(!in_array($chamado->status_chamado_id, [StatusChamado::FECHADO, StatusChamado::ABERTO, StatusChamado::RESOLVIDO]) && Auth::user()->departamento_id == $chamado->departamento_id)
                     <button class="btn btn-outline-primary btn-block mb-2" data-toggle="modal" data-target="#modalAlterarResponsavel">
                         <i class="fas fa-user-edit"></i> Alterar Responsável
                     </button>
