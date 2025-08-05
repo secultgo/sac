@@ -167,14 +167,6 @@ class ChamadoController extends Controller
             
             $chamado->status_chamado_id = StatusChamado::ATENDIMENTO;
             $chamado->save();
-            
-            // Adiciona comentário automático sobre o retorno do atendimento
-            ComentarioChamado::create([
-                'comentario_chamado_comentario' => 'Usuário respondeu - Chamado retornou para atendimento automaticamente.',
-                'comentario_chamado_data' => now(),
-                'chamado_id' => $id,
-                'usuario_id' => Auth::user()->usuario_id
-            ]);
         }
 
         ComentarioChamado::create([
