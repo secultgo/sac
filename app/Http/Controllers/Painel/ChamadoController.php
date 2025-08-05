@@ -259,6 +259,45 @@ class ChamadoController extends Controller
     }
 
     /**
+     * Devolve o chamado ao usuário (aguardando resposta do usuário)
+     */
+    public function devolverUsuario(Request $request, $id)
+    {
+        $request->validate([
+            'motivo_devolucao' => 'required|string|max:1000'
+        ]);
+
+        $chamado = Chamado::findOrFail($id);
+        
+        // Verifica se o chamado está em atendimento ou pendente para poder devolver
+        if (!in_array($chamado->status_chamado_id, [StatusChamado::ATENDIMENTO, StatusChamado::PENDENTE])) {
+            return redirect()->back()->with('error', 'Apenas chamados em atendimento ou pendentes podem ser devolvidos ao usuário.');
+        }
+
+        // Atualiza o status para Aguardando resposta usuário (6)
+        $chamado->status_chamado_id = StatusChamado::AGUARDANDO_USUARIO;
+        $chamado->save();
+
+        // Adiciona o comentário do usuário como motivo da devolução
+        ComentarioChamado::create([
+            'comentario_chamado_comentario' => $request->motivo_devolucao,
+            'comentario_chamado_data' => now(),
+            'chamado_id' => $id,
+            'usuario_id' => Auth::user()->usuario_id
+        ]);
+
+        // Adiciona comentário automático sobre a devolução
+        ComentarioChamado::create([
+            'comentario_chamado_comentario' => 'Chamado devolvido ao usuário por ' . Auth::user()->name . ' - Aguardando resposta do usuário.',
+            'comentario_chamado_data' => now(),
+            'chamado_id' => $id,
+            'usuario_id' => Auth::user()->usuario_id
+        ]);
+
+        return redirect()->back()->with('success', 'Chamado devolvido ao usuário com sucesso!');
+    }
+
+    /**
      * Transfere o chamado para outro departamento
      */
     public function transferirDepartamento(Request $request, $id)
