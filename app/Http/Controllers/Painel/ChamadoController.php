@@ -73,7 +73,7 @@ class ChamadoController extends Controller
      */
     public function meusAtendimentos(Request $request)
     {
-        $statusFiltro = $request->get('status');
+        $statusFiltro = $request->get('status', 2); // Status padrão: 2 (Em Atendimento)
         
         $query = Chamado::with(['problema', 'departamento', 'local', 'usuario', 'servicoChamado', 'statusChamado'])
                         ->where('responsavel_id', Auth::user()->usuario_id);

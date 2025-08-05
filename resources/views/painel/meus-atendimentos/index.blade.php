@@ -38,12 +38,24 @@
     <div class="col-lg-3 col-6">
         <div class="small-box bg-info">
             <div class="inner">
-                <h3>{{ $contadores['abertos'] + $contadores['atendimento'] + $contadores['fechados'] + $contadores['pendentes'] + $contadores['resolvidos'] + $contadores['aguardando_usuario'] }}</h3>
+                <h3>{{ $contadores['atendimento'] + $contadores['fechados'] + $contadores['pendentes'] + $contadores['resolvidos'] + $contadores['aguardando_usuario'] }}</h3>
                 <p>Total de Atendimentos</p>
             </div>
             <div class="icon"><i class="fas fa-headset"></i></div>
             <a href="{{ route('meus-atendimentos.index') }}" class="small-box-footer">
                 Ver todos <i class="fas fa-arrow-circle-right"></i>
+            </a>
+        </div>
+    </div>
+    <div class="col-lg-3 col-6">
+        <div class="small-box bg-warning">
+            <div class="inner">
+                <h3>{{ $contadores['atendimento'] }}</h3>
+                <p>Em Atendimento</p>
+            </div>
+            <div class="icon"><i class="fas fa-user-clock"></i></div>
+            <a href="{{ route('meus-atendimentos.index', ['status' => 2]) }}" class="small-box-footer">
+                Ver em atendimento <i class="fas fa-arrow-circle-right"></i>
             </a>
         </div>
     </div>
@@ -71,18 +83,6 @@
             </a>
         </div>
     </div>
-    <div class="col-lg-3 col-6">
-        <div class="small-box bg-danger">
-            <div class="inner">
-                <h3>{{ $contadores['abertos'] }}</h3>
-                <p>Atendimentos Abertos</p>
-            </div>
-            <div class="icon"><i class="fas fa-folder-open"></i></div>
-            <a href="{{ route('meus-atendimentos.index', ['status' => 1]) }}" class="small-box-footer">
-                Ver abertos <i class="fas fa-arrow-circle-right"></i>
-            </a>
-        </div>
-    </div>
 </div>
 
 <div class="card">
@@ -91,9 +91,6 @@
         <h3 class="card-title mb-2 mb-md-0">Meus Atendimentos</h3>
 
         <div class="d-flex flex-wrap justify-content-start">
-            <a href="{{ route('meus-atendimentos.index', ['status' => 1]) }}" class="btn btn-sm btn-danger rounded-pill px-3 mr-2 mb-2 {{ $statusFiltro == 1 ? 'active' : '' }}">
-                Abertos <span class="badge badge-light ml-1">{{ $contadores['abertos'] }}</span>
-            </a>
             <a href="{{ route('meus-atendimentos.index', ['status' => 2]) }}" class="btn btn-sm btn-warning rounded-pill px-3 mr-2 mb-2 {{ $statusFiltro == 2 ? 'active' : '' }}">
                 Atendimento <span class="badge badge-light ml-1">{{ $contadores['atendimento'] }}</span>
             </a>
@@ -109,7 +106,7 @@
             <a href="{{ route('meus-atendimentos.index', ['status' => 6]) }}" class="btn btn-sm btn-secondary rounded-pill px-3 mr-2 mb-2 {{ $statusFiltro == 6 ? 'active' : '' }}">
                 Aguardando Usuário <span class="badge badge-light ml-1">{{ $contadores['aguardando_usuario'] }}</span>
             </a>
-            <a href="{{ route('meus-atendimentos.index') }}" class="btn btn-sm btn-primary rounded-pill px-3 mr-2 mb-2 {{ !$statusFiltro ? 'active' : '' }}">
+            <a href="{{ route('meus-atendimentos.index') }}" class="btn btn-sm btn-primary rounded-pill px-3 mr-2 mb-2 {{ !request('status') ? 'active' : '' }}">
                 Todos
             </a>
         </div>
@@ -222,9 +219,6 @@
                     <h4><i class="fas fa-info-circle"></i> Nenhum atendimento encontrado</h4>
                     <p>
                         @switch($statusFiltro)
-                            @case(1)
-                                Você não possui chamados abertos no momento.
-                                @break
                             @case(2)
                                 Você não possui chamados em atendimento no momento.
                                 @break
