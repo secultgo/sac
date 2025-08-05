@@ -120,9 +120,28 @@
                             $fim = $chamado->chamado_fechado ? 
                                 (is_string($chamado->chamado_fechado) ? \Carbon\Carbon::parse($chamado->chamado_fechado) : $chamado->chamado_fechado) : 
                                 now();
-                            $tempo = $inicio->diffInHours($fim);
+                            
+                            // Calcula a diferença total em segundos
+                            $diff = $inicio->diff($fim);
+                            
+                            // Monta o texto formatado
+                            $tempoFormatado = '';
+                            if ($diff->d > 0) {
+                                $tempoFormatado .= $diff->d . ' dia' . ($diff->d > 1 ? 's' : '') . ' ';
+                            }
+                            if ($diff->h > 0) {
+                                $tempoFormatado .= $diff->h . 'h ';
+                            }
+                            if ($diff->i > 0) {
+                                $tempoFormatado .= $diff->i . 'min ';
+                            }
+                            if ($diff->s > 0 || empty($tempoFormatado)) {
+                                $tempoFormatado .= $diff->s . 's';
+                            }
+                            
+                            $tempoFormatado = trim($tempoFormatado);
                         @endphp
-                        {{ $tempo }}h
+                        {{ $tempoFormatado }}
                     </div>
                 </div>
                 @endif
