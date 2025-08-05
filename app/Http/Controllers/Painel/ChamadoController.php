@@ -298,6 +298,46 @@ class ChamadoController extends Controller
     }
 
     /**
+     * Resolve o chamado (marca como resolvido)
+     */
+    public function resolverChamado(Request $request, $id)
+    {
+        $request->validate([
+            'solucao' => 'required|string|max:1000'
+        ]);
+
+        $chamado = Chamado::findOrFail($id);
+        
+        // Verifica se o chamado pode ser resolvido
+        if (!in_array($chamado->status_chamado_id, [StatusChamado::ATENDIMENTO, StatusChamado::PENDENTE, StatusChamado::AGUARDANDO_USUARIO])) {
+            return redirect()->back()->with('error', 'Apenas chamados em atendimento, pendentes ou aguardando usuário podem ser resolvidos.');
+        }
+
+        // Atualiza o status para Resolvido (5)
+        $chamado->status_chamado_id = StatusChamado::RESOLVIDO;
+        $chamado->chamado_resolvido = now();
+        $chamado->save();
+
+        // Adiciona o comentário com a solução
+        ComentarioChamado::create([
+            'comentario_chamado_comentario' => $request->solucao,
+            'comentario_chamado_data' => now(),
+            'chamado_id' => $id,
+            'usuario_id' => Auth::user()->usuario_id
+        ]);
+
+        // Adiciona comentário automático sobre a resolução
+        ComentarioChamado::create([
+            'comentario_chamado_comentario' => 'Chamado resolvido por ' . Auth::user()->name,
+            'comentario_chamado_data' => now(),
+            'chamado_id' => $id,
+            'usuario_id' => Auth::user()->usuario_id
+        ]);
+
+        return redirect()->back()->with('success', 'Chamado resolvido com sucesso!');
+    }
+
+    /**
      * Transfere o chamado para outro departamento
      */
     public function transferirDepartamento(Request $request, $id)

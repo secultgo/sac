@@ -54,7 +54,7 @@ use App\Models\StatusChamado;
                     </form>
                     @endif
 
-                    @if(!in_array($chamado->status_chamado_id, [StatusChamado::FECHADO, StatusChamado::ABERTO]))
+                    @if(!in_array($chamado->status_chamado_id, [StatusChamado::FECHADO, StatusChamado::ABERTO, StatusChamado::RESOLVIDO]))
                     <button class="btn btn-primary btn-block mb-2" data-toggle="modal" data-target="#modalComentario">
                         <i class="fas fa-comment-dots"></i> Adicionar Comentário
                     </button>
@@ -72,19 +72,19 @@ use App\Models\StatusChamado;
                     </button>
                     @endif
 
-                    @if(in_array($chamado->status_chamado_id, [StatusChamado::ATENDIMENTO, StatusChamado::PENDENTE]))
-                    <button class="btn btn-success btn-block mb-2">
+                    @if(in_array($chamado->status_chamado_id, [StatusChamado::ATENDIMENTO, StatusChamado::PENDENTE, StatusChamado::AGUARDANDO_USUARIO]))
+                    <button class="btn btn-success btn-block mb-2" data-toggle="modal" data-target="#modalResolver">
                         <i class="fas fa-check"></i> Resolver Chamado
                     </button>
                     @endif
 
-                    @if($chamado->status_chamado_id != StatusChamado::FECHADO)
+                    @if(!in_array($chamado->status_chamado_id, [StatusChamado::FECHADO, StatusChamado::RESOLVIDO]))
                     <button class="btn btn-dark btn-block mb-2" data-toggle="modal" data-target="#modalTransferir">
                         <i class="fas fa-exchange-alt"></i> Transferir Departamento
                     </button>
                     @endif
 
-                    @if(!in_array($chamado->status_chamado_id, [StatusChamado::FECHADO, StatusChamado::ABERTO]))
+                    @if(!in_array($chamado->status_chamado_id, [StatusChamado::FECHADO, StatusChamado::ABERTO, StatusChamado::RESOLVIDO]))
                     <button class="btn btn-outline-primary btn-block mb-2">
                         <i class="fas fa-user-edit"></i> Alterar Responsável
                     </button>
@@ -375,6 +375,47 @@ use App\Models\StatusChamado;
     </div>
 </div>
 
+<!-- Modal para Resolver Chamado -->
+<div class="modal fade" id="modalResolver" tabindex="-1" role="dialog" aria-labelledby="modalResolverLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <form action="{{ route('chamados.resolver', $chamado->chamado_id) }}" method="POST">
+                @csrf
+                @method('PUT')
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalResolverLabel">
+                        <i class="fas fa-check"></i> Resolver Chamado
+                    </h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="alert alert-success">
+                        <i class="fas fa-check-circle"></i>
+                        <strong>Resolução:</strong> Descreva a solução aplicada para resolver o chamado.
+                    </div>
+                    <div class="form-group">
+                        <label for="solucao">Solução Aplicada <span class="text-danger">*</span></label>
+                        <textarea class="form-control" id="solucao" name="solucao" rows="4" placeholder="Descreva detalhadamente a solução aplicada..." required></textarea>
+                        <small class="form-text text-muted">
+                            Esta informação será registrada no histórico do chamado e o status será alterado para "Resolvido".
+                        </small>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">
+                        <i class="fas fa-times"></i> Cancelar
+                    </button>
+                    <button type="submit" class="btn btn-success">
+                        <i class="fas fa-check"></i> Resolver Chamado
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
 @stop
 
 @section('css')
@@ -433,11 +474,13 @@ $(document).ready(function() {
         $('#modalPendencia').modal('hide');
         $('#modalTransferir').modal('hide');
         $('#modalDevolver').modal('hide');
+        $('#modalResolver').modal('hide');
         // Limpar os formulários
         $('#modalComentario form')[0].reset();
         $('#modalPendencia form')[0].reset();
         $('#modalTransferir form')[0].reset();
         $('#modalDevolver form')[0].reset();
+        $('#modalResolver form')[0].reset();
     @endif
 });
 </script>
