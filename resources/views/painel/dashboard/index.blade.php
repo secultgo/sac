@@ -13,15 +13,15 @@ use Illuminate\Support\Facades\Auth;
 @section('content')
 <style>
 .descricao-limitada {
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  line-height: 1.3em;
-  max-height: 3.5em; /* 1.3em * 2 linhas */
-  max-width: 400px;  /* largura fixa */
-  word-break: break-word; /* para evitar overflow */
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    line-height: 1.3em;
+    max-height: 3.5em; /* 1.3em * 2 linhas */
+    max-width: 400px;  /* largura fixa */
+    word-break: break-word; /* para evitar overflow */
 }
 .bg-orange {
     background-color: #FF851B !important; /* laranja vibrante */
