@@ -34,8 +34,9 @@ class DashboardController extends Controller
         
         $chamadosFechadosMes = Chamado::where('departamento_id', Auth::user()->departamento_id)
                                      ->where('status_chamado_id', 3)
-                                     ->whereMonth('chamado_abertura', now()->month)
-                                     ->whereYear('chamado_abertura', now()->year)
+                                     ->whereMonth('chamado_fechado', now()->month)
+                                     ->whereYear('chamado_fechado', now()->year)
+                                     ->whereNotNull('chamado_fechado')
                                      ->count();
         
         $percentualFechadosMes = $chamadosMesAtual > 0 ? round(($chamadosFechadosMes / $chamadosMesAtual) * 100, 1) : 0;
