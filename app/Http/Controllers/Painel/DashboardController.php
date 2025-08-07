@@ -24,7 +24,7 @@ class DashboardController extends Controller
         // Sempre aplicar filtro de status
         $query->where('status_chamado_id', $statusFiltro);
         
-        $chamados = $query->orderBy('chamado_abertura', 'desc')->get();
+        $chamados = $query->orderBy('chamado_abertura', 'asc')->get();
         
         // Contar chamados por status para os badges (apenas do departamento do usuário)
         $chamadosMesAtual = Chamado::where('departamento_id', Auth::user()->departamento_id)
