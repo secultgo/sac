@@ -24,9 +24,23 @@ class DashboardController extends Controller
         // Sempre aplicar filtro de status
         $query->where('status_chamado_id', $statusFiltro);
         
-        $chamados = $query->orderBy('chamado_abertura', 'desc')->get();
+        $chamados = $query->orderBy('chamado_abertura', 'asc')->get();
         
         // Contar chamados por status para os badges (apenas do departamento do usuário)
+        $chamadosMesAtual = Chamado::where('departamento_id', Auth::user()->departamento_id)
+                                  ->whereMonth('chamado_abertura', now()->month)
+                                  ->whereYear('chamado_abertura', now()->year)
+                                  ->count();
+        
+        $chamadosFechadosMes = Chamado::where('departamento_id', Auth::user()->departamento_id)
+                                     ->where('status_chamado_id', 3)
+                                     ->whereMonth('chamado_fechado', now()->month)
+                                     ->whereYear('chamado_fechado', now()->year)
+                                     ->whereNotNull('chamado_fechado')
+                                     ->count();
+        
+        $percentualFechadosMes = $chamadosMesAtual > 0 ? round(($chamadosFechadosMes / $chamadosMesAtual) * 100, 1) : 0;
+        
         $contadores = [
             'abertos' => Chamado::where('departamento_id', Auth::user()->departamento_id)->where('status_chamado_id', 1)->count(),
             'atendimento' => Chamado::where('departamento_id', Auth::user()->departamento_id)->where('status_chamado_id', 2)->count(),
@@ -34,6 +48,8 @@ class DashboardController extends Controller
             'pendentes' => Chamado::where('departamento_id', Auth::user()->departamento_id)->where('status_chamado_id', 4)->count(),
             'resolvidos' => Chamado::where('departamento_id', Auth::user()->departamento_id)->where('status_chamado_id', 5)->count(),
             'aguardando_usuario' => Chamado::where('departamento_id', Auth::user()->departamento_id)->where('status_chamado_id', 6)->count(),
+            'mes_atual' => $chamadosMesAtual,
+            'percentual_fechados_mes' => $percentualFechadosMes,
         ];
         
         return view('painel.dashboard.index', compact('chamados', 'contadores', 'statusFiltro')); 

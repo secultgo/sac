@@ -49,10 +49,21 @@ Route::prefix('painel')
 
         Route::get('chamados/create', [ChamadoController::class, 'create'])->name('chamados.create');
         Route::post('chamados', [ChamadoController::class, 'store'])->name('chamados.store');
+        Route::get('chamados/{chamado}', [ChamadoController::class, 'show'])->name('chamados.show');
+        Route::post('chamados/{chamado}/comentarios', [ChamadoController::class, 'adicionarComentario'])->name('chamados.comentarios.store');
+        Route::put('chamados/{chamado}/pendencia', [ChamadoController::class, 'colocarPendencia'])->name('chamados.pendencia');
+        Route::put('chamados/{chamado}/atender', [ChamadoController::class, 'atenderChamado'])->name('chamados.atender');
+        Route::put('chamados/{chamado}/iniciar-atendimento', [ChamadoController::class, 'iniciarAtendimento'])->name('chamados.iniciar');
+        Route::put('chamados/{chamado}/devolver-usuario', [ChamadoController::class, 'devolverUsuario'])->name('chamados.devolver');
+        Route::put('chamados/{chamado}/resolver', [ChamadoController::class, 'resolverChamado'])->name('chamados.resolver');
+        Route::put('chamados/{chamado}/alterar-responsavel', [ChamadoController::class, 'alterarResponsavel'])->name('chamados.alterar-responsavel');
+        Route::put('chamados/{chamado}/transferir', [ChamadoController::class, 'transferirDepartamento'])->name('chamados.transferir');
+        Route::put('chamados/{chamado}/avaliar', [ChamadoController::class, 'avaliarChamado'])->name('chamados.avaliar');
         Route::get('chamados', function() { return redirect()->route('painel.dashboard'); })->name('chamados.index');
         Route::get('meus-atendimentos', [ChamadoController::class, 'meusAtendimentos'])
             ->name('meus-atendimentos.index')
             ->middleware('nivel.atendimento');
+        Route::get('meus-chamados', [ChamadoController::class, 'meusChamados'])->name('meus-chamados.index');
         Route::get('chamados/problemas/{departamento}', [ChamadoController::class, 'problemasPorDepartamento'])->name('chamados.problemasPorDepartamento');
         Route::get('chamados/servicos/{problema}', [ChamadoController::class, 'servicosPorProblema'])->name('chamados.servicosPorProblema');
      });

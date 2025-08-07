@@ -329,7 +329,7 @@ return [
         ],
         [
             'text' => 'Meus Chamados',
-            'url' => 'painel/chamados',
+            'url' => 'painel/meus-chamados',
             'icon' => 'far fa-fw fa-folder-open',
         ],
         [
@@ -463,6 +463,21 @@ return [
                     'type' => 'js',
                     'asset' => false,
                     'location' => '//cdn.jsdelivr.net/npm/sweetalert2@11',
+                ],
+            ],
+        ],
+        'Toastr' => [
+            'active' => true,
+            'files' => [
+                [
+                    'type' => 'js',
+                    'asset' => false,
+                    'location' => '//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js',
+                ],
+                [
+                    'type' => 'css',
+                    'asset' => false,
+                    'location' => '//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css',
                 ],
             ],
         ],
