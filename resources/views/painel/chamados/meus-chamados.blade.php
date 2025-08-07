@@ -73,7 +73,7 @@
 
     <div class="card-body p-3">
         <!-- Filtros de Status -->
-        <div class="mb-3">
+        <div class="mb-3 text-center">
             <a href="{{ route('meus-chamados.index') }}" class="btn btn-sm btn-primary rounded-pill px-3 mr-2 mb-2 {{ !request('status') ? 'active' : '' }}">
                 Todos
             </a>
@@ -278,6 +278,7 @@
 <!-- DataTables CSS -->
 <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap4.min.css">
 <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.5.0/css/responsive.bootstrap4.min.css">
+<link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.4.2/css/buttons.bootstrap4.min.css">
 <style>
 /* Cores customizadas para badges e cards */
 .bg-orange {
@@ -390,6 +391,14 @@
 <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap4.min.js"></script>
 <script src="https://cdn.datatables.net/responsive/2.5.0/js/dataTables.responsive.min.js"></script>
 <script src="https://cdn.datatables.net/responsive/2.5.0/js/responsive.bootstrap4.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.4.2/js/dataTables.buttons.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.bootstrap4.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.html5.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.print.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.colVis.min.js"></script>
 
 <script>
 $(document).ready(function() {
@@ -417,6 +426,10 @@ $(document).ready(function() {
             "aria": {
                 "sortAscending": ": ativar para classificar a coluna em ordem crescente",
                 "sortDescending": ": ativar para classificar a coluna em ordem decrescente"
+            },
+            "buttons": {
+                "colvis": "Colunas",
+                "pageLength": "Exibir %d registros"
             }
         },
         "responsive": false,
@@ -433,9 +446,14 @@ $(document).ready(function() {
             }
         ],
         "autoWidth": false,
-        "dom": '<"row"<"col-sm-12 col-md-6"l><"col-sm-12 col-md-6"f>>' +
-               '<"row"<"col-sm-12"tr>>' +
-               '<"row"<"col-sm-12 col-md-5"i><"col-sm-12 col-md-7"p>>'
+        "dom": 'Bfrtip',
+        "buttons": [
+            'colvis',
+            'pageLength',
+            'excelHtml5', 'pdfHtml5',{
+                extend: 'print',
+                text: 'Imprimir'
+            }]
     });
 
     // Toastr notifications
