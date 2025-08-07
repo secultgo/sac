@@ -159,7 +159,7 @@ use Illuminate\Support\Facades\Auth;
                 Aguardando Usuário <span class="badge badge-light ml-1">{{ $contadores['aguardando_usuario'] ?? 0 }}</span>
             </a>
             <a href="{{ route('painel.dashboard', ['status' => 5]) }}" class="btn btn-sm btn-info rounded-pill px-3 mr-2 mb-2 {{ $statusFiltro == 5 ? 'active' : '' }}">
-                Resolvidos <span class="badge badge-light ml-1">{{ $contadores['resolvidos'] ?? 0 }}</span>
+                Não Avaliados <span class="badge badge-light ml-1">{{ $contadores['resolvidos'] ?? 0 }}</span>
             </a>
             <a href="{{ route('painel.dashboard', ['status' => 3]) }}" class="btn btn-sm btn-success rounded-pill px-3 mr-2 mb-2 {{ $statusFiltro == 3 ? 'active' : '' }}">
                 Fechados <span class="badge badge-light ml-1">{{ $contadores['fechados'] ?? 0 }}</span>
@@ -224,7 +224,7 @@ use Illuminate\Support\Facades\Auth;
                                     <span class="badge bg-orange">Pendente</span>
                                     @break
                                 @case(5)
-                                    <span class="badge badge-info">Resolvido</span>
+                                    <span class="badge badge-info">Não Avaliado</span>
                                     @break
                                 @case(6)
                                     <span class="badge badge-secondary">Aguardando Usuário</span>
@@ -269,7 +269,7 @@ use Illuminate\Support\Facades\Auth;
                                 </a>
                                 @endif
 
-                                <!-- Adicionar Comentário - para chamados que não estão fechados, abertos ou resolvidos -->
+                                <!-- Adicionar Comentário - para chamados que não estão fechados, abertos ou não avaliados -->
                                 @if(!in_array($chamado->status_chamado_id, [3, 1, 5]) && $chamado->status_chamado_id != 6)
                                 <a href="{{ route('chamados.show', $chamado->chamado_id) }}" class="btn btn-sm btn-secondary mr-1 mb-1" title="Adicionar Comentário">
                                     <i class="fas fa-comment-dots"></i>
@@ -297,21 +297,21 @@ use Illuminate\Support\Facades\Auth;
                                 </a>
                                 @endif
 
-                                <!-- Transferir Departamento - não disponível para FECHADO (3) e RESOLVIDO (5) -->
+                                <!-- Transferir Departamento - não disponível para FECHADO (3) e NÃO AVALIADO (5) -->
                                 @if(!in_array($chamado->status_chamado_id, [3, 5]) && Auth::user()->departamento_id == $chamado->departamento_id)
                                 <a href="{{ route('chamados.show', $chamado->chamado_id) }}" class="btn btn-sm btn-dark mr-1 mb-1" title="Transferir Departamento">
                                     <i class="fas fa-exchange-alt"></i>
                                 </a>
                                 @endif
 
-                                <!-- Alterar Responsável - não disponível para FECHADO (3), ABERTO (1) e RESOLVIDO (5) -->
+                                <!-- Alterar Responsável - não disponível para FECHADO (3), ABERTO (1) e NÃO AVALIADO (5) -->
                                 @if(!in_array($chamado->status_chamado_id, [3, 1, 5]) && Auth::user()->departamento_id == $chamado->departamento_id)
                                 <a href="{{ route('chamados.show', $chamado->chamado_id) }}" class="btn btn-sm btn-outline-primary mr-1 mb-1" title="Alterar Responsável">
                                     <i class="fas fa-user-edit"></i>
                                 </a>
                                 @endif
 
-                                <!-- Avaliar Atendimento - apenas para chamados RESOLVIDOS (5) pelo usuário solicitante -->
+                                <!-- Avaliar Atendimento - apenas para chamados NÃO AVALIADOS (5) pelo usuário solicitante -->
                                 @if($chamado->status_chamado_id == 5 && Auth::user()->usuario_id == $chamado->usuario_id)
                                 <a href="{{ route('chamados.show', $chamado->chamado_id) }}" class="btn btn-sm btn-warning mr-1 mb-1" title="Avaliar Atendimento">
                                     <i class="fas fa-star"></i>

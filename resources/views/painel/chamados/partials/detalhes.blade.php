@@ -34,7 +34,7 @@
                             @break
                         @case(5)
                             <span class="badge badge-info status-badge">
-                                <i class="fas fa-check-circle"></i> Resolvido
+                                <i class="fas fa-check-circle"></i> Não Avaliado
                             </span>
                             @break
                         @case(6)
