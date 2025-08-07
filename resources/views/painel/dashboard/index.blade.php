@@ -34,19 +34,74 @@ use Illuminate\Support\Facades\Auth;
     color: white !important; /* garantir texto branco */
 }
 
-
-
 .bg-orange .small-box-footer {
     color: white !important; /* texto do footer branco */
 }
 
+.bg-purple {
+    background-color: #6f42c1 !important; /* roxo */
+    color: white !important; /* texto branco */
+}
+
+.bg-purple .inner,
+.bg-purple h3,
+.bg-purple p {
+    color: white !important; /* garantir texto branco */
+}
+
+.bg-purple .small-box-footer {
+    color: white !important; /* texto do footer branco */
+}
 </style>
 
 <div class="row mb-4">
-    <div class="col-lg-3 col-6">
+    <!-- Card 1: Total de Chamados do Departamento -->
+    <div class="col-lg-2 col-6">
+        <div class="small-box bg-info">
+            <div class="inner">
+                <h3>{{ ($contadores['abertos'] ?? 0) + ($contadores['atendimento'] ?? 0) + ($contadores['fechados'] ?? 0) + ($contadores['pendentes'] ?? 0) + ($contadores['resolvidos'] ?? 0) + ($contadores['aguardando_usuario'] ?? 0) }}</h3>
+                <p>Total de Chamados</p>
+            </div>
+            <div class="icon"><i class="fas fa-ticket-alt"></i></div>
+            <a href="{{ route('painel.dashboard') }}" class="small-box-footer">
+                Ver todos <i class="fas fa-arrow-circle-right"></i>
+            </a>
+        </div>
+    </div>
+    
+    <!-- Card 2: Total de Chamados Fechados -->
+    <div class="col-lg-2 col-6">
+        <div class="small-box bg-success">
+            <div class="inner">
+                <h3>{{ $contadores['fechados'] ?? 0 }}</h3>
+                <p>Chamados Fechados</p>
+            </div>
+            <div class="icon"><i class="fas fa-check-circle"></i></div>
+            <a href="{{ route('painel.dashboard', ['status' => 3]) }}" class="small-box-footer">
+                Ver fechados <i class="fas fa-arrow-circle-right"></i>
+            </a>
+        </div>
+    </div>
+    
+    <!-- Card 3: Chamados Pendentes -->
+    <div class="col-lg-2 col-6">
+        <div class="small-box bg-orange">
+            <div class="inner">
+                <h3>{{ $contadores['pendentes'] ?? 0 }}</h3>
+                <p>Chamados Pendentes</p>
+            </div>
+            <div class="icon"><i class="fas fa-hourglass-half"></i></div>
+            <a href="{{ route('painel.dashboard', ['status' => 4]) }}" class="small-box-footer">
+                Ver pendentes <i class="fas fa-arrow-circle-right"></i>
+            </a>
+        </div>
+    </div>
+    
+    <!-- Card 4: Chamados Abertos -->
+    <div class="col-lg-2 col-6">
         <div class="small-box bg-danger">
             <div class="inner">
-                <h3>{{ $contadores['abertos'] }}</h3>
+                <h3>{{ $contadores['abertos'] ?? 0 }}</h3>
                 <p>Chamados Abertos</p>
             </div>
             <div class="icon"><i class="fas fa-folder-open"></i></div>
@@ -55,39 +110,31 @@ use Illuminate\Support\Facades\Auth;
             </a>
         </div>
     </div>
-    <div class="col-lg-3 col-6">
-        <div class="small-box bg-warning">
+    
+    <!-- Card 5: Total de Chamados do Mês -->
+    <div class="col-lg-2 col-6">
+        <div class="small-box bg-primary">
             <div class="inner">
-                <h3>{{ $contadores['atendimento'] }}</h3>
-                <p>Em Atendimento</p>
+                <h3>{{ $contadores['mes_atual'] ?? 0 }}</h3>
+                <p>Chamados do Mês</p>
             </div>
-            <div class="icon"><i class="fas fa-user-clock"></i></div>
-            <a href="{{ route('painel.dashboard', ['status' => 2]) }}" class="small-box-footer">
-                Ver em atendimento <i class="fas fa-arrow-circle-right"></i>
+            <div class="icon"><i class="fas fa-calendar-alt"></i></div>
+            <a href="{{ route('painel.dashboard') }}" class="small-box-footer">
+                Ver do mês <i class="fas fa-arrow-circle-right"></i>
             </a>
         </div>
     </div>
-    <div class="col-lg-3 col-6">
-        <div class="small-box bg-secondary">
+    
+    <!-- Card 6: Percentual de Chamados Fechados no Mês -->
+    <div class="col-lg-2 col-6">
+        <div class="small-box bg-purple">
             <div class="inner">
-                <h3>{{ $contadores['aguardando_usuario'] }}</h3>
-                <p>Aguardando Usuário</p>
+                <h3>{{ $contadores['percentual_fechados_mes'] ?? 0 }}%</h3>
+                <p>% Fechados no Mês</p>
             </div>
-            <div class="icon"><i class="fas fa-user-clock"></i></div>
-            <a href="{{ route('painel.dashboard', ['status' => 6]) }}" class="small-box-footer">
-                Ver aguardando usuário <i class="fas fa-arrow-circle-right"></i>
-            </a>
-        </div>
-    </div>
-    <div class="col-lg-3 col-6">
-        <div class="small-box bg-orange">
-            <div class="inner">
-                <h3>{{ $contadores['pendentes'] }}</h3>
-                <p>Chamados Pendentes</p>
-            </div>
-            <div class="icon"><i class="fas fa-hourglass-half"></i></div>
-            <a href="{{ route('painel.dashboard', ['status' => 4]) }}" class="small-box-footer">
-                Ver pendentes <i class="fas fa-arrow-circle-right"></i>
+            <div class="icon"><i class="fas fa-chart-pie"></i></div>
+            <a href="{{ route('painel.dashboard', ['status' => 3]) }}" class="small-box-footer">
+                Ver relatório <i class="fas fa-arrow-circle-right"></i>
             </a>
         </div>
     </div>
@@ -99,17 +146,23 @@ use Illuminate\Support\Facades\Auth;
         <h3 class="card-title mb-2 mb-md-0">Chamados</h3>
 
         <div class="d-flex flex-wrap justify-content-start">
+            <a href="{{ route('painel.dashboard') }}" class="btn btn-sm btn-info rounded-pill px-3 mr-2 mb-2 {{ !$statusFiltro ? 'active' : '' }}">
+                Todos <span class="badge badge-light ml-1">{{ ($contadores['abertos'] ?? 0) + ($contadores['atendimento'] ?? 0) + ($contadores['fechados'] ?? 0) + ($contadores['pendentes'] ?? 0) + ($contadores['resolvidos'] ?? 0) + ($contadores['aguardando_usuario'] ?? 0) }}</span>
+            </a>
             <a href="{{ route('painel.dashboard', ['status' => 1]) }}" class="btn btn-sm btn-danger rounded-pill px-3 mr-2 mb-2 {{ $statusFiltro == 1 ? 'active' : '' }}">
-                Abertos <span class="badge badge-light ml-1">{{ $contadores['abertos'] }}</span>
+                Abertos <span class="badge badge-light ml-1">{{ $contadores['abertos'] ?? 0 }}</span>
             </a>
             <a href="{{ route('painel.dashboard', ['status' => 2]) }}" class="btn btn-sm btn-warning rounded-pill px-3 mr-2 mb-2 {{ $statusFiltro == 2 ? 'active' : '' }}">
-                Atendimento <span class="badge badge-light ml-1">{{ $contadores['atendimento'] }}</span>
-            </a>
-            <a href="{{ route('painel.dashboard', ['status' => 6]) }}" class="btn btn-sm btn-secondary rounded-pill px-3 mr-2 mb-2 {{ $statusFiltro == 6 ? 'active' : '' }}">
-                Aguardando Usuário <span class="badge badge-light ml-1">{{ $contadores['aguardando_usuario'] }}</span>
+                Atendimento <span class="badge badge-light ml-1">{{ $contadores['atendimento'] ?? 0 }}</span>
             </a>
             <a href="{{ route('painel.dashboard', ['status' => 4]) }}" class="btn btn-sm bg-orange text-white rounded-pill px-3 mr-2 mb-2 {{ $statusFiltro == 4 ? 'active' : '' }}">
-                Pendentes <span class="badge badge-light ml-1">{{ $contadores['pendentes'] }}</span>
+                Pendentes <span class="badge badge-light ml-1">{{ $contadores['pendentes'] ?? 0 }}</span>
+            </a>
+            <a href="{{ route('painel.dashboard', ['status' => 3]) }}" class="btn btn-sm btn-success rounded-pill px-3 mr-2 mb-2 {{ $statusFiltro == 3 ? 'active' : '' }}">
+                Fechados <span class="badge badge-light ml-1">{{ $contadores['fechados'] ?? 0 }}</span>
+            </a>
+            <a href="{{ route('painel.dashboard', ['status' => 6]) }}" class="btn btn-sm btn-secondary rounded-pill px-3 mr-2 mb-2 {{ $statusFiltro == 6 ? 'active' : '' }}">
+                Aguardando Usuário <span class="badge badge-light ml-1">{{ $contadores['aguardando_usuario'] ?? 0 }}</span>
             </a>
         </div>
     </div>
@@ -282,11 +335,14 @@ use Illuminate\Support\Facades\Auth;
                             @case(2)
                                 Não há chamados em atendimento no momento.
                                 @break
-                            @case(6)
-                                Não há chamados aguardando usuário no momento.
+                            @case(3)
+                                Não há chamados fechados no momento.
                                 @break
                             @case(4)
                                 Não há chamados pendentes no momento.
+                                @break
+                            @case(6)
+                                Não há chamados aguardando usuário no momento.
                                 @break
                             @default
                                 Não há chamados cadastrados no momento.
