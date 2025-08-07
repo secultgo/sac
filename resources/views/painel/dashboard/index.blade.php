@@ -297,21 +297,21 @@ use Illuminate\Support\Facades\Auth;
                                 </a>
                                 @endif
 
-                                <!-- Transferir Departamento - não disponível para FECHADO (3) e RESOLVIDO (5) -->
+                                <!-- Transferir Departamento - não disponível para FECHADO (3) e NÃO AVALIADO (5) -->
                                 @if(!in_array($chamado->status_chamado_id, [3, 5]) && Auth::user()->departamento_id == $chamado->departamento_id)
                                 <a href="{{ route('chamados.show', $chamado->chamado_id) }}" class="btn btn-sm btn-dark mr-1 mb-1" title="Transferir Departamento">
                                     <i class="fas fa-exchange-alt"></i>
                                 </a>
                                 @endif
 
-                                <!-- Alterar Responsável - não disponível para FECHADO (3), ABERTO (1) e RESOLVIDO (5) -->
+                                <!-- Alterar Responsável - não disponível para FECHADO (3), ABERTO (1) e NÃO AVALIADO (5) -->
                                 @if(!in_array($chamado->status_chamado_id, [3, 1, 5]) && Auth::user()->departamento_id == $chamado->departamento_id)
                                 <a href="{{ route('chamados.show', $chamado->chamado_id) }}" class="btn btn-sm btn-outline-primary mr-1 mb-1" title="Alterar Responsável">
                                     <i class="fas fa-user-edit"></i>
                                 </a>
                                 @endif
 
-                                <!-- Avaliar Atendimento - apenas para chamados RESOLVIDOS (5) pelo usuário solicitante -->
+                                <!-- Avaliar Atendimento - apenas para chamados NÃO AVALIADOS (5) pelo usuário solicitante -->
                                 @if($chamado->status_chamado_id == 5 && Auth::user()->usuario_id == $chamado->usuario_id)
                                 <a href="{{ route('chamados.show', $chamado->chamado_id) }}" class="btn btn-sm btn-warning mr-1 mb-1" title="Avaliar Atendimento">
                                     <i class="fas fa-star"></i>

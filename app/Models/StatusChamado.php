@@ -26,7 +26,7 @@ class StatusChamado extends Model
      * 2 = Atendimento  
      * 3 = Fechado
      * 4 = Pendente
-     * 5 = Resolvido
+     * 5 = Não Avaliado
      * 6 = Aguardando resposta usuário
      * 7 = Cancelado
      */
@@ -34,7 +34,8 @@ class StatusChamado extends Model
     public const ATENDIMENTO = 2;
     public const FECHADO = 3;
     public const PENDENTE = 4;
-    public const RESOLVIDO = 5;
+    public const NAO_AVALIADO = 5;
+    public const RESOLVIDO = 5; // Alias para compatibilidade
     public const AGUARDANDO_USUARIO = 6;
     public const CANCELADO = 7;
 
