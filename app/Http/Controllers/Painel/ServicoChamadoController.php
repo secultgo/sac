@@ -14,7 +14,7 @@ class ServicoChamadoController extends Controller
     {
         $servicos = ServicoChamado::with('problema')
             ->orderBy('servico_chamado_nome')
-            ->paginate(15);
+            ->get();
 
         return view('painel.servicos-chamado.index', compact('servicos'));
     }

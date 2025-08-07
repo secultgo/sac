@@ -73,7 +73,7 @@
 
     <div class="card-body p-3">
         <!-- Filtros de Status -->
-        <div class="mb-3">
+        <div class="mb-3 text-center">
             <a href="{{ route('meus-chamados.index') }}" class="btn btn-sm btn-primary rounded-pill px-3 mr-2 mb-2 {{ !request('status') ? 'active' : '' }}">
                 Todos
             </a>
@@ -100,7 +100,7 @@
 
     <div class="card-body p-0">
         @if($chamados->count() > 0)
-            <table class="table table-striped table-hover mb-0">
+            <table id="meusChamadosTable" class="table table-striped table-hover mb-0">
                 <thead>
                     <tr>
                         <th>ID</th>
@@ -119,8 +119,8 @@
                     @foreach($chamados as $chamado)
                     <tr>
                         <td><strong>#{{ $chamado->chamado_id }}</strong></td>
-                        <td class="descricao-limitada">
-                            {{ Str::limit($chamado->chamado_descricao, 50) }}
+                        <td>
+                            {{ $chamado->chamado_descricao }}
                         </td>
                         <td>{{ $chamado->departamento->departamento_nome ?? 'N/A' }}</td>
                         <td>{{ $chamado->local->local_nome ?? 'N/A' }}</td>
@@ -275,19 +275,73 @@
 
 @section('css')
 <link rel="stylesheet" href="/css/admin_custom.css">
+<!-- DataTables CSS -->
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap4.min.css">
+<link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.5.0/css/responsive.bootstrap4.min.css">
+<link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.4.2/css/buttons.bootstrap4.min.css">
 <style>
+/* Cores customizadas para badges e cards */
+.bg-orange {
+    background-color: #fd7e14 !important;
+}
+
+/* Estilo para botões ativos */
 .btn.active {
     box-shadow: 0 0 0 2px rgba(0,123,255,.5);
     transform: scale(1.05);
 }
 
+/* Customizar estilo do DataTables */
+.dataTables_wrapper .dataTables_filter {
+    float: right;
+    text-align: right;
+    margin-bottom: 10px;
+}
+
+.dataTables_wrapper .dataTables_filter input {
+    border-radius: 4px;
+    padding: 4px 8px;
+    border: 1px solid #ddd;
+    width: 250px;
+}
+
+.dataTables_wrapper .dataTables_length select {
+    border-radius: 4px;
+    padding: 4px 8px;
+    border: 1px solid #ddd;
+}
+
+/* Melhorar responsividade da tabela */
+.dataTables_wrapper {
+    overflow-x: auto;
+}
+
+#meusChamadosTable {
+    width: 100% !important;
+    table-layout: auto;
+}
+
+#meusChamadosTable th,
+#meusChamadosTable td {
+    padding: 8px 12px;
+    vertical-align: top; /* Alinhar no topo para melhor apresentação */
+}
+
+/* Definir larguras das colunas */
+#meusChamadosTable th:nth-child(1), #meusChamadosTable td:nth-child(1) { width: 80px; min-width: 80px; }  /* ID */
+#meusChamadosTable th:nth-child(2), #meusChamadosTable td:nth-child(2) { width: 25%; min-width: 200px; }  /* Descrição */
+#meusChamadosTable th:nth-child(3), #meusChamadosTable td:nth-child(3) { width: 12%; min-width: 120px; }  /* Departamento */
+#meusChamadosTable th:nth-child(4), #meusChamadosTable td:nth-child(4) { width: 10%; min-width: 100px; }  /* Local */
+#meusChamadosTable th:nth-child(5), #meusChamadosTable td:nth-child(5) { width: 10%; min-width: 100px; }  /* Problema */
+#meusChamadosTable th:nth-child(6), #meusChamadosTable td:nth-child(6) { width: 12%; min-width: 120px; }  /* Responsável */
+#meusChamadosTable th:nth-child(7), #meusChamadosTable td:nth-child(7) { width: 8%; min-width: 90px; }   /* Data Criação */
+#meusChamadosTable th:nth-child(8), #meusChamadosTable td:nth-child(8) { width: 8%; min-width: 90px; }   /* Data Atendimento */
+#meusChamadosTable th:nth-child(9), #meusChamadosTable td:nth-child(9) { width: 7%; min-width: 80px; }   /* Status */
+#meusChamadosTable th:nth-child(10), #meusChamadosTable td:nth-child(10) { width: 12%; min-width: 120px; white-space: nowrap; } /* Ações */
+
 .descricao-limitada {
     max-width: 200px;
     word-wrap: break-word;
-}
-
-.bg-orange {
-    background-color: #fd7e14 !important;
 }
 
 .card {
@@ -313,12 +367,96 @@
 .badge {
     font-size: 0.775em;
 }
+
+/* Estilo para dispositivos menores */
+@media (max-width: 768px) {
+    .dataTables_wrapper .dataTables_filter input {
+        width: 200px;
+    }
+    
+    .card-body {
+        padding: 0 !important;
+    }
+    
+    #meusChamadosTable {
+        font-size: 0.85em;
+    }
+}
 </style>
 @stop
 
 @section('js')
+<!-- DataTables JS -->
+<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap4.min.js"></script>
+<script src="https://cdn.datatables.net/responsive/2.5.0/js/dataTables.responsive.min.js"></script>
+<script src="https://cdn.datatables.net/responsive/2.5.0/js/responsive.bootstrap4.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.4.2/js/dataTables.buttons.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.bootstrap4.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.html5.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.print.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.colVis.min.js"></script>
+
 <script>
 $(document).ready(function() {
+    // Configurar DataTables
+    $('#meusChamadosTable').DataTable({
+        "language": {
+            "decimal": "",
+            "emptyTable": "Nenhum registro encontrado",
+            "info": "Mostrando _START_ até _END_ de _TOTAL_ registros",
+            "infoEmpty": "Mostrando 0 até 0 de 0 registros",
+            "infoFiltered": "(filtrado de _MAX_ registros no total)",
+            "infoPostFix": "",
+            "thousands": ".",
+            "lengthMenu": "Mostrar _MENU_ registros",
+            "loadingRecords": "Carregando...",
+            "processing": "Processando...",
+            "search": "Buscar:",
+            "zeroRecords": "Nenhum registro encontrado",
+            "paginate": {
+                "first": "Primeiro",
+                "last": "Último",
+                "next": "Próximo",
+                "previous": "Anterior"
+            },
+            "aria": {
+                "sortAscending": ": ativar para classificar a coluna em ordem crescente",
+                "sortDescending": ": ativar para classificar a coluna em ordem decrescente"
+            },
+            "buttons": {
+                "colvis": "Colunas",
+                "pageLength": "Exibir %d registros"
+            }
+        },
+        "responsive": false,
+        "scrollX": true,
+        "scrollCollapse": true,
+        "pageLength": 25,
+        "lengthMenu": [[10, 25, 50, 100, -1], [10, 25, 50, 100, "Todos"]],
+        "order": [[0, "desc"]], // Ordenar por ID decrescente
+        "columnDefs": [
+            {
+                "targets": [9], // Coluna de ações
+                "orderable": false,
+                "searchable": false
+            }
+        ],
+        "autoWidth": false,
+        "dom": 'Bfrtip',
+        "buttons": [
+            'colvis',
+            'pageLength',
+            'excelHtml5', 'pdfHtml5',{
+                extend: 'print',
+                text: 'Imprimir'
+            }]
+    });
+
+    // Toastr notifications
     @if(session('success'))
         toastr.success('{{ session('success') }}');
     @endif

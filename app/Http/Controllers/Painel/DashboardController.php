@@ -26,6 +26,14 @@ class DashboardController extends Controller
         
         $chamados = $query->orderBy('chamado_abertura', 'asc')->get();
         
+        // Limitar descrição a 200 caracteres
+        $chamados->transform(function ($chamado) {
+            if (strlen($chamado->chamado_descricao) > 200) {
+                $chamado->chamado_descricao = substr($chamado->chamado_descricao, 0, 200) . '...';
+            }
+            return $chamado;
+        });
+        
         // Contar chamados por status para os badges (apenas do departamento do usuário)
         $chamadosMesAtual = Chamado::where('departamento_id', Auth::user()->departamento_id)
                                   ->whereMonth('chamado_abertura', now()->month)
