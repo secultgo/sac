@@ -10,33 +10,6 @@ use Illuminate\Support\Facades\Auth;
 @stop
 
 @section('content')
-<style>
-.descricao-limitada {
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  line-height: 1.3em;
-  max-height: 3.5em; /* 1.3em * 2 linhas */
-  max-width: 400px;  /* largura fixa */
-  word-break: break-word; /* para evitar overflow */
-}
-.bg-orange {
-    background-color: #FF851B !important; /* laranja vibrante */
-    color: white !important; /* texto branco */
-}
-
-.bg-orange .inner,
-.bg-orange h3,
-.bg-orange p {
-    color: white !important; /* garantir texto branco */
-}
-
-.bg-orange .small-box-footer {
-    color: white !important; /* texto do footer branco */
-}
-</style>
 
 <div class="row mb-4">
     <div class="col-lg-3 col-6">
@@ -118,7 +91,7 @@ use Illuminate\Support\Facades\Auth;
 
     <div class="card-body p-0">
         @if($chamados->count() > 0)
-            <table class="table table-striped table-hover mb-0">
+            <table id="meusAtendimentosTable" class="table table-striped table-hover mb-0">
                 <thead>
                     <tr>
                         <th>ID</th>
@@ -137,7 +110,7 @@ use Illuminate\Support\Facades\Auth;
                     @foreach($chamados as $chamado)
                     <tr>
                         <td>{{ $chamado->chamado_id }}</td>
-                        <td class="descricao-limitada">
+                        <td>
                             {{ $chamado->chamado_descricao }}
                         </td>
                         <td>{{ $chamado->usuario->usuario_nome ?? 'N/A' }}</td>
@@ -293,16 +266,150 @@ use Illuminate\Support\Facades\Auth;
 
 @section('css')
 <link rel="stylesheet" href="/css/admin_custom.css">
+<!-- DataTables CSS -->
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap4.min.css">
+<link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.5.0/css/responsive.bootstrap4.min.css">
 <style>
+/* Cores customizadas para badges e cards */
+.bg-orange {
+    background-color: #FF851B !important; /* laranja vibrante */
+    color: white !important; /* texto branco */
+}
+
+.bg-orange .inner,
+.bg-orange h3,
+.bg-orange p {
+    color: white !important; /* garantir texto branco */
+}
+
+.bg-orange .small-box-footer {
+    color: white !important; /* texto do footer branco */
+}
+
+/* Estilo para botões ativos */
 .btn.active {
     box-shadow: 0 0 0 2px rgba(0,123,255,.5);
     transform: scale(1.05);
+}
+
+/* Customizar estilo do DataTables */
+.dataTables_wrapper .dataTables_filter {
+    float: right;
+    text-align: right;
+    margin-bottom: 10px;
+}
+
+.dataTables_wrapper .dataTables_filter input {
+    border-radius: 4px;
+    padding: 4px 8px;
+    border: 1px solid #ddd;
+    width: 250px;
+}
+
+.dataTables_wrapper .dataTables_length select {
+    border-radius: 4px;
+    padding: 4px 8px;
+    border: 1px solid #ddd;
+}
+
+/* Melhorar responsividade da tabela */
+.dataTables_wrapper {
+    overflow-x: auto;
+}
+
+#meusAtendimentosTable {
+    width: 100% !important;
+    table-layout: auto;
+}
+
+#meusAtendimentosTable th,
+#meusAtendimentosTable td {
+    padding: 8px 12px;
+    vertical-align: top; /* Alinhar no topo para melhor apresentação */
+}
+
+/* Definir larguras das colunas */
+#meusAtendimentosTable th:nth-child(1), #meusAtendimentosTable td:nth-child(1) { width: 80px; min-width: 80px; }  /* ID */
+#meusAtendimentosTable th:nth-child(2), #meusAtendimentosTable td:nth-child(2) { width: 25%; min-width: 200px; }  /* Descrição */
+#meusAtendimentosTable th:nth-child(3), #meusAtendimentosTable td:nth-child(3) { width: 12%; min-width: 120px; }  /* Solicitante */
+#meusAtendimentosTable th:nth-child(4), #meusAtendimentosTable td:nth-child(4) { width: 12%; min-width: 120px; }  /* Departamento */
+#meusAtendimentosTable th:nth-child(5), #meusAtendimentosTable td:nth-child(5) { width: 10%; min-width: 100px; }  /* Local */
+#meusAtendimentosTable th:nth-child(6), #meusAtendimentosTable td:nth-child(6) { width: 10%; min-width: 100px; }  /* Problema */
+#meusAtendimentosTable th:nth-child(7), #meusAtendimentosTable td:nth-child(7) { width: 8%; min-width: 90px; }   /* Data Criação */
+#meusAtendimentosTable th:nth-child(8), #meusAtendimentosTable td:nth-child(8) { width: 8%; min-width: 90px; }   /* Data Atendimento */
+#meusAtendimentosTable th:nth-child(9), #meusAtendimentosTable td:nth-child(9) { width: 7%; min-width: 80px; }   /* Status */
+#meusAtendimentosTable th:nth-child(10), #meusAtendimentosTable td:nth-child(10) { width: 12%; min-width: 120px; white-space: nowrap; } /* Ações */
+
+/* Estilo para dispositivos menores */
+@media (max-width: 768px) {
+    .dataTables_wrapper .dataTables_filter input {
+        width: 200px;
+    }
+    
+    .card-body {
+        padding: 0 !important;
+    }
+    
+    #meusAtendimentosTable {
+        font-size: 0.85em;
+    }
 }
 </style>
 @stop
 
 @section('js')
+<!-- DataTables JS -->
+<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap4.min.js"></script>
+<script src="https://cdn.datatables.net/responsive/2.5.0/js/dataTables.responsive.min.js"></script>
+<script src="https://cdn.datatables.net/responsive/2.5.0/js/responsive.bootstrap4.min.js"></script>
+
 <script>
-console.log('Meus Atendimentos carregado');
+$(document).ready(function() {
+    // Configurar DataTables
+    $('#meusAtendimentosTable').DataTable({
+        "language": {
+            "decimal": "",
+            "emptyTable": "Nenhum registro encontrado",
+            "info": "Mostrando _START_ até _END_ de _TOTAL_ registros",
+            "infoEmpty": "Mostrando 0 até 0 de 0 registros",
+            "infoFiltered": "(filtrado de _MAX_ registros no total)",
+            "infoPostFix": "",
+            "thousands": ".",
+            "lengthMenu": "Mostrar _MENU_ registros",
+            "loadingRecords": "Carregando...",
+            "processing": "Processando...",
+            "search": "Buscar:",
+            "zeroRecords": "Nenhum registro encontrado",
+            "paginate": {
+                "first": "Primeiro",
+                "last": "Último",
+                "next": "Próximo",
+                "previous": "Anterior"
+            },
+            "aria": {
+                "sortAscending": ": ativar para classificar a coluna em ordem crescente",
+                "sortDescending": ": ativar para classificar a coluna em ordem decrescente"
+            }
+        },
+        "responsive": false,
+        "scrollX": true,
+        "scrollCollapse": true,
+        "pageLength": 25,
+        "lengthMenu": [[10, 25, 50, 100, -1], [10, 25, 50, 100, "Todos"]],
+        "order": [[0, "desc"]], // Ordenar por ID decrescente
+        "columnDefs": [
+            {
+                "targets": [9], // Coluna de ações
+                "orderable": false,
+                "searchable": false
+            }
+        ],
+        "autoWidth": false,
+        "dom": '<"row"<"col-sm-12 col-md-6"l><"col-sm-12 col-md-6"f>>' +
+               '<"row"<"col-sm-12"tr>>' +
+               '<"row"<"col-sm-12 col-md-5"i><"col-sm-12 col-md-7"p>>'
+    });
+});
 </script>
 @stop

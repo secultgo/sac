@@ -100,6 +100,14 @@ class ChamadoController extends Controller
         
         $chamados = $query->orderBy('chamado_abertura', 'desc')->get();
         
+        // Limitar descrição a 200 caracteres
+        $chamados->transform(function ($chamado) {
+            if (strlen($chamado->chamado_descricao) > 200) {
+                $chamado->chamado_descricao = substr($chamado->chamado_descricao, 0, 200) . '...';
+            }
+            return $chamado;
+        });
+        
         // Contar chamados por status para os badges
         $contadores = [
             'atendimento' => Chamado::where('responsavel_id', Auth::user()->usuario_id)->where('status_chamado_id', 2)->count(),
@@ -479,6 +487,14 @@ class ChamadoController extends Controller
         }
         
         $chamados = $query->orderBy('chamado_abertura', 'desc')->get();
+        
+        // Limitar descrição a 200 caracteres
+        $chamados->transform(function ($chamado) {
+            if (strlen($chamado->chamado_descricao) > 200) {
+                $chamado->chamado_descricao = substr($chamado->chamado_descricao, 0, 200) . '...';
+            }
+            return $chamado;
+        });
         
         // Contar chamados por status para os badges (apenas do usuário logado)
         $contadores = [
