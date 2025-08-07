@@ -146,9 +146,6 @@ use Illuminate\Support\Facades\Auth;
         <h3 class="card-title mb-2 mb-md-0">Chamados</h3>
 
         <div class="d-flex flex-wrap justify-content-start">
-            <a href="{{ route('painel.dashboard') }}" class="btn btn-sm btn-info rounded-pill px-3 mr-2 mb-2 {{ !$statusFiltro ? 'active' : '' }}">
-                Todos <span class="badge badge-light ml-1">{{ ($contadores['abertos'] ?? 0) + ($contadores['atendimento'] ?? 0) + ($contadores['fechados'] ?? 0) + ($contadores['pendentes'] ?? 0) + ($contadores['resolvidos'] ?? 0) + ($contadores['aguardando_usuario'] ?? 0) }}</span>
-            </a>
             <a href="{{ route('painel.dashboard', ['status' => 1]) }}" class="btn btn-sm btn-danger rounded-pill px-3 mr-2 mb-2 {{ $statusFiltro == 1 ? 'active' : '' }}">
                 Abertos <span class="badge badge-light ml-1">{{ $contadores['abertos'] ?? 0 }}</span>
             </a>
@@ -158,11 +155,14 @@ use Illuminate\Support\Facades\Auth;
             <a href="{{ route('painel.dashboard', ['status' => 4]) }}" class="btn btn-sm bg-orange text-white rounded-pill px-3 mr-2 mb-2 {{ $statusFiltro == 4 ? 'active' : '' }}">
                 Pendentes <span class="badge badge-light ml-1">{{ $contadores['pendentes'] ?? 0 }}</span>
             </a>
-            <a href="{{ route('painel.dashboard', ['status' => 3]) }}" class="btn btn-sm btn-success rounded-pill px-3 mr-2 mb-2 {{ $statusFiltro == 3 ? 'active' : '' }}">
-                Fechados <span class="badge badge-light ml-1">{{ $contadores['fechados'] ?? 0 }}</span>
-            </a>
             <a href="{{ route('painel.dashboard', ['status' => 6]) }}" class="btn btn-sm btn-secondary rounded-pill px-3 mr-2 mb-2 {{ $statusFiltro == 6 ? 'active' : '' }}">
                 Aguardando Usuário <span class="badge badge-light ml-1">{{ $contadores['aguardando_usuario'] ?? 0 }}</span>
+            </a>
+            <a href="{{ route('painel.dashboard', ['status' => 5]) }}" class="btn btn-sm btn-info rounded-pill px-3 mr-2 mb-2 {{ $statusFiltro == 5 ? 'active' : '' }}">
+                Resolvidos <span class="badge badge-light ml-1">{{ $contadores['resolvidos'] ?? 0 }}</span>
+            </a>
+            <a href="{{ route('painel.dashboard', ['status' => 3]) }}" class="btn btn-sm btn-success rounded-pill px-3 mr-2 mb-2 {{ $statusFiltro == 3 ? 'active' : '' }}">
+                Fechados <span class="badge badge-light ml-1">{{ $contadores['fechados'] ?? 0 }}</span>
             </a>
         </div>
     </div>
