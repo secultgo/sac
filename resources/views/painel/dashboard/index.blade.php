@@ -312,6 +312,40 @@ use Illuminate\Support\Facades\Auth;
     </div>
 </div>
 
+<!-- Modal de Chamados Não Avaliados -->
+@if(session('mostrarModalAvaliacao') && session('chamadosNaoAvaliados') > 0)
+<div class="modal fade" id="modalChamadosNaoAvaliados" tabindex="-1" role="dialog" aria-labelledby="modalChamadosNaoAvaliadosLabel" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header bg-warning">
+                <h5 class="modal-title" id="modalChamadosNaoAvaliadosLabel">
+                    <i class="fas fa-exclamation-triangle"></i> Chamados Pendentes de Avaliação
+                </h5>
+            </div>
+            <div class="modal-body text-center">
+                <div class="mb-3">
+                    <i class="fas fa-clipboard-check fa-3x text-warning"></i>
+                </div>
+                <h5 class="mb-3">Você possui {{ session('chamadosNaoAvaliados') }} chamado{{ session('chamadosNaoAvaliados') > 1 ? 's' : '' }} não avaliado{{ session('chamadosNaoAvaliados') > 1 ? 's' : '' }}!</h5>
+                <p class="text-muted">
+                    Para abrir um novo chamado, é necessário avaliar primeiro os chamados que já foram resolvidos.
+                    Isso nos ajuda a melhorar continuamente nossos serviços.
+                </p>
+                <div class="alert alert-info">
+                    <i class="fas fa-info-circle"></i>
+                    <strong>Como avaliar:</strong> Procure pelos chamados com status "Não Avaliado" na tabela abaixo e clique no botão "Avaliar Atendimento".
+                </div>
+            </div>
+            <div class="modal-footer justify-content-center">
+                <button type="button" class="btn btn-warning" data-dismiss="modal">
+                    <i class="fas fa-star"></i> Entendi, vou avaliar
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+@endif
+
 @stop
 
 @section('css')
@@ -476,6 +510,13 @@ $(document).ready(function() {
                '<"row"<"col-sm-12 col-md-5"i><"col-sm-12 col-md-7"p>>'
     });
 });
+
+// Mostrar modal de chamados não avaliados
+@if(session('mostrarModalAvaliacao') && session('chamadosNaoAvaliados') > 0)
+    $(document).ready(function() {
+        $('#modalChamadosNaoAvaliados').modal('show');
+    });
+@endif
 
 // Verificar se há notificação de chamado criado
 @if(session('chamado_id') && session('posicao_fila'))
