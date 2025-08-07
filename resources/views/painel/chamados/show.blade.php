@@ -157,7 +157,7 @@ use Illuminate\Support\Facades\Auth;
                 <hr>
                 <div class="row">
                     <div class="col-6">
-                        <strong>Resolvido em:</strong>
+                        <strong>Não Avaliado em:</strong>
                     </div>
                     <div class="col-6">
                         {{ is_string($chamado->chamado_resolvido) ? \Carbon\Carbon::parse($chamado->chamado_resolvido)->format('d/m/Y H:i:s') : $chamado->chamado_resolvido->format('d/m/Y H:i:s') }}
@@ -413,7 +413,7 @@ use Illuminate\Support\Facades\Auth;
                         <label for="solucao">Solução Aplicada <span class="text-danger">*</span></label>
                         <textarea class="form-control" id="solucao" name="solucao" rows="4" placeholder="Descreva detalhadamente a solução aplicada..." required></textarea>
                         <small class="form-text text-muted">
-                            Esta informação será registrada no histórico do chamado e o status será alterado para "Resolvido".
+                            Esta informação será registrada no histórico do chamado e o status será alterado para "Não Avaliado".
                         </small>
                     </div>
                 </div>
@@ -545,7 +545,7 @@ use Illuminate\Support\Facades\Auth;
                 <div class="modal-body">
                     <div class="alert alert-success">
                         <i class="fas fa-check-circle"></i>
-                        <strong>Seu chamado foi resolvido!</strong> Avalie o atendimento recebido.
+                        <strong>Seu chamado foi resolvido e está aguardando avaliação!</strong> Avalie o atendimento recebido.
                     </div>
                     
                     <div class="form-group">

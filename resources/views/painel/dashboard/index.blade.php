@@ -159,7 +159,7 @@ use Illuminate\Support\Facades\Auth;
                 Aguardando Usuário <span class="badge badge-light ml-1">{{ $contadores['aguardando_usuario'] ?? 0 }}</span>
             </a>
             <a href="{{ route('painel.dashboard', ['status' => 5]) }}" class="btn btn-sm btn-info rounded-pill px-3 mr-2 mb-2 {{ $statusFiltro == 5 ? 'active' : '' }}">
-                Resolvidos <span class="badge badge-light ml-1">{{ $contadores['resolvidos'] ?? 0 }}</span>
+                Não Avaliados <span class="badge badge-light ml-1">{{ $contadores['resolvidos'] ?? 0 }}</span>
             </a>
             <a href="{{ route('painel.dashboard', ['status' => 3]) }}" class="btn btn-sm btn-success rounded-pill px-3 mr-2 mb-2 {{ $statusFiltro == 3 ? 'active' : '' }}">
                 Fechados <span class="badge badge-light ml-1">{{ $contadores['fechados'] ?? 0 }}</span>
@@ -224,7 +224,7 @@ use Illuminate\Support\Facades\Auth;
                                     <span class="badge bg-orange">Pendente</span>
                                     @break
                                 @case(5)
-                                    <span class="badge badge-info">Resolvido</span>
+                                    <span class="badge badge-info">Não Avaliado</span>
                                     @break
                                 @case(6)
                                     <span class="badge badge-secondary">Aguardando Usuário</span>
@@ -269,7 +269,7 @@ use Illuminate\Support\Facades\Auth;
                                 </a>
                                 @endif
 
-                                <!-- Adicionar Comentário - para chamados que não estão fechados, abertos ou resolvidos -->
+                                <!-- Adicionar Comentário - para chamados que não estão fechados, abertos ou não avaliados -->
                                 @if(!in_array($chamado->status_chamado_id, [3, 1, 5]) && $chamado->status_chamado_id != 6)
                                 <a href="{{ route('chamados.show', $chamado->chamado_id) }}" class="btn btn-sm btn-secondary mr-1 mb-1" title="Adicionar Comentário">
                                     <i class="fas fa-comment-dots"></i>

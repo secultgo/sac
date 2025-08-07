@@ -80,7 +80,7 @@
                             <h6><i class="fas fa-pause-circle text-orange"></i> Chamado Pendente</h6>
                             @break
                         @case('resolvido')
-                            <h6><i class="fas fa-check-circle text-info"></i> Chamado Resolvido</h6>
+                            <h6><i class="fas fa-check-circle text-info"></i> Chamado Não Avaliado</h6>
                             @break
                         @case('fechado')
                             <h6><i class="fas fa-times-circle text-success"></i> Chamado Fechado</h6>
