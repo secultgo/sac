@@ -22,10 +22,23 @@ class ChamadoController extends Controller
      */
     public function create()
     {
+        // Verificar se o usuário tem chamados não avaliados
+        $chamadosNaoAvaliados = Chamado::where('usuario_id', Auth::user()->usuario_id)
+            ->where('status_chamado_id', StatusChamado::NAO_AVALIADO)
+            ->count();
+
+        // Se houver chamados não avaliados, redirecionar para o dashboard com mensagem
+        if ($chamadosNaoAvaliados > 0) {
+            return redirect()->route('painel.dashboard')
+                ->with('chamadosNaoAvaliados', $chamadosNaoAvaliados)
+                ->with('mostrarModalAvaliacao', true);
+        }
+
         $problemas = Problema::orderBy('problema_nome')->get();
         $departamentos = Departamento::orderBy('departamento_nome')->get();
         $locais = Local::orderBy('local_nome')->get();
         $servicos = ServicoChamado::orderBy('servico_chamado_nome')->get();
+
         return view('painel.chamados.create', compact('problemas', 'departamentos', 'locais', 'servicos'));
     }
 
