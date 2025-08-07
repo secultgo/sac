@@ -15,7 +15,7 @@ class DepartamentoController extends Controller
      */
     public function index()
     {
-        $departamentos = Departamento::orderBy('departamento_nome')->paginate(15);
+        $departamentos = Departamento::orderBy('departamento_nome')->get();
         return view('painel.departamentos.index', compact('departamentos'));
     }
 

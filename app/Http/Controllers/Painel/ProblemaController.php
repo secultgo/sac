@@ -15,7 +15,7 @@ class ProblemaController extends Controller
     {
         $problemas = Problema::with(['departamento','status'])
             ->orderBy('problema_nome')
-            ->paginate(15);
+            ->get();
         return view('painel.problemas.index', compact('problemas'));
     }
 

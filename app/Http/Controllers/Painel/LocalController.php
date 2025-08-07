@@ -11,7 +11,7 @@ class LocalController extends Controller
 {
     public function index()
     {
-        $locais = Local::orderBy('local_nome')->paginate(15);
+        $locais = Local::orderBy('local_nome')->get();
         return view('painel.locais.index', compact('locais'));
     }
 
