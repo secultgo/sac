@@ -8,7 +8,6 @@ use App\Models\Departamento;
 use App\Models\NivelUsuario;
 use App\Models\Chamado;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
 use App\Http\Requests\UserRequest;
 use App\Models\Nivel;
 use App\Models\Ldap;
@@ -103,7 +102,7 @@ class UserController extends Controller
                 'status_id' => $request->status_id,
             ]);
 
-            \App\Models\NivelUsuario::updateOrCreate(
+            NivelUsuario::updateOrCreate(
                 ['usuario_id' => $usuario->usuario_id],
                 ['nivel_id'   => $request->usuario_nivel]
             );
