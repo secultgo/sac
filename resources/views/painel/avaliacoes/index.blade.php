@@ -112,7 +112,7 @@
                                 </span>
                             </td>
                             <td>
-                                <a href="#" class="btn btn-sm btn-outline-primary" title="Ver detalhes">
+                                <a href="{{ route('chamados.show', $chamado->chamado_id) }}" class="btn btn-sm btn-outline-primary" title="Ver detalhes">
                                     <i class="fas fa-search"></i>
                                 </a>
                             </td>
