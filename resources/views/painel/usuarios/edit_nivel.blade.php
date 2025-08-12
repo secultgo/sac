@@ -17,13 +17,21 @@
 
                 @csrf
                 @method('PUT')
+                
+                <!-- Campo para identificar a origem -->
+                @if(request()->headers->get('referer') && str_contains(request()->headers->get('referer'), '/equipe'))
+                    <input type="hidden" name="from_equipe" value="1">
+                @endif
 
                 <div class="form-group mb-3">
                     <label for="usuario_nivel">Nível</label>
                     <select name="usuario_nivel" id="usuario_nivel" class="form-control @error('usuario_nivel') is-invalid @enderror">
                         @foreach($nivel_usuarios as $nivel)
+                            @php
+                                $nivelAtual = $usuario->nivelUsuarios->first();
+                            @endphp
                             <option value="{{ $nivel->nivel_id }}" 
-                                @if(optional($usuario->nivelUsuario)->nivel_id == $nivel->nivel_id) selected @endif>
+                                @if($nivelAtual && $nivelAtual->nivel_id == $nivel->nivel_id) selected @endif>
                                 {{ $nivel->nivel_nome }}
                             </option>
                         @endforeach

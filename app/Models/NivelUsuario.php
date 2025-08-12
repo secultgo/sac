@@ -14,4 +14,9 @@ class NivelUsuario extends Model
         'usuario_id',
         'nivel_id',
     ];
+
+    public function nivel()
+    {
+        return $this->belongsTo(Nivel::class, 'nivel_id', 'nivel_id');
+    }
 }        
