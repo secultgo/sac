@@ -38,8 +38,8 @@ Route::prefix('painel')
         Route::resource('locais', LocalController::class)->parameters(['locais' => 'local']);
 
         Route::resource('usuarios', UserController::class)->names('usuarios')->except(['show']);
-        Route::get('usuarios/{usuario}/edit-nivel', [UserController::class, 'edit_nivel'])->name('usuarios.edit_nivel');
-        Route::put('usuarios/{usuario}/nivel', [UserController::class, 'updateNivel'])->name('usuarios.update_nivel');
+        Route::get('usuarios/{usuario}/edit-nivel', [UserController::class, 'edit_nivel'])->name('usuarios.edit_nivel')->middleware('can:gestor');
+        Route::put('usuarios/{usuario}/nivel', [UserController::class, 'updateNivel'])->name('usuarios.update_nivel')->middleware('can:gestor');
         Route::put('usuarios/{usuario}/ativar', [UserController::class, 'ativar'])->name('usuarios.ativar');
         Route::put('usuarios/{usuario}/desativar', [UserController::class, 'desativar'])->name('usuarios.desativar');
 

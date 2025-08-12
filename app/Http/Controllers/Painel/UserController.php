@@ -125,6 +125,23 @@ class UserController extends Controller
 
     public function edit_nivel(User $usuario)
     {
+        // Verifica se é gestor (nível 1 ou 2)
+        if (!auth()->user()->isGestor()) {
+            abort(403, 'Acesso negado. Apenas gestores podem alterar níveis de usuários.');
+        }
+        
+        // Impede que o usuário altere seu próprio nível
+        if ($usuario->usuario_id === auth()->user()->usuario_id) {
+            // Verifica se veio da tela de equipe pelo referer
+            $referer = request()->headers->get('referer');
+            if ($referer && str_contains($referer, '/equipe')) {
+                return redirect()->route('equipe.index')->with('error', 'Você não pode alterar seu próprio nível.');
+            }
+            return redirect()->route('usuarios.index')->with('error', 'Você não pode alterar seu próprio nível.');
+        }
+        
+        // Carrega os relacionamentos necessários
+        $usuario->load('nivelUsuarios');
         $nivel_usuarios = Nivel::all();
         return view('painel.usuarios.edit_nivel', compact('usuario', 'nivel_usuarios'));
     }
@@ -137,6 +154,11 @@ class UserController extends Controller
 
     public function updateNivel(Request $request, User $usuario)
     {
+        // Verifica se é gestor (nível 1 ou 2)
+        if (!auth()->user()->isGestor()) {
+            abort(403, 'Acesso negado. Apenas gestores podem alterar níveis de usuários.');
+        }
+        
         $request->validate([
             'usuario_nivel' => 'required|exists:nivel,nivel_id',
         ]);
@@ -145,6 +167,11 @@ class UserController extends Controller
             ['usuario_id' => $usuario->usuario_id],
             ['nivel_id' => $request->usuario_nivel]
         );
+
+        // Verifica se veio da tela de equipe
+        if ($request->has('from_equipe')) {
+            return redirect()->route('equipe.index')->with('success', 'Nível do usuário atualizado com sucesso!');
+        }
 
         return redirect()->route('usuarios.index')->with('success', 'Nível do usuário atualizado com sucesso!');
     }

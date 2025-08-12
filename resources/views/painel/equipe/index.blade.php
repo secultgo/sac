@@ -6,6 +6,24 @@
 @stop
 
 @section('content')
+@if(session('success'))
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        <i class="fas fa-check-circle"></i> {{ session('success') }}
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+@endif
+
+@if(session('error'))
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        <i class="fas fa-exclamation-circle"></i> {{ session('error') }}
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+@endif
+
 <div class="card">
     <div class="card-header">
         <h3 class="card-title">Membros da Equipe</h3>
@@ -21,6 +39,7 @@
                             <th>Usuário</th>
                             <th>Nível</th>
                             <th>Status</th>
+                            <th>Ações</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -54,6 +73,17 @@
                                     <span class="badge badge-success">Ativo</span>
                                 @else
                                     <span class="badge badge-danger">Inativo</span>
+                                @endif
+                            </td>
+                            <td>
+                                @if($usuario->usuario_id !== auth()->user()->usuario_id)
+                                    <a href="{{ route('usuarios.edit_nivel', $usuario->usuario_id) }}" 
+                                       class="btn btn-sm btn-warning" 
+                                       title="Alterar Nível">
+                                        <i class="fas fa-user-cog"></i> Nível
+                                    </a>
+                                @else
+                                    <span class="text-muted">-</span>
                                 @endif
                             </td>
                         </tr>
