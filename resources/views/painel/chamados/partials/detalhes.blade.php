@@ -66,9 +66,17 @@
             </div>
             <div class="col-md-6">
                 <div class="info-box-custom">
-                    <h5><i class="fas fa-user-cog"></i> Responsável</h5>
-                    <p><strong>{{ $chamado->responsavel->usuario_nome ?? 'Não atribuído' }}</strong></p>
-                    <p class="text-muted mb-0">{{ $chamado->responsavel->usuario_email ?? '' }}</p>
+                    <h5><i class="fas fa-building"></i> Lotação</h5>
+                    <p><strong>{{ $chamado->departamentoLotacao->departamento_nome ?? 'N/A' }}</strong></p>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6">
+                <div class="info-box-custom">
+                    <h5><i class="fas fa-map-marker-alt"></i> Local</h5>
+                    <p><strong>{{ $chamado->local->local_nome ?? 'N/A' }}</strong></p>
                 </div>
             </div>
         </div>
@@ -82,8 +90,8 @@
             </div>
             <div class="col-md-6">
                 <div class="info-box-custom">
-                    <h5><i class="fas fa-map-marker-alt"></i> Local</h5>
-                    <p><strong>{{ $chamado->local->local_nome ?? 'N/A' }}</strong></p>
+                    <h5><i class="fas fa-user-cog"></i> Responsável</h5>
+                    <p><strong>{{ $chamado->responsavel->usuario_nome ?? 'Não atribuído' }}</strong></p>
                 </div>
             </div>
         </div>
@@ -102,13 +110,6 @@
                 </div>
             </div>
         </div>
-
-        @if($chamado->chamado_ip)
-        <div class="info-box-custom">
-            <h5><i class="fas fa-network-wired"></i> IP do Solicitante</h5>
-            <p><code>{{ $chamado->chamado_ip }}</code></p>
-        </div>
-        @endif
 
         <div class="info-box-custom">
             <h5><i class="fas fa-comment-alt"></i> Descrição do Problema</h5>
