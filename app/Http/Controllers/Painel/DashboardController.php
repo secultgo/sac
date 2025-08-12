@@ -23,12 +23,17 @@ class DashboardController extends Controller
         
         // Aplicar filtro de status - se for status 1 (Abertos), incluir também status 8 (Reabertos)
         if ($statusFiltro == 1) {
-            $query->whereIn('status_chamado_id', [1, 8]);
+            // Uma única query com ordenação customizada: reabertos primeiro, depois abertos
+            $chamados = Chamado::with(['problema', 'departamento', 'local', 'usuario', 'responsavel', 'servicoChamado', 'statusChamado'])
+                              ->where('departamento_id', Auth::user()->departamento_id)
+                              ->whereIn('status_chamado_id', [1, 8])
+                              ->orderByRaw('FIELD(status_chamado_id, 8, 1)')
+                              ->orderBy('chamado_id', 'asc')
+                              ->get();
         } else {
             $query->where('status_chamado_id', $statusFiltro);
+            $chamados = $query->orderBy('chamado_id', 'asc')->get();
         }
-        
-        $chamados = $query->orderBy('chamado_abertura', 'asc')->get();
         
         // Limitar descrição a 200 caracteres
         $chamados->transform(function ($chamado) {

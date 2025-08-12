@@ -519,7 +519,9 @@ $(document).ready(function() {
         "scrollCollapse": true,
         "pageLength": 25,
         "lengthMenu": [[10, 25, 50, 100, -1], [10, 25, 50, 100, "Todos"]],
-        "order": [[0, "desc"]], // Ordenar por ID decrescente
+        // Manter ordenação do servidor quando filtro = Abertos (1);
+        // para outros filtros, ordenar por ID decrescente
+        "order": {!! $statusFiltro == 1 ? '[]' : '[[0, "desc"]]' !!},
         "columnDefs": [
             {
                 "targets": [9], // Coluna de ações
