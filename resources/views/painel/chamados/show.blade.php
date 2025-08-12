@@ -68,19 +68,29 @@ use Illuminate\Support\Facades\Auth;
                     </button>
                     @endif
 
-                    @if($chamado->status_chamado_id == StatusChamado::ATENDIMENTO && Auth::user()->departamento_id == $chamado->departamento_id)
+                    @if($chamado->status_chamado_id == StatusChamado::REABERTO && Auth::user()->departamento_id == $chamado->departamento_id)
+                    <form action="{{ route('chamados.iniciar', $chamado->chamado_id) }}" method="POST" style="display: inline;">
+                        @csrf
+                        @method('PUT')
+                        <button type="submit" class="btn btn-warning btn-block mb-2">
+                            <i class="fas fa-play"></i> Reiniciar Atendimento
+                        </button>
+                    </form>
+                    @endif
+
+                    @if(in_array($chamado->status_chamado_id, [StatusChamado::ATENDIMENTO, StatusChamado::REABERTO]) && Auth::user()->departamento_id == $chamado->departamento_id)
                     <button class="btn btn-info btn-block mb-2" data-toggle="modal" data-target="#modalPendencia">
                         <i class="fas fa-hourglass-half"></i> Colocar em Pendência
                     </button>
                     @endif
 
-                    @if(in_array($chamado->status_chamado_id, [StatusChamado::ATENDIMENTO, StatusChamado::PENDENTE]) && Auth::user()->departamento_id == $chamado->departamento_id)
+                    @if(in_array($chamado->status_chamado_id, [StatusChamado::ATENDIMENTO, StatusChamado::PENDENTE, StatusChamado::REABERTO]) && Auth::user()->departamento_id == $chamado->departamento_id)
                     <button class="btn btn-secondary btn-block mb-2" data-toggle="modal" data-target="#modalDevolver">
                         <i class="fas fa-undo"></i> Devolver ao Usuário
                     </button>
                     @endif
 
-                    @if(in_array($chamado->status_chamado_id, [StatusChamado::ATENDIMENTO, StatusChamado::PENDENTE, StatusChamado::AGUARDANDO_USUARIO]) && Auth::user()->departamento_id == $chamado->departamento_id)
+                    @if(in_array($chamado->status_chamado_id, [StatusChamado::ATENDIMENTO, StatusChamado::PENDENTE, StatusChamado::AGUARDANDO_USUARIO, StatusChamado::REABERTO]) && Auth::user()->departamento_id == $chamado->departamento_id)
                     <button class="btn btn-success btn-block mb-2" data-toggle="modal" data-target="#modalResolver">
                         <i class="fas fa-check"></i> Resolver Chamado
                     </button>
@@ -101,6 +111,9 @@ use Illuminate\Support\Facades\Auth;
                     @if($chamado->status_chamado_id == StatusChamado::RESOLVIDO && Auth::user()->usuario_id == $chamado->usuario_id)
                     <button class="btn btn-warning btn-block mb-2" data-toggle="modal" data-target="#modalAvaliarChamado">
                         <i class="fas fa-star"></i> Avaliar Atendimento
+                    </button>
+                    <button class="btn btn-danger btn-block mb-2" data-toggle="modal" data-target="#modalReabrirChamado">
+                        <i class="fas fa-redo"></i> Reabrir Chamado
                     </button>
                     @endif
 
@@ -586,6 +599,47 @@ use Illuminate\Support\Facades\Auth;
     </div>
 </div>
 
+<!-- Modal para Reabrir Chamado -->
+<div class="modal fade" id="modalReabrirChamado" tabindex="-1" role="dialog" aria-labelledby="modalReabrirChamadoLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <form action="{{ route('chamados.reabrir', $chamado->chamado_id) }}" method="POST">
+                @csrf
+                @method('PUT')
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalReabrirChamadoLabel">
+                        <i class="fas fa-redo"></i> Reabrir Chamado
+                    </h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="alert alert-warning">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <strong>Atenção:</strong> O chamado será reaberto e retornará para atendimento. Descreva o motivo da reabertura.
+                    </div>
+                    <div class="form-group">
+                        <label for="motivoReabertura">Motivo da Reabertura <span class="text-danger">*</span></label>
+                        <textarea class="form-control" id="motivoReabertura" name="motivo_reabertura" rows="4" placeholder="Descreva por que você está reabrindo este chamado..." required></textarea>
+                        <small class="form-text text-muted">
+                            Este comentário será adicionado automaticamente ao histórico do chamado.
+                        </small>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">
+                        <i class="fas fa-times"></i> Cancelar
+                    </button>
+                    <button type="submit" class="btn btn-danger">
+                        <i class="fas fa-redo"></i> Reabrir Chamado
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
 @stop
 
 @section('css')
@@ -739,6 +793,7 @@ $(document).ready(function() {
         $('#modalAlterarResponsavel').modal('hide');
         $('#modalResponderUsuario').modal('hide');
         $('#modalAvaliarChamado').modal('hide');
+        $('#modalReabrirChamado').modal('hide');
         // Limpar os formulários
         $('#modalComentario form')[0].reset();
         $('#modalPendencia form')[0].reset();
@@ -748,6 +803,7 @@ $(document).ready(function() {
         $('#modalAlterarResponsavel form')[0].reset();
         $('#modalResponderUsuario form')[0].reset();
         $('#modalAvaliarChamado form')[0].reset();
+        $('#modalReabrirChamado form')[0].reset();
     @endif
 });
 </script>

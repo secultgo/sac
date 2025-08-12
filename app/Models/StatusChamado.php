@@ -29,6 +29,7 @@ class StatusChamado extends Model
      * 5 = Não Avaliado
      * 6 = Aguardando resposta usuário
      * 7 = Cancelado
+     * 8 = Reaberto
      */
     public const ABERTO = 1;
     public const ATENDIMENTO = 2;
@@ -38,6 +39,7 @@ class StatusChamado extends Model
     public const RESOLVIDO = 5; // Alias para compatibilidade
     public const AGUARDANDO_USUARIO = 6;
     public const CANCELADO = 7;
+    public const REABERTO = 8;
 
     /**
      * Um status de chamado pode ter vários chamados

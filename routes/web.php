@@ -59,6 +59,7 @@ Route::prefix('painel')
         Route::put('chamados/{chamado}/alterar-responsavel', [ChamadoController::class, 'alterarResponsavel'])->name('chamados.alterar-responsavel');
         Route::put('chamados/{chamado}/transferir', [ChamadoController::class, 'transferirDepartamento'])->name('chamados.transferir');
         Route::put('chamados/{chamado}/avaliar', [ChamadoController::class, 'avaliarChamado'])->name('chamados.avaliar');
+        Route::put('chamados/{chamado}/reabrir', [ChamadoController::class, 'reabrirChamado'])->name('chamados.reabrir');
         Route::get('chamados', function() { return redirect()->route('painel.dashboard'); })->name('chamados.index');
         Route::get('meus-atendimentos', [ChamadoController::class, 'meusAtendimentos'])
             ->name('meus-atendimentos.index')

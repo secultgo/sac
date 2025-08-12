@@ -213,9 +213,9 @@ class ChamadoController extends Controller
 
         $chamado = Chamado::findOrFail($id);
         
-        // Verifica se o chamado está em atendimento para poder colocar em pendência
-        if ($chamado->status_chamado_id != StatusChamado::ATENDIMENTO) {
-            return redirect()->back()->with('error', 'Apenas chamados em atendimento podem ser colocados em pendência.');
+        // Verifica se o chamado está em atendimento ou reaberto para poder colocar em pendência
+        if (!in_array($chamado->status_chamado_id, [StatusChamado::ATENDIMENTO, StatusChamado::REABERTO])) {
+            return redirect()->back()->with('error', 'Apenas chamados em atendimento ou reabertos podem ser colocados em pendência.');
         }
 
         // Atualiza o status para Pendente (4)
@@ -266,21 +266,28 @@ class ChamadoController extends Controller
     public function iniciarAtendimento($id)
     {
         $chamado = Chamado::findOrFail($id);
+        $statusOriginal = $chamado->status_chamado_id;
         
-        // Verifica se o chamado está aberto para poder iniciar atendimento
-        if ($chamado->status_chamado_id != StatusChamado::ABERTO) {
-            return redirect()->back()->with('error', 'Apenas chamados abertos podem ter o atendimento iniciado.');
+        // Verifica se o chamado está aberto ou reaberto para poder iniciar atendimento
+        if (!in_array($statusOriginal, [StatusChamado::ABERTO, StatusChamado::REABERTO])) {
+            return redirect()->back()->with('error', 'Apenas chamados abertos ou reabertos podem ter o atendimento iniciado.');
         }
 
         // Atualiza o status para Atendimento (2) e define o responsável
         $chamado->status_chamado_id = StatusChamado::ATENDIMENTO;
         $chamado->responsavel_id = Auth::user()->usuario_id;
-        $chamado->chamado_atendimento = now();
+        
+        // Define a data de atendimento apenas se for um chamado aberto (não reaberto)
+        if ($statusOriginal == StatusChamado::ABERTO) {
+            $chamado->chamado_atendimento = now();
+        }
+        
         $chamado->save();
 
         // Adiciona um comentário automático
+        $acao = ($statusOriginal == StatusChamado::ABERTO) ? 'Atendimento iniciado' : 'Atendimento reiniciado';
         ComentarioChamado::create([
-            'comentario_chamado_comentario' => 'Atendimento iniciado por ' . Auth::user()->name,
+            'comentario_chamado_comentario' => $acao . ' por ' . Auth::user()->name,
             'comentario_chamado_data' => now(),
             'chamado_id' => $id,
             'usuario_id' => Auth::user()->usuario_id
@@ -300,9 +307,9 @@ class ChamadoController extends Controller
 
         $chamado = Chamado::findOrFail($id);
         
-        // Verifica se o chamado está em atendimento ou pendente para poder devolver
-        if (!in_array($chamado->status_chamado_id, [StatusChamado::ATENDIMENTO, StatusChamado::PENDENTE])) {
-            return redirect()->back()->with('error', 'Apenas chamados em atendimento ou pendentes podem ser devolvidos ao usuário.');
+        // Verifica se o chamado está em atendimento, pendente ou reaberto para poder devolver
+        if (!in_array($chamado->status_chamado_id, [StatusChamado::ATENDIMENTO, StatusChamado::PENDENTE, StatusChamado::REABERTO])) {
+            return redirect()->back()->with('error', 'Apenas chamados em atendimento, pendentes ou reabertos podem ser devolvidos ao usuário.');
         }
 
         // Atualiza o status para Aguardando resposta usuário (6)
@@ -340,8 +347,8 @@ class ChamadoController extends Controller
         $chamado = Chamado::findOrFail($id);
         
         // Verifica se o chamado pode ser resolvido
-        if (!in_array($chamado->status_chamado_id, [StatusChamado::ATENDIMENTO, StatusChamado::PENDENTE, StatusChamado::AGUARDANDO_USUARIO])) {
-            return redirect()->back()->with('error', 'Apenas chamados em atendimento, pendentes ou aguardando usuário podem ser resolvidos.');
+        if (!in_array($chamado->status_chamado_id, [StatusChamado::ATENDIMENTO, StatusChamado::PENDENTE, StatusChamado::AGUARDANDO_USUARIO, StatusChamado::REABERTO])) {
+            return redirect()->back()->with('error', 'Apenas chamados em atendimento, pendentes, aguardando usuário ou reabertos podem ser resolvidos.');
         }
 
         // Atualiza o status para Resolvido (5)
@@ -381,8 +388,8 @@ class ChamadoController extends Controller
         $chamado = Chamado::findOrFail($id);
         
         // Verifica se o chamado pode ter o responsável alterado
-        if (!in_array($chamado->status_chamado_id, [StatusChamado::ATENDIMENTO, StatusChamado::PENDENTE, StatusChamado::AGUARDANDO_USUARIO])) {
-            return redirect()->back()->with('error', 'Apenas chamados em atendimento, pendentes ou aguardando usuário podem ter o responsável alterado.');
+        if (!in_array($chamado->status_chamado_id, [StatusChamado::ATENDIMENTO, StatusChamado::PENDENTE, StatusChamado::AGUARDANDO_USUARIO, StatusChamado::REABERTO])) {
+            return redirect()->back()->with('error', 'Apenas chamados em atendimento, pendentes, aguardando usuário ou reabertos podem ter o responsável alterado.');
         }
 
         // Verifica se não está tentando alterar para o mesmo responsável
@@ -572,5 +579,37 @@ class ChamadoController extends Controller
         ]);
 
         return redirect()->back()->with('success', 'Avaliação enviada com sucesso! Obrigado pelo seu feedback.');
+    }
+
+    /**
+     * Reabre um chamado resolvido.
+     */
+    public function reabrirChamado(Request $request, $id)
+    {
+        $validated = $request->validate([
+            'motivo_reabertura' => 'required|string|max:1000',
+        ]);
+
+        $chamado = Chamado::findOrFail($id);
+
+        // Verifica se o usuário pode reabrir o chamado (deve ser o dono do chamado e estar resolvido)
+        if ($chamado->usuario_id !== Auth::user()->usuario_id || $chamado->status_chamado_id !== StatusChamado::RESOLVIDO) {
+            return redirect()->back()->with('error', 'Você não pode reabrir este chamado.');
+        }
+
+        // Atualiza o status para "Reaberto" 
+        $chamado->status_chamado_id = StatusChamado::REABERTO;
+        $chamado->chamado_resolvido = null; // Remove a data de resolução
+        $chamado->save();
+
+        // Adiciona comentário da reabertura
+        ComentarioChamado::create([
+            'comentario_chamado_comentario' => 'Chamado reaberto pelo usuário ' . Auth::user()->name . '. Motivo: ' . $validated['motivo_reabertura'],
+            'comentario_chamado_data' => now(),
+            'chamado_id' => $id,
+            'usuario_id' => Auth::user()->usuario_id
+        ]);
+
+        return redirect()->back()->with('success', 'Chamado reaberto com sucesso! O departamento responsável foi notificado.');
     }
 }
