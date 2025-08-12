@@ -133,7 +133,7 @@ use Illuminate\Support\Facades\Auth;
                         <th>ID</th>
                         <th>Descrição</th>
                         <th>Solicitante</th>
-                        <th>Departamento</th>
+                        <th>Lotação</th>
                         <th>Local</th>
                         <th>Responsável</th>
                         <th>Data de Criação</th>
@@ -150,7 +150,7 @@ use Illuminate\Support\Facades\Auth;
                             {{ $chamado->chamado_descricao }}
                         </td>
                         <td>{{ $chamado->usuario->usuario_nome ?? 'N/A' }}</td>
-                        <td>{{ $chamado->departamento->departamento_nome ?? 'N/A' }}</td>
+                        <td>{{ $chamado->departamentoLotacao->departamento_nome ?? 'N/A' }}</td>
                         <td>{{ $chamado->local->local_nome ?? 'N/A' }}</td>
                         <td>{{ $chamado->responsavel->usuario_nome ?? 'Não atribuído' }}</td>
                         <td>
