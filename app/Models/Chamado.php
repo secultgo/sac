@@ -60,6 +60,14 @@ class Chamado extends Model
         return $this->belongsTo(Departamento::class, 'departamento_id', 'departamento_id');
     }
 
+    /**
+     * Relacionamento com Departamento (Lotação)
+     */
+    public function departamentoLotacao()
+    {
+        return $this->belongsTo(Departamento::class, 'lotacao_id', 'departamento_id');
+    }
+
     public function local()
     {
         return $this->belongsTo(Local::class, 'local_id', 'local_id');

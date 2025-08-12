@@ -343,6 +343,12 @@ return [
             'can' => 'gestor',
         ],
         [
+            'text' => 'Avaliações',
+            'url' => 'painel/avaliacoes',
+            'icon' => 'fas fa-star',
+            'can' => 'gestor',
+        ],
+        [
             'text' => 'Departamentos',
             'url'  => 'painel/departamentos',
             'icon' => 'fas fa-building',

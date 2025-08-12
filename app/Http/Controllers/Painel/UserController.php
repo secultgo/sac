@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Models\Departamento;
 use App\Models\NivelUsuario;
+use App\Models\Chamado;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use App\Http\Requests\UserRequest;
@@ -311,6 +312,51 @@ class UserController extends Controller
             ->get();
             
         return view('painel.equipe.index', compact('usuarios'));
+    }
+
+    /**
+     * Exibe a página de avaliações para gestores
+     */
+    public function avaliacoes()
+    {
+        // Verifica se é gestor (redundante, mas por segurança)
+        $this->authorize('gestor');
+        
+        $departamentoId = auth()->user()->departamento_id;
+        
+        // Buscar chamados com avaliações ruins (4) e regulares (3) do departamento
+        $chamadosAvaliados = Chamado::with([
+            'usuario',
+            'local',
+            'responsavel',
+            'avaliacaoChamado'
+        ])
+        ->where('departamento_id', $departamentoId)
+        ->whereIn('avaliacao_chamado_id', [3,4])
+        ->whereNotNull('avaliacao_chamado_id')
+        ->orderBy('chamado_fechado', 'desc')
+        ->get();
+
+        // Totalizadores
+        $totalRuins = Chamado::where('departamento_id', $departamentoId)
+            ->where('avaliacao_chamado_id', 4)
+            ->whereNotNull('avaliacao_chamado_id')
+            ->count();
+        $totalRegulares = Chamado::where('departamento_id', $departamentoId)
+            ->where('avaliacao_chamado_id', 3)
+            ->whereNotNull('avaliacao_chamado_id')
+            ->count();
+        $totalAvaliacoes = Chamado::where('departamento_id', $departamentoId)
+            ->whereIn('avaliacao_chamado_id', [3,4])
+            ->whereNotNull('avaliacao_chamado_id')
+            ->count();
+
+        return view('painel.avaliacoes.index', compact(
+            'chamadosAvaliados',
+            'totalAvaliacoes',
+            'totalRuins',
+            'totalRegulares'
+        ));
     }
 
 }
