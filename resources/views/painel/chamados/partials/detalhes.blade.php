@@ -42,6 +42,11 @@
                                 <i class="fas fa-clock"></i> Aguardando Usuário
                             </span>
                             @break
+                        @case(8)
+                            <span class="badge badge-danger status-badge">
+                                <i class="fas fa-redo"></i> Reaberto
+                            </span>
+                            @break
                         @default
                             <span class="badge badge-dark status-badge">
                                 Status {{ $chamado->status_chamado_id }}
