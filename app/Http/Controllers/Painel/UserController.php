@@ -12,7 +12,6 @@ use App\Http\Requests\UserRequest;
 use App\Models\Nivel;
 use App\Models\Ldap;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
 
 
 class UserController extends Controller
@@ -77,7 +76,8 @@ class UserController extends Controller
     {
         $departamentos = Departamento::all();
         $niveis = Nivel::all();
-        return view('painel.usuarios.edit', compact('usuario', 'departamentos', 'niveis'));
+        $nivelUsuario = NivelUsuario::where('usuario_id', $usuario->usuario_id)->first();
+        return view('painel.usuarios.edit', compact('usuario', 'departamentos', 'niveis', 'nivelUsuario'));
     }
 
     public function update(Request $request, User $usuario)
@@ -87,7 +87,7 @@ class UserController extends Controller
             $request->validate([
                 'usuario_nome'     => 'required|string|max:100',
                 'usuario_email'    => 'required|email|max:100|unique:usuario,usuario_email,' . $usuario->usuario_id . ',usuario_id',
-                'usuario_cpf'      => ['required', 'string', 'max:14', 'regex:/^\d{3}\.\d{3}\.\d{3}\-\d{2}$/', 'unique:usuario,usuario_cpf,' . $usuario->usuario_id . ',usuario_id'],
+                'usuario_cpf'      => ['nullable', 'string', 'max:14', 'regex:/^\d{3}\.\d{3}\.\d{3}\-\d{2}$/', 'unique:usuario,usuario_cpf,' . $usuario->usuario_id . ',usuario_id'],
                 'departamento_id'  => 'required|exists:departamento,departamento_id',
                 'usuario_ldap'     => 'required|in:0,1',
                 'usuario_nivel'    => 'required|exists:nivel,nivel_id',
@@ -188,7 +188,6 @@ class UserController extends Controller
         if (!$ldapconn) {
             return redirect()->route('usuarios.index')->with('error', 'Não foi possível conectar ao servidor LDAP.');
         }
-
     
         ldap_set_option($ldapconn, LDAP_OPT_PROTOCOL_VERSION, 3);
         ldap_set_option($ldapconn, LDAP_OPT_REFERRALS, 0);
@@ -205,57 +204,70 @@ class UserController extends Controller
     
         $entries = ldap_get_entries($ldapconn, $result);
     
+        // Desativar todos os usuários LDAP existentes (equivale ao desativarGeral() do CI)
         User::where('usuario_ldap', true)->update(['status_id' => 2]);
-    
-        $usuariosLdap = User::where('usuario_ldap', true)->pluck('usuario_id');
         
+        $usuariosProcessados = 0;
+        $usuariosAtualizados = 0;
+        $usuariosCriados = 0;
+        $erros = 0;
+        
+        // Iterar sobre os dados do LDAP
         for ($i = 0; $i < $entries['count']; $i++) {
 
             $ldapUser = $entries[$i];
+            $usuariosProcessados++;
     
             DB::beginTransaction();
             try {
-                $userData = [
-                    'usuario_id'        => $ldapUser['usncreated'][0],
-                    'usuario_nome'     => $ldapUser['cn'][0],
-                    'usuario_usuario'  => $ldapUser['samaccountname'][0],
-                    'usuario_email'    => $ldapUser['mail'][0] ?? null,
-                    'departamento_id'  => $ldapUser['department'][0] ?? null,
-                    'usuario_cpf'      => $ldapUser['description'][0] ?? null,
-                    'usuario_celular'  => $ldapUser['telephonenumber'][0] ?? null,
-                    'status_id'        => 1,
-                    'usuario_ldap'     => 1,
-                    'excluido_id'      => 2,
-                ];
-    
+                // Verificar se o usuário já existe pelo usuario_id
                 $usuario = User::where('usuario_id', $ldapUser['usncreated'][0])->first();
-                if ($usuario) {
-                    $usuario->update($userData);
-                } else {
+                
+                if (!$usuario) {
+                    // Criar novo usuário (seguindo a estrutura do CI original)
+                    $userData = [
+                        'usuario_id'        => (int) $ldapUser['usncreated'][0],
+                        'usuario_nome'      => $ldapUser['cn'][0],
+                        'usuario_usuario'   => $ldapUser['samaccountname'][0],
+                        'usuario_email'     => isset($ldapUser['mail'][0]) ? $ldapUser['mail'][0] : '',
+                        'status_id'         => 1,
+                        'usuario_ldap'      => 1,
+                    ];
+                    
                     $usuario = User::create($userData);
+                    
+                    // Criar nível de usuário (nível 4 como no CI original)
                     NivelUsuario::create([
                         'usuario_id' => $usuario->usuario_id,
-                        'nivel_id'   => 3,
+                        'nivel_id'   => 4,
                     ]);
+                    
+                    $usuariosCriados++;
+                } else {
+                    // Atualizar usuário existente (seguindo a estrutura do CI original)
+                    $updateData = [
+                        'usuario_nome'      => $ldapUser['cn'][0],
+                        'usuario_usuario'   => $ldapUser['samaccountname'][0],
+                        'usuario_email'     => isset($ldapUser['mail'][0]) ? $ldapUser['mail'][0] : '',
+                        'status_id'         => 1,
+                    ];
+                    
+                    $usuario->update($updateData);
+                    $usuariosAtualizados++;
                 }
-
-    
-                if (!$usuario) {
-                    throw new \Exception('Falha ao criar o usuário.');
-                }
-    
-                
     
                 DB::commit();
             } catch (\Exception $e) {
                 DB::rollBack();
-                logger('Erro LDAP:', [$e->getMessage()]);
+                $erros++;
             }
         }
     
         ldap_close($ldapconn);
     
-        return redirect()->route('usuarios.index')->with('success', 'Importação de usuários LDAP concluída.');
+        return redirect()->route('usuarios.index')->with('success', 
+            "Importação LDAP concluída. Processados: {$usuariosProcessados}, Criados: {$usuariosCriados}, Atualizados: {$usuariosAtualizados}, Erros: {$erros}"
+        );
     }
     
 
