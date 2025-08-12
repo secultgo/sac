@@ -56,6 +56,7 @@ class DashboardController extends Controller
             'pendentes' => Chamado::where('departamento_id', Auth::user()->departamento_id)->where('status_chamado_id', 4)->count(),
             'resolvidos' => Chamado::where('departamento_id', Auth::user()->departamento_id)->where('status_chamado_id', 5)->count(),
             'aguardando_usuario' => Chamado::where('departamento_id', Auth::user()->departamento_id)->where('status_chamado_id', 6)->count(),
+            'reabertos' => Chamado::where('departamento_id', Auth::user()->departamento_id)->where('status_chamado_id', 8)->count(),
             'mes_atual' => $chamadosMesAtual,
             'percentual_fechados_mes' => $percentualFechadosMes,
         ];
