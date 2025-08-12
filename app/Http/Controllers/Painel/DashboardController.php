@@ -21,8 +21,12 @@ class DashboardController extends Controller
         $query = Chamado::with(['problema', 'departamento', 'local', 'usuario', 'responsavel', 'servicoChamado', 'statusChamado'])
                         ->where('departamento_id', Auth::user()->departamento_id);
         
-        // Sempre aplicar filtro de status
-        $query->where('status_chamado_id', $statusFiltro);
+        // Aplicar filtro de status - se for status 1 (Abertos), incluir também status 8 (Reabertos)
+        if ($statusFiltro == 1) {
+            $query->whereIn('status_chamado_id', [1, 8]);
+        } else {
+            $query->where('status_chamado_id', $statusFiltro);
+        }
         
         $chamados = $query->orderBy('chamado_abertura', 'asc')->get();
         
@@ -50,7 +54,7 @@ class DashboardController extends Controller
         $percentualFechadosMes = $chamadosMesAtual > 0 ? round(($chamadosFechadosMes / $chamadosMesAtual) * 100, 1) : 0;
         
         $contadores = [
-            'abertos' => Chamado::where('departamento_id', Auth::user()->departamento_id)->where('status_chamado_id', 1)->count(),
+            'abertos' => Chamado::where('departamento_id', Auth::user()->departamento_id)->whereIn('status_chamado_id', [1, 8])->count(),
             'atendimento' => Chamado::where('departamento_id', Auth::user()->departamento_id)->where('status_chamado_id', 2)->count(),
             'fechados' => Chamado::where('departamento_id', Auth::user()->departamento_id)->where('status_chamado_id', 3)->count(),
             'pendentes' => Chamado::where('departamento_id', Auth::user()->departamento_id)->where('status_chamado_id', 4)->count(),
