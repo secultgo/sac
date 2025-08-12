@@ -1,7 +1,6 @@
 <?php
 
 return [
-
     /*
     |--------------------------------------------------------------------------
     | Title
@@ -336,6 +335,12 @@ return [
             'text' => 'Meus Atendimentos',
             'url' => 'painel/meus-atendimentos',
             'icon' => 'fas fa-headset',
+        ],
+        [
+            'text' => 'Equipe',
+            'url' => 'painel/equipe',
+            'icon' => 'fas fa-users-cog',
+            'can' => 'gestor',
         ],
         [
             'text' => 'Departamentos',

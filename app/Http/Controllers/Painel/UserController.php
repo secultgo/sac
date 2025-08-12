@@ -269,6 +269,21 @@ class UserController extends Controller
             "Importação LDAP concluída. Processados: {$usuariosProcessados}, Criados: {$usuariosCriados}, Atualizados: {$usuariosAtualizados}, Erros: {$erros}"
         );
     }
-    
+
+    /**
+     * Exibe a página de equipe para gestores
+     */
+    public function equipe()
+    {
+        // Verifica se é gestor (redundante, mas por segurança)
+        $this->authorize('gestor');
+        
+        $usuarios = User::with(['nivelUsuarios'])
+            ->where('departamento_id', auth()->user()->departamento_id)
+            ->where('status_id', 1) // Apenas usuários ativos
+            ->get();
+            
+        return view('painel.equipe.index', compact('usuarios'));
+    }
 
 }
