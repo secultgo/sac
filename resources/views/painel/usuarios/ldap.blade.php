@@ -3,7 +3,7 @@
 @section('title', 'Importar Usuários')
 
 @section('content_header')
-    <h1>Importar Usuários</h1>
+    <h1>Importar Usuários LDAP</h1>
 @stop
 
 @section('content')
@@ -11,30 +11,44 @@
         <div class="alert alert-success">{{ session('success') }}</div>
     @endif
 
-    <div class="card">
-        <div class="card-header">
-            <h3 class="card-title">Importar Usuários via LDAP</h3>
+    @if(session('error'))
+        <div class="alert alert-danger">{{ session('error') }}</div>
+    @endif
+
+    @if($errors->any())
+        <div class="alert alert-danger">
+            <ul class="mb-0">
+                @foreach($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
         </div>
+    @endif
 
-        <div class="card-body">
-            <form method="POST" action="{{ route('usuarios.importar.ldap.post') }}">
-                @csrf
-
+    <div class="card">
+        <form method="POST" action="{{ route('usuarios.importar.ldap.post') }}">
+            @csrf
+            
+            <div class="card-body">
                 <div class="form-group">
-                    <label for="ldap_server">Selecione o servidor LDAP:</label>
-                    <select name="ldap_server" id="ldap_server" class="form-control">
+                    <label for="ldap_server">Servidor LDAP:</label>
+                    <select name="ldap_server" id="ldap_server" class="form-control" required>
+                        <option value="">Selecione um servidor...</option>
                         @foreach($ldaps as $ldap)
                             <option value="{{ $ldap }}">{{ $ldap }}</option>
                         @endforeach
                     </select>
                 </div>
-
-                <div class="text-right">
-                    <button type="submit" class="btn btn-primary">
-                        <i class="fas fa-download mr-1"></i> Importar Usuários
-                    </button>
-                </div>
-            </form>
-        </div>
+            </div>
+            
+            <div class="card-footer">
+                <a href="{{ route('usuarios.index') }}" class="btn btn-secondary">
+                    <i class="fas fa-arrow-left"></i> Voltar
+                </a>
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-cloud-download-alt"></i> Importar Usuários
+                </button>
+            </div>
+        </form>
     </div>
 @stop

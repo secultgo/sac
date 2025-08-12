@@ -36,8 +36,7 @@
                         id="usuario_cpf"
                         name="usuario_cpf" 
                         value="{{ old('usuario_cpf', $usuario->usuario_cpf ?? '') }}" 
-                        class="form-control @error('usuario_cpf') is-invalid @enderror" 
-                        required
+                        class="form-control @error('usuario_cpf') is-invalid @enderror"
                     >
                     @error('usuario_cpf')
                         <div class="invalid-feedback">{{ $message }}</div>
@@ -112,8 +111,18 @@
                             name="usuario_ldap" 
                             id="ldap_local" 
                             value="0" 
-                            {{ old('usuario_ldap', 0) == 0 ? 'checked' : '' }}>
+                            {{ old('usuario_ldap', $usuario->usuario_ldap ?? 0) == 0 ? 'checked' : '' }}>
                         <label class="form-check-label" for="ldap_local">Local</label>
+                    </div>
+                    <div class="form-check">
+                        <input 
+                            class="form-check-input" 
+                            type="radio" 
+                            name="usuario_ldap" 
+                            id="ldap_ativo" 
+                            value="1" 
+                            {{ old('usuario_ldap', $usuario->usuario_ldap ?? 0) == 1 ? 'checked' : '' }}>
+                        <label class="form-check-label" for="ldap_ativo">LDAP</label>
                     </div>
                   
                     @error('usuario_ldap')

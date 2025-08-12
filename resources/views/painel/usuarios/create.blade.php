@@ -115,6 +115,16 @@
                             {{ old('usuario_ldap', 0) == 0 ? 'checked' : '' }}>
                         <label class="form-check-label" for="ldap_local">Local</label>
                     </div>
+                    <div class="form-check">
+                        <input 
+                            class="form-check-input" 
+                            type="radio" 
+                            name="usuario_ldap" 
+                            id="ldap_ativo" 
+                            value="1" 
+                            {{ old('usuario_ldap', 0) == 1 ? 'checked' : '' }}>
+                        <label class="form-check-label" for="ldap_ativo">LDAP</label>
+                    </div>
                   
                     @error('usuario_ldap')
                         <div class="text-danger">{{ $message }}</div>

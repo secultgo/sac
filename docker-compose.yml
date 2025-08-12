@@ -39,7 +39,7 @@ services:
         volumes:
             - ./.docker/mysql/dbdata:/var/lib/mysql
         ports:
-            - "3300:3306"
+            - "11306:3306"
         networks:
             - laravel
 
@@ -49,11 +49,14 @@ services:
         platform: linux/x86_64
         restart: unless-stopped
         ports:
-            - "8080:80"
+            - "11080:80"
         environment:
             PMA_HOST: db
             PMA_PORT: 3306
             MYSQL_ROOT_PASSWORD: ${DB_PASSWORD:-root}
+            UPLOAD_LIMIT: 300M
+            MAX_EXECUTION_TIME: 600
+            MEMORY_LIMIT: 512M
         networks:
             - laravel
 
