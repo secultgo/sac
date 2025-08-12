@@ -69,13 +69,13 @@ class User extends Authenticatable
     }
 
     /**
-     * Verifica se o usuário tem permissão para atendimentos (nível 1 ou 2)
+     * Verifica se o usuário tem permissão para atendimentos (nível 1, 2 ou 3)
      */
     public function podeAtender()
     {
         return \DB::table('nivel_usuario')
             ->where('usuario_id', $this->usuario_id)
-            ->whereIn('nivel_id', [1, 2])
+            ->whereIn('nivel_id', [1, 2, 3])
             ->exists();
     }
     

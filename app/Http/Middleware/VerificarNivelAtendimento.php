@@ -24,10 +24,10 @@ class VerificarNivelAtendimento
 
         $usuarioId = Auth::user()->usuario_id;
         
-        // Verificar se o usuário tem nível 1 ou 2 na tabela nivel_usuario
+        // Permite níveis: 1 (Super), 2 (Gestor), 3 (Atendente)
         $temPermissao = DB::table('nivel_usuario')
             ->where('usuario_id', $usuarioId)
-            ->whereIn('nivel_id', [1, 2])
+            ->whereIn('nivel_id', [1, 2, 3])
             ->exists();
 
         if (!$temPermissao) {
