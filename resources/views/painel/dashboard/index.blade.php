@@ -187,6 +187,9 @@ use Illuminate\Support\Facades\Auth;
                                 @case(6)
                                     <span class="badge badge-secondary">Aguardando Usuário</span>
                                     @break
+                                @case(8)
+                                    <span class="badge bg-purple text-white">Reaberto</span>
+                                    @break
                                 @default
                                     <span class="badge badge-dark">Status {{ $chamado->status_chamado_id }}</span>
                             @endswitch
@@ -198,12 +201,12 @@ use Illuminate\Support\Facades\Auth;
                                     <i class="fas fa-eye"></i>
                                 </a>
 
-                                <!-- Iniciar Atendimento - apenas para chamados ABERTOS -->
-                                @if($chamado->status_chamado_id == 1)
+                                <!-- Iniciar Atendimento - para chamados ABERTOS ou REABERTOS -->
+                                @if(in_array($chamado->status_chamado_id, [1, 8]))
                                 <form action="{{ route('chamados.iniciar', $chamado->chamado_id) }}" method="POST" style="display: inline;">
                                     @csrf
                                     @method('PUT')
-                                    <button type="submit" class="btn btn-sm btn-warning mr-1 mb-1" title="Iniciar Atendimento">
+                                    <button type="submit" class="btn btn-sm btn-warning mr-1 mb-1" title="{{ $chamado->status_chamado_id == 1 ? 'Iniciar Atendimento' : 'Reiniciar Atendimento' }}">
                                         <i class="fas fa-play"></i>
                                     </button>
                                 </form>
@@ -234,22 +237,22 @@ use Illuminate\Support\Facades\Auth;
                                 </a>
                                 @endif
 
-                                <!-- Colocar em Pendência - apenas para chamados em ATENDIMENTO (2) -->
-                                @if($chamado->status_chamado_id == 2 && Auth::user()->departamento_id == $chamado->departamento_id)
+                                <!-- Colocar em Pendência - apenas para chamados em ATENDIMENTO (2) ou REABERTOS (8) -->
+                                @if(in_array($chamado->status_chamado_id, [2, 8]) && Auth::user()->departamento_id == $chamado->departamento_id)
                                 <a href="{{ route('chamados.show', $chamado->chamado_id) }}" class="btn btn-sm btn-info mr-1 mb-1" title="Colocar em Pendência">
                                     <i class="fas fa-hourglass-half"></i>
                                 </a>
                                 @endif
 
-                                <!-- Devolver ao Usuário - para chamados em ATENDIMENTO (2) ou PENDENTE (4) -->
-                                @if(in_array($chamado->status_chamado_id, [2, 4]) && Auth::user()->departamento_id == $chamado->departamento_id)
+                                <!-- Devolver ao Usuário - para chamados em ATENDIMENTO (2), PENDENTE (4) ou REABERTOS (8) -->
+                                @if(in_array($chamado->status_chamado_id, [2, 4, 8]) && Auth::user()->departamento_id == $chamado->departamento_id)
                                 <a href="{{ route('chamados.show', $chamado->chamado_id) }}" class="btn btn-sm btn-warning mr-1 mb-1" title="Devolver ao Usuário">
                                     <i class="fas fa-undo"></i>
                                 </a>
                                 @endif
 
-                                <!-- Resolver Chamado - para ATENDIMENTO (2), PENDENTE (4) e AGUARDANDO_USUARIO (6) -->
-                                @if(in_array($chamado->status_chamado_id, [2, 4, 6]) && Auth::user()->departamento_id == $chamado->departamento_id)
+                                <!-- Resolver Chamado - para ATENDIMENTO (2), PENDENTE (4), AGUARDANDO_USUARIO (6) e REABERTOS (8) -->
+                                @if(in_array($chamado->status_chamado_id, [2, 4, 6, 8]) && Auth::user()->departamento_id == $chamado->departamento_id)
                                 <a href="{{ route('chamados.show', $chamado->chamado_id) }}" class="btn btn-sm btn-success mr-1 mb-1" title="Resolver Chamado">
                                     <i class="fas fa-check"></i>
                                 </a>
@@ -386,6 +389,13 @@ use Illuminate\Support\Facades\Auth;
     color: white !important; /* texto do footer branco */
 }
 
+/* Badge customizado para status Reaberto */
+.badge.bg-purple {
+    background-color: #8B008B !important; /* roxo escuro para reaberto */
+    color: white !important;
+    font-weight: bold !important;
+}
+
 /* Estilo para botões ativos */
 .btn.active {
     box-shadow: 0 0 0 2px rgba(0,123,255,.5);
@@ -509,7 +519,9 @@ $(document).ready(function() {
         "scrollCollapse": true,
         "pageLength": 25,
         "lengthMenu": [[10, 25, 50, 100, -1], [10, 25, 50, 100, "Todos"]],
-        "order": [[0, "desc"]], // Ordenar por ID decrescente
+        // Manter ordenação do servidor quando filtro = Abertos (1);
+        // para outros filtros, ordenar por ID decrescente
+        "order": {!! $statusFiltro == 1 ? '[]' : '[[0, "desc"]]' !!},
         "columnDefs": [
             {
                 "targets": [9], // Coluna de ações
