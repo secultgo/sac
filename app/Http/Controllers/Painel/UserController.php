@@ -323,16 +323,18 @@ class UserController extends Controller
         
         $departamentoId = auth()->user()->departamento_id;
         
-        // Buscar chamados com avaliações ruins (4) e regulares (3) do departamento
+        // Buscar chamados com avaliações ruins (4) e regulares (3) do departamento PENDENTES de ciência do gestor
         $chamadosAvaliados = Chamado::with([
             'usuario',
             'local',
             'responsavel',
-            'avaliacaoChamado'
+            'avaliacaoChamado',
+            'departamentoLotacao',
         ])
         ->where('departamento_id', $departamentoId)
         ->whereIn('avaliacao_chamado_id', [3,4])
         ->whereNotNull('avaliacao_chamado_id')
+        ->where('chamado_ciente_gestor', 0)
         ->orderBy('chamado_fechado', 'desc')
         ->get();
 
@@ -340,14 +342,17 @@ class UserController extends Controller
         $totalRuins = Chamado::where('departamento_id', $departamentoId)
             ->where('avaliacao_chamado_id', 4)
             ->whereNotNull('avaliacao_chamado_id')
+            ->where('chamado_ciente_gestor', 0)
             ->count();
         $totalRegulares = Chamado::where('departamento_id', $departamentoId)
             ->where('avaliacao_chamado_id', 3)
             ->whereNotNull('avaliacao_chamado_id')
+            ->where('chamado_ciente_gestor', 0)
             ->count();
         $totalAvaliacoes = Chamado::where('departamento_id', $departamentoId)
             ->whereIn('avaliacao_chamado_id', [3,4])
             ->whereNotNull('avaliacao_chamado_id')
+            ->where('chamado_ciente_gestor', 0)
             ->count();
 
         return view('painel.avaliacoes.index', compact(
@@ -356,6 +361,25 @@ class UserController extends Controller
             'totalRuins',
             'totalRegulares'
         ));
+    }
+
+    /**
+     * Marca ciência do gestor em um chamado avaliado (3/4)
+     */
+    public function marcarCiente(Chamado $chamado)
+    {
+        $this->authorize('gestor');
+
+        if (!in_array((int) $chamado->avaliacao_chamado_id, [3, 4], true)) {
+            return redirect()->back()->with('error', 'Chamado não requer ciência do gestor.');
+        }
+
+        $chamado->update([
+            'chamado_ciente_gestor' => 1,
+            'chamado_ciente_gestor_id' => auth()->user()->usuario_id,
+        ]);
+
+        return redirect()->route('avaliacoes.index')->with('success', 'Ciência registrada com sucesso.');
     }
 
 }

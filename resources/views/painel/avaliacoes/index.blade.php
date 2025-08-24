@@ -72,7 +72,7 @@
 <div class="card mt-3">
     <div class="card-header bg-primary">
         <h3 class="card-title">
-            <i class="fas fa-list"></i> Chamados Avaliados (Ruim/Regular)
+            <i class="fas fa-list"></i> Chamados Avaliados (Ruim/Regular) pendentes de ciência
         </h3>
     </div>
     <div class="card-body">
@@ -91,6 +91,7 @@
                             <th>Data de Criação</th>
                             <th>Data Atendimento</th>
                             <th>Avaliação</th>
+                            <th>Ciência</th>
                             <th>Ação</th>
                         </tr>
                     </thead>
@@ -112,9 +113,24 @@
                                 </span>
                             </td>
                             <td>
+                                @if(!$chamado->chamado_ciente_gestor)
+                                    <span class="badge badge-secondary">Pendente</span>
+                                @else
+                                    <span class="badge badge-success">Ciente</span>
+                                @endif
+                            </td>
+                            <td>
                                 <a href="{{ route('chamados.show', $chamado->chamado_id) }}" class="btn btn-sm btn-outline-primary" title="Ver detalhes">
                                     <i class="fas fa-search"></i>
                                 </a>
+                                @if(!$chamado->chamado_ciente_gestor)
+                                <form action="{{ route('avaliacoes.ciente', $chamado->chamado_id) }}" method="POST" class="d-inline">
+                                    @csrf
+                                    <button type="submit" class="btn btn-sm btn-success" title="Dar ciência">
+                                        <i class="fas fa-check"></i>
+                                    </button>
+                                </form>
+                                @endif
                             </td>
                         </tr>
                         @endforeach
@@ -123,7 +139,7 @@
             </div>
         @else
             <div class="alert alert-success">
-                <i class="fas fa-check-circle"></i> Nenhum chamado avaliado encontrado!
+                <i class="fas fa-check-circle"></i> Sem chamados avaliados (Regular/Ruim) pendentes de ciência.
             </div>
         @endif
     </div>

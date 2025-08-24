@@ -29,6 +29,8 @@ class Chamado extends Model
         'local_id',
         'departamento_id',
         'lotacao_id',
+    'chamado_ciente_gestor',
+    'chamado_ciente_gestor_id',
     ];
 
     protected $casts = [
@@ -37,6 +39,7 @@ class Chamado extends Model
         'chamado_fechado' => 'datetime',
         'chamado_resolvido' => 'datetime',
         'chamado_pendente' => 'datetime',
+    'chamado_ciente_gestor' => 'boolean',
     ];
 
     // Relacionamentos
@@ -91,5 +94,23 @@ class Chamado extends Model
     public function avaliacaoChamado()
     {
         return $this->belongsTo(AvaliacaoChamado::class, 'avaliacao_chamado_id', 'avaliacao_chamado_id');
+    }
+
+    public function gestorCiente()
+    {
+        return $this->belongsTo(User::class, 'chamado_ciente_gestor_id', 'usuario_id');
+    }
+
+    protected static function booted()
+    {
+        static::saving(function (Chamado $chamado) {
+            if ($chamado->isDirty('avaliacao_chamado_id')) {
+                $novo = (int) $chamado->avaliacao_chamado_id;
+                if (in_array($novo, [3, 4], true)) {
+                    $chamado->chamado_ciente_gestor = 0;
+                    $chamado->chamado_ciente_gestor_id = null;
+                }
+            }
+        });
     }
 }
