@@ -6,8 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Models\Departamento;
 use App\Models\NivelUsuario;
+use App\Models\Chamado;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
 use App\Http\Requests\UserRequest;
 use App\Models\Nivel;
 use App\Models\Ldap;
@@ -102,7 +102,7 @@ class UserController extends Controller
                 'status_id' => $request->status_id,
             ]);
 
-            \App\Models\NivelUsuario::updateOrCreate(
+            NivelUsuario::updateOrCreate(
                 ['usuario_id' => $usuario->usuario_id],
                 ['nivel_id'   => $request->usuario_nivel]
             );
@@ -311,6 +311,75 @@ class UserController extends Controller
             ->get();
             
         return view('painel.equipe.index', compact('usuarios'));
+    }
+
+    /**
+     * Exibe a página de avaliações para gestores
+     */
+    public function avaliacoes()
+    {
+        // Verifica se é gestor (redundante, mas por segurança)
+        $this->authorize('gestor');
+        
+        $departamentoId = auth()->user()->departamento_id;
+        
+        // Buscar chamados com avaliações ruins (4) e regulares (3) do departamento PENDENTES de ciência do gestor
+        $chamadosAvaliados = Chamado::with([
+            'usuario',
+            'local',
+            'responsavel',
+            'avaliacaoChamado',
+            'departamentoLotacao',
+        ])
+        ->where('departamento_id', $departamentoId)
+        ->whereIn('avaliacao_chamado_id', [3,4])
+        ->whereNotNull('avaliacao_chamado_id')
+        ->where('chamado_ciente_gestor', 0)
+        ->orderBy('chamado_fechado', 'desc')
+        ->get();
+
+        // Totalizadores
+        $totalRuins = Chamado::where('departamento_id', $departamentoId)
+            ->where('avaliacao_chamado_id', 4)
+            ->whereNotNull('avaliacao_chamado_id')
+            ->where('chamado_ciente_gestor', 0)
+            ->count();
+        $totalRegulares = Chamado::where('departamento_id', $departamentoId)
+            ->where('avaliacao_chamado_id', 3)
+            ->whereNotNull('avaliacao_chamado_id')
+            ->where('chamado_ciente_gestor', 0)
+            ->count();
+        $totalAvaliacoes = Chamado::where('departamento_id', $departamentoId)
+            ->whereIn('avaliacao_chamado_id', [3,4])
+            ->whereNotNull('avaliacao_chamado_id')
+            ->where('chamado_ciente_gestor', 0)
+            ->count();
+
+        return view('painel.avaliacoes.index', compact(
+            'chamadosAvaliados',
+            'totalAvaliacoes',
+            'totalRuins',
+            'totalRegulares'
+        ));
+    }
+
+    /**
+     * Marca ciência do gestor em um chamado avaliado (3/4)
+     */
+    public function marcarCiente(Chamado $chamado)
+    {
+        $this->authorize('gestor');
+
+        if (!in_array((int) $chamado->avaliacao_chamado_id, [3, 4], true)) {
+            return redirect()->back()->with('error', 'Chamado não requer ciência do gestor.');
+        }
+
+        $chamado->update([
+            'chamado_ciente_gestor' => 1,
+            'chamado_ciente_gestor_id' => auth()->user()->usuario_id,
+        ]);
+
+        return redirect()->route('avaliacoes.index')->with('success', 'Ciência registrada com sucesso.');
     }
 
 }

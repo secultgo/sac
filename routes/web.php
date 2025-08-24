@@ -67,6 +67,12 @@ Route::prefix('painel')
         Route::get('equipe', [UserController::class, 'equipe'])
             ->name('equipe.index')
             ->middleware('can:gestor');
+        Route::get('avaliacoes', [UserController::class, 'avaliacoes'])
+            ->name('avaliacoes.index')
+            ->middleware('can:gestor');
+        Route::post('avaliacoes/{chamado}/ciente', [UserController::class, 'marcarCiente'])
+            ->name('avaliacoes.ciente')
+            ->middleware('can:gestor');
         Route::get('meus-chamados', [ChamadoController::class, 'meusChamados'])->name('meus-chamados.index');
         Route::get('chamados/problemas/{departamento}', [ChamadoController::class, 'problemasPorDepartamento'])->name('chamados.problemasPorDepartamento');
         Route::get('chamados/servicos/{problema}', [ChamadoController::class, 'servicosPorProblema'])->name('chamados.servicosPorProblema');

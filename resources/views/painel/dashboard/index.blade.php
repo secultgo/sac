@@ -133,7 +133,7 @@ use Illuminate\Support\Facades\Auth;
                         <th>ID</th>
                         <th>Descrição</th>
                         <th>Solicitante</th>
-                        <th>Departamento</th>
+                        <th>Lotação</th>
                         <th>Local</th>
                         <th>Responsável</th>
                         <th>Data de Criação</th>
@@ -150,7 +150,7 @@ use Illuminate\Support\Facades\Auth;
                             {{ $chamado->chamado_descricao }}
                         </td>
                         <td>{{ $chamado->usuario->usuario_nome ?? 'N/A' }}</td>
-                        <td>{{ $chamado->departamento->departamento_nome ?? 'N/A' }}</td>
+                        <td>{{ $chamado->departamentoLotacao->departamento_nome ?? 'N/A' }}</td>
                         <td>{{ $chamado->local->local_nome ?? 'N/A' }}</td>
                         <td>{{ $chamado->responsavel->usuario_nome ?? 'Não atribuído' }}</td>
                         <td>
@@ -569,6 +569,24 @@ $(document).ready(function() {
         allowOutsideClick: false,
         allowEscapeKey: false,
         width: '500px'
+    });
+@endif
+
+@if(session('avaliacoes_pendentes'))
+    Swal.fire({
+        title: 'Avaliações Pendentes!',
+        html: 'Sua unidade possui <strong>{{ session("avaliacoes_pendentes") }}</strong> avaliações regulares/ruins pendentes de ciência.<br><br>Favor avaliar para prosseguir.',
+        icon: 'warning',
+        showCancelButton: false,
+        confirmButtonColor: '#3085d6',
+        confirmButtonText: '<i class="fas fa-star"></i> Avaliar',
+        allowOutsideClick: false,
+        allowEscapeKey: false,
+        width: '500px'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            window.location.href = '{{ route("avaliacoes.index") }}';
+        }
     });
 @endif
 </script>
