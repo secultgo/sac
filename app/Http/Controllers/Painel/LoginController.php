@@ -5,10 +5,9 @@ namespace App\Http\Controllers\Painel;
 use App\Http\Controllers\Controller; 
 use Illuminate\Http\Request;
 use App\Models\User;
+use App\Models\Chamado;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Session;
 use App\Models\Ldap;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
 class LoginController extends Controller
@@ -31,15 +30,13 @@ class LoginController extends Controller
         // Procura o usuário pelo email
         $user = User::where('usuario_email', $credentials['usuario_email'])->first();
 
-        if ($user) {
-            Auth::login($user);
-            return redirect()->intended('/painel');
-        } else {
+        if (!$user) {
             return back()->withErrors([
                 'usuario_email' => 'Usuário não encontrado.',
             ])->onlyInput('usuario_email');
         }
 
+        // Se for usuário LDAP, valida no LDAP
         if ($user->usuario_ldap) {
             $ldapConfig = Ldap::first();
             if (!$ldapConfig) {
@@ -64,16 +61,31 @@ class LoginController extends Controller
 
             Log::debug("Tentando login LDAP com: {$loginLdap}");
 
-            if (@ldap_bind($ldapconn, $loginLdap, $senhaLdap)) {
-                Auth::login($user);
-                $request->session()->regenerate();
-                return redirect()->intended('painel/usuarios');
-            } else {
+            if (!@ldap_bind($ldapconn, $loginLdap, $senhaLdap)) {
                 return back()->withErrors([
                 'usuario_email' => 'As credenciais informadas não conferem.',
                 ])->onlyInput('usuario_email');
             }
         }
+
+        // Login bem-sucedido
+        Auth::login($user);
+        
+        // Verifica se é gestor e se há avaliações pendentes
+        if ($user->isGestor()) {
+            $avaliacoesPendentes = Chamado::where('departamento_id', $user->departamento_id)
+                ->whereIn('avaliacao_chamado_id', [3, 4])
+                ->whereNotNull('avaliacao_chamado_id')
+                ->where('chamado_ciente_gestor', 0)
+                ->count();
+            
+            if ($avaliacoesPendentes > 0) {
+                session()->flash('avaliacoes_pendentes', $avaliacoesPendentes);
+            }
+        }
+        
+        $request->session()->regenerate();
+        return redirect()->intended('/painel');
     }
 
     /**

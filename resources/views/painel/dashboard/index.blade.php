@@ -571,5 +571,23 @@ $(document).ready(function() {
         width: '500px'
     });
 @endif
+
+@if(session('avaliacoes_pendentes'))
+    Swal.fire({
+        title: 'Avaliações Pendentes!',
+        html: 'Sua unidade possui <strong>{{ session("avaliacoes_pendentes") }}</strong> avaliações regulares/ruins pendentes de ciência.<br><br>Favor avaliar para prosseguir.',
+        icon: 'warning',
+        showCancelButton: false,
+        confirmButtonColor: '#3085d6',
+        confirmButtonText: '<i class="fas fa-star"></i> Avaliar',
+        allowOutsideClick: false,
+        allowEscapeKey: false,
+        width: '500px'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            window.location.href = '{{ route("avaliacoes.index") }}';
+        }
+    });
+@endif
 </script>
 @stop
