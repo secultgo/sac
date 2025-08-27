@@ -71,6 +71,12 @@ class LoginController extends Controller
         // Login bem-sucedido
         Auth::login($user);
         
+        // Verificar se o usuário tem perfil completo (departamento e telefone)
+        if (!$user->perfilCompleto()) {
+            return redirect()->route('usuarios.completar-perfil')
+                ->with('info', 'Para utilizar o sistema, você precisa completar as informações do seu perfil.');
+        }
+        
         // Verifica se é gestor e se há avaliações pendentes
         if ($user->isGestor()) {
             $avaliacoesPendentes = Chamado::where('departamento_id', $user->departamento_id)

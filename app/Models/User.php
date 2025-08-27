@@ -21,6 +21,7 @@ class User extends Authenticatable
         'departamento_id',
         'usuario_cpf',
         'usuario_celular',
+        'usuario_fone_residencial',
         'status_id',
         'usuario_ldap',
         'nivel_id',
@@ -88,6 +89,30 @@ class User extends Authenticatable
             ->where('usuario_id', $this->usuario_id)
             ->whereIn('nivel_id', [1, 2])
             ->exists();
+    }
+
+    /**
+     * Verifica se o usuário tem departamento cadastrado
+     */
+    public function temDepartamento()
+    {
+        return !empty($this->departamento_id);
+    }
+
+    /**
+     * Verifica se o perfil do usuário está completo (departamento e telefone)
+     */
+    public function perfilCompleto()
+    {
+        return !empty($this->departamento_id) && !empty($this->usuario_fone_residencial);
+    }
+
+    /**
+     * Relação com departamento
+     */
+    public function departamento()
+    {
+        return $this->belongsTo(Departamento::class, 'departamento_id', 'departamento_id');
     }
     
 }

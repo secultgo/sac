@@ -12,6 +12,7 @@ use App\Http\Requests\UserRequest;
 use App\Models\Nivel;
 use App\Models\Ldap;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 
 
 class UserController extends Controller
@@ -380,6 +381,45 @@ class UserController extends Controller
         ]);
 
         return redirect()->route('avaliacoes.index')->with('success', 'Ciência registrada com sucesso.');
+    }
+
+    /**
+     * Exibe a tela de completar perfil
+     */
+    public function completarPerfil()
+    {
+        $user = Auth::user();
+        $departamentos = Departamento::where('excluido_id', 2)
+                                   ->orderBy('departamento_nome')
+                                   ->get();
+
+        return view('painel.usuarios.completar-perfil', compact('user', 'departamentos'));
+    }
+
+    /**
+     * Atualiza as informações do perfil
+     */
+    public function atualizarPerfil(Request $request)
+    {
+        $user = Auth::user();
+
+        $validated = $request->validate([
+            'departamento_id' => 'required|exists:departamento,departamento_id',
+            'usuario_fone_residencial' => 'required|string|max:20',
+        ], [
+            'departamento_id.required' => 'O departamento é obrigatório.',
+            'departamento_id.exists' => 'Departamento inválido.',
+            'usuario_fone_residencial.required' => 'O telefone é obrigatório.',
+            'usuario_fone_residencial.max' => 'O telefone deve ter no máximo 20 caracteres.',
+        ]);
+
+        $user->update([
+            'departamento_id' => $validated['departamento_id'],
+            'usuario_fone_residencial' => $validated['usuario_fone_residencial'],
+        ]);
+
+        return redirect()->route('painel.dashboard')
+                        ->with('success', 'Perfil atualizado com sucesso! Agora você pode usar todas as funcionalidades do sistema.');
     }
 
 }

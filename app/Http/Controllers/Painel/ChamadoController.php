@@ -22,6 +22,12 @@ class ChamadoController extends Controller
      */
     public function create()
     {
+        // Verificar se o usuário tem perfil completo (departamento e telefone)
+        if (!Auth::user()->perfilCompleto()) {
+            return redirect()->route('usuarios.completar-perfil')
+                ->with('warning', 'Para abrir chamados, você precisa completar as informações do seu perfil.');
+        }
+
         // Verificar se o usuário tem chamados não avaliados
         $chamadosNaoAvaliados = Chamado::where('usuario_id', Auth::user()->usuario_id)
             ->where('status_chamado_id', StatusChamado::NAO_AVALIADO)
@@ -47,6 +53,12 @@ class ChamadoController extends Controller
      */
     public function store(Request $request)
     {
+        // Verificar se o usuário tem perfil completo (departamento e telefone)
+        if (!Auth::user()->perfilCompleto()) {
+            return redirect()->route('usuarios.completar-perfil')
+                ->with('warning', 'Para criar chamados, você precisa completar as informações do seu perfil.');
+        }
+
         $validated = $request->validate([
             'chamado_descricao' => 'required|string',
             'problema_id' => 'required|exists:problema,problema_id',

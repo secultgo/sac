@@ -25,6 +25,10 @@ Route::prefix('painel')
      ->group(function () {
          Route::get('/', [DashboardController::class, 'index'])->name('painel.dashboard');
          
+         // Rotas de perfil
+         Route::get('/usuarios/completar-perfil', [UserController::class, 'completarPerfil'])->name('usuarios.completar-perfil');
+         Route::put('/usuarios/atualizar-perfil', [UserController::class, 'atualizarPerfil'])->name('usuarios.atualizar-perfil');
+         
          Route::resource('departamentos', DepartamentoController::class);
 
          Route::resource('problemas', ProblemaController::class);
