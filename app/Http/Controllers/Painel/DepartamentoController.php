@@ -15,7 +15,9 @@ class DepartamentoController extends Controller
      */
     public function index()
     {
-        $departamentos = Departamento::orderBy('departamento_nome')->get();
+        $departamentos = Departamento::where('excluido_id', 2)
+                                   ->orderBy('departamento_nome')
+                                   ->get();
         return view('painel.departamentos.index', compact('departamentos'));
     }
 
@@ -70,7 +72,8 @@ class DepartamentoController extends Controller
      */
     public function destroy(Departamento $departamento)
     {
-        $departamento->delete();
+        // Exclusão lógica: marca como excluído (excluido_id = 1)
+        $departamento->update(['excluido_id' => 1]);
         return redirect()->route('departamentos.index')
                          ->with('success', 'Departamento removido com sucesso.');
     }

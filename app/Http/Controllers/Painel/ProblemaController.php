@@ -7,7 +7,6 @@ use App\Http\Requests\Painel\ProblemaRequest;
 use App\Models\Problema;
 use App\Models\Departamento;
 use App\Models\Status;
-use Illuminate\Http\Request;
 
 class ProblemaController extends Controller
 {
@@ -45,13 +44,6 @@ class ProblemaController extends Controller
         $problema->update($request->validated());
         return redirect()->route('problemas.index')
                          ->with('success', 'Problema atualizado com sucesso.');
-    }
-
-    public function destroy(Problema $problema)
-    {
-        $problema->delete();
-        return redirect()->route('problemas.index')
-                         ->with('success', 'Problema removido com sucesso.');
     }
 
     /**

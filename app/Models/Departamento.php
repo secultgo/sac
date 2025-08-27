@@ -24,6 +24,7 @@ class Departamento extends Model
         'departamento_nome',
         'departamento_sigla',
         'departamento_chamado',
+        'excluido_id',
     ];
 
     /**
