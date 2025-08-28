@@ -527,6 +527,10 @@ $(document).ready(function() {
                 "targets": [9], // Coluna de ações
                 "orderable": false,
                 "searchable": false
+            },
+            {
+                "targets": [1, 2, 3, 4, 5, 6, 7, 8], // Todas as colunas exceto ID (0) e Ações (9)
+                "searchable": false
             }
         ],
         "autoWidth": false,
