@@ -564,7 +564,6 @@ class ChamadoController extends Controller
 
         // Atualiza o chamado com a avaliação
         $chamado->avaliacao_chamado_id = $request->avaliacao;
-        $chamado->chamado_comentario_avaliacao = $request->comentario_avaliacao;
         $chamado->status_chamado_id = StatusChamado::FECHADO;
         $chamado->chamado_fechado = now();
         $chamado->save();
