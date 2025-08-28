@@ -40,8 +40,8 @@ class ChamadoController extends Controller
                 ->with('mostrarModalAvaliacao', true);
         }
 
-        $problemas = Problema::orderBy('problema_nome')->get();
-        $departamentos = Departamento::orderBy('departamento_nome')->get();
+        $problemas = Problema::where('status_id', 1)->orderBy('problema_nome')->get();
+        $departamentos = Departamento::where('excluido_id', 2)->orderBy('departamento_nome')->get();
         $locais = Local::orderBy('local_nome')->get();
         $servicos = ServicoChamado::orderBy('servico_chamado_nome')->get();
 
