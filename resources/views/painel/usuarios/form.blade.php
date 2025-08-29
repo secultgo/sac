@@ -130,5 +130,22 @@
                     @enderror
                 </div>
 
+                <div class="form-group mb-3">
+                    <label for="status_id">Status</label>
+                    <select 
+                        id="status_id"
+                        name="status_id" 
+                        class="form-control @error('status_id') is-invalid @enderror" 
+                        required
+                    >
+                        <option value="">Selecione</option>
+                        <option value="1" {{ old('status_id', $usuario->status_id ?? '') == 1 ? 'selected' : '' }}>Ativo</option>
+                        <option value="0" {{ old('status_id', $usuario->status_id ?? '') == 0 ? 'selected' : '' }}>Inativo</option>
+                    </select>
+                    @error('status_id')
+                        <div class="invalid-feedback">{{ $message }}</div>
+                    @enderror
+                </div>
+                
                 <button type="submit" class="btn btn-success">Salvar</button>
                 <a href="{{ route('usuarios.index') }}" class="btn btn-secondary">Cancelar</a>
