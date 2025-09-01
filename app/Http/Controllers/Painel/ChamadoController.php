@@ -83,6 +83,7 @@ class ChamadoController extends Controller
             $chamado->chamado_anexo = $fileName;
         }
 
+        $chamado->chamado_abertura = now();
         $chamado->save();
 
         // Calcular posição na fila (chamados abertos, reabertos, em atendimento e devolvidos ao usuário para o mesmo departamento)
