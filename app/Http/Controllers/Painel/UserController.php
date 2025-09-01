@@ -42,11 +42,11 @@ class UserController extends Controller
                     'departamento_id'  => $data['departamento_id'],
                     'usuario_ldap'     => $data['usuario_ldap'],
                     'status_id' => $data['status_id'],
+                    'nivel_id'   => $data['nivel_id'], 
                 ]);
-    
                 NivelUsuario::create([
                     'usuario_id' => $usuario->usuario_id,
-                    'nivel_id'   => 3, 
+                    'nivel_id'   => 4, 
                 ]);
     
             } else {
@@ -58,10 +58,9 @@ class UserController extends Controller
                     'departamento_id'  => $data['departamento_id'],
                     'usuario_ldap'     => $data['usuario_ldap'],
                 ]);
-    
                 NivelUsuario::create([
                     'usuario_id' => $usuario->usuario_id,
-                    'nivel_id'   => 4, 
+                    'nivel_id'   =>  $data['nivel_id'], 
                 ]);
     
             }
@@ -150,7 +149,8 @@ class UserController extends Controller
     public function create()
     {
         $departamentos = Departamento::all();
-        return view('painel.usuarios.create', compact('departamentos'));
+        $nivel_usuarios = Nivel::all();
+        return view('painel.usuarios.create', compact('departamentos', 'nivel_usuarios'));
     }
 
     public function updateNivel(Request $request, User $usuario)
