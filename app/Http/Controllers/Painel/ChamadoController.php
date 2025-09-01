@@ -82,6 +82,7 @@ class ChamadoController extends Controller
             $file->move(public_path('uploads/chamado'), $fileName);
             $chamado->chamado_anexo = $fileName;
         }
+        $chamado->chamado_abertura = now();
 
         $chamado->save();
 
