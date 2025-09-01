@@ -69,10 +69,11 @@
                     >
                         <option value="">Selecione</option>
                         @foreach($departamentos as $departamento)
-                            <option value="{{ $departamento->departamento_id }}" 
-                                {{ old('departamento_id') == $departamento->departamento_id ? 'selected' : '' }}>
-                                {{ $departamento->departamento_nome }}
-                            </option>
+                            @if($departamento->excluido_id != 1)
+                                <option value="{{ $departamento->departamento_id }}">
+                                    {{ $departamento->departamento_nome }}
+                                </option>
+                            @endif
                         @endforeach
                     </select>
                     @error('departamento_id')
