@@ -497,7 +497,7 @@ $(document).ready(function() {
             "lengthMenu": "Mostrar _MENU_ registros",
             "loadingRecords": "Carregando...",
             "processing": "Processando...",
-            "search": "Buscar:",
+            "search": "Buscar nº chamado:",
             "zeroRecords": "Nenhum registro encontrado",
             "paginate": {
                 "first": "Primeiro",
