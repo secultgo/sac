@@ -163,6 +163,9 @@
                                 @case(7)
                                     <span class="badge badge-dark">Cancelado</span>
                                     @break
+                                @case(8)
+                                    <span class="badge bg-purple text-white">Reaberto</span>
+                                    @break
                                 @default
                                     <span class="badge badge-dark">Status {{ $chamado->status_chamado_id }}</span>
                             @endswitch
@@ -283,6 +286,10 @@
 /* Cores customizadas para badges e cards */
 .bg-orange {
     background-color: #fd7e14 !important;
+}
+
+.bg-purple {
+    background-color: #6f42c1 !important;
 }
 
 /* Estilo para botões ativos */
