@@ -20,7 +20,7 @@ class ProblemaController extends Controller
 
     public function create()
     {
-        $departamentos = Departamento::orderBy('departamento_nome')->get();
+        $departamentos = Departamento::where('excluido_id', 2)->orderBy('departamento_nome')->get();
         $statuses = Status::orderBy('status_nome')->get();
         return view('painel.problemas.create', compact('departamentos','statuses'));
     }
@@ -34,7 +34,7 @@ class ProblemaController extends Controller
 
     public function edit(Problema $problema)
     {
-        $departamentos = Departamento::orderBy('departamento_nome')->get();
+        $departamentos = Departamento::where('excluido_id', 2)->orderBy('departamento_nome')->get();
         $statuses = Status::orderBy('status_nome')->get();
         return view('painel.problemas.edit', compact('problema','departamentos','statuses'));
     }

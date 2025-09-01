@@ -92,6 +92,17 @@ class User extends Authenticatable
     }
 
     /**
+     * Verifica se o usuário é super admin (nível 1)
+     */
+    public function isSuperAdmin()
+    {
+        return \DB::table('nivel_usuario')
+            ->where('usuario_id', $this->usuario_id)
+            ->where('nivel_id', 1)
+            ->exists();
+    }
+
+    /**
      * Verifica se o usuário tem departamento cadastrado
      */
     public function temDepartamento()

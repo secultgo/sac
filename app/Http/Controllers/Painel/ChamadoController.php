@@ -85,9 +85,9 @@ class ChamadoController extends Controller
 
         $chamado->save();
 
-        // Calcular posição na fila (chamados abertos para o mesmo departamento)
+        // Calcular posição na fila (chamados abertos, reabertos, em atendimento e devolvidos ao usuário para o mesmo departamento)
         $posicaoFila = Chamado::where('departamento_id', $request->departamento_id)
-                             ->where('status_chamado_id', 1) // Status 1 = Aberto
+                             ->whereIn('status_chamado_id', [1, 2, 6, 8]) // Aberto, Em Atendimento, Aguardando Usuário, Reaberto
                              ->count();
 
         return redirect()->route('painel.dashboard')
