@@ -6,7 +6,9 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Painel\ServicoChamadoRequest;
 use App\Models\ServicoChamado;
 use App\Models\Problema;
-use Illuminate\Http\Request;
+use App\Models\Departamento;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
 
 class ServicoChamadoController extends Controller
 {
@@ -21,8 +23,28 @@ class ServicoChamadoController extends Controller
 
     public function create()
     {
-        $problemas = Problema::orderBy('problema_nome')->get();
-        return view('painel.servicos-chamado.create', compact('problemas'));
+        $user = Auth::user();
+        
+        if ($user->isSuperAdmin()) {
+            // Super admin pode escolher qualquer departamento que atende chamados
+            $departamentos = Departamento::where('excluido_id', 2)
+                                       ->where('departamento_chamado', true)
+                                       ->orderBy('departamento_nome')
+                                       ->get();
+            $problemas = Problema::where('status_id', 1)->orderBy('problema_nome')->get();
+        } else {
+            // Gestor ou outros usuários: apenas departamento do usuário (se atende chamados)
+            $departamentos = Departamento::where('departamento_id', $user->departamento_id)
+                                       ->where('excluido_id', 2)
+                                       ->where('departamento_chamado', true)
+                                       ->get();
+            $problemas = Problema::where('departamento_id', $user->departamento_id)
+                               ->where('status_id', 1)
+                               ->orderBy('problema_nome')
+                               ->get();
+        }
+        
+        return view('painel.servicos-chamado.create', compact('problemas', 'departamentos'));
     }
 
     public function store(ServicoChamadoRequest $request)
@@ -35,10 +57,31 @@ class ServicoChamadoController extends Controller
 
     public function edit(ServicoChamado $servicosChamado)
     {
-        $problemas = Problema::orderBy('problema_nome')->get();
+        $user = Auth::user();
+        
+        if ($user->isSuperAdmin()) {
+            // Super admin pode escolher qualquer departamento que atende chamados
+            $departamentos = Departamento::where('excluido_id', 2)
+                                       ->where('departamento_chamado', true)
+                                       ->orderBy('departamento_nome')
+                                       ->get();
+            $problemas = Problema::where('status_id', 1)->orderBy('problema_nome')->get();
+        } else {
+            // Gestor ou outros usuários: apenas departamento do usuário (se atende chamados)
+            $departamentos = Departamento::where('departamento_id', $user->departamento_id)
+                                       ->where('excluido_id', 2)
+                                       ->where('departamento_chamado', true)
+                                       ->get();
+            $problemas = Problema::where('departamento_id', $user->departamento_id)
+                               ->where('status_id', 1)
+                               ->orderBy('problema_nome')
+                               ->get();
+        }
+        
         return view('painel.servicos-chamado.edit', [
             'servicosChamado' => $servicosChamado,
             'problemas'       => $problemas,
+            'departamentos'   => $departamentos,
         ]);
     }
 
@@ -56,5 +99,17 @@ class ServicoChamadoController extends Controller
         return redirect()
             ->route('servicos.index')
             ->with('success', 'Serviço removido com sucesso.');
+    }
+
+    /**
+     * Retorna os problemas de um departamento (AJAX)
+     */
+    public function problemasPorDepartamento($departamentoId)
+    {
+        $problemas = Problema::where('departamento_id', $departamentoId)
+                           ->where('status_id', 1)
+                           ->orderBy('problema_nome')
+                           ->get(['problema_id', 'problema_nome']);
+        return response()->json($problemas);
     }
 }

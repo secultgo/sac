@@ -38,6 +38,7 @@ Route::prefix('painel')
             ->name('problemas.ativar');
 
         Route::resource('servicos', ServicoChamadoController::class)->parameters(['servicos' => 'servicosChamado']);
+        Route::get('servicos/problemas-por-departamento/{departamento}', [ServicoChamadoController::class, 'problemasPorDepartamento'])->name('servicos.problemasPorDepartamento');
 
         Route::resource('locais', LocalController::class)->parameters(['locais' => 'local']);
 
