@@ -61,7 +61,7 @@ class UserController extends Controller
     
                 NivelUsuario::create([
                     'usuario_id' => $usuario->usuario_id,
-                    'nivel_id'   => 3, 
+                    'nivel_id'   => 4, 
                 ]);
     
             }
