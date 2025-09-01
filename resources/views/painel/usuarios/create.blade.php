@@ -132,6 +132,28 @@
                     @enderror
                 </div>
 
+                <div class="form-group mb-3">
+                    <label for="departamento_id">Nível</label>
+                    <select 
+                        id="nivel_id"
+                        name="nivel_id" 
+                        class="form-control @error('nivel_id') is-invalid @enderror" 
+                        required
+                    >
+                        <option value="">Selecione</option>
+                            @foreach($nivel_usuarios as $nivel)                        
+                                    <option value="{{ $nivel->nivel_id }}">
+                                        {{ $nivel->nivel_nome }}
+                                </option>                
+                        @endforeach
+                    </select>
+                    @error('nivel_id')
+                        <div class="invalid-feedback">{{ $message }}</div>
+                    @enderror
+                </div>  
+
+
+                
                 <button type="submit" class="btn btn-success">Salvar</button>
                 <a href="{{ route('usuarios.index') }}" class="btn btn-secondary">Cancelar</a>
             </form>

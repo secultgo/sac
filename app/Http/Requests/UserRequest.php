@@ -44,6 +44,7 @@ class UserRequest extends FormRequest
             'usuario_senha'    => 'required|string|min:5',
             'departamento_id'  => 'required|exists:departamento,departamento_id',
             'usuario_ldap'     => 'required|in:0,1',
+            'nivel_id'         => 'required|exists:nivel,nivel_id',
         ];
     }
 
