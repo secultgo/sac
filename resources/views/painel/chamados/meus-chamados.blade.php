@@ -230,47 +230,14 @@
     </div>
 </div>
 
-<!-- Modais para Responder -->
+{{-- Incluir modais específicos para meus chamados --}}
 @foreach($chamados as $chamado)
-    @if($chamado->status_chamado_id == 6)
-    <div class="modal fade" id="modalResponder{{ $chamado->chamado_id }}" tabindex="-1" role="dialog">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <form action="{{ route('chamados.comentarios.store', $chamado->chamado_id) }}" method="POST" enctype="multipart/form-data">
-                    @csrf
-                    <div class="modal-header">
-                        <h5 class="modal-title">
-                            <i class="fas fa-reply"></i> Responder Chamado #{{ $chamado->chamado_id }}
-                        </h5>
-                        <button type="button" class="close" data-dismiss="modal">
-                            <span>&times;</span>
-                        </button>
-                    </div>
-                    <div class="modal-body">
-                        <div class="form-group">
-                            <label for="comentario{{ $chamado->chamado_id }}">Sua Resposta <span class="text-danger">*</span></label>
-                            <textarea class="form-control" id="comentario{{ $chamado->chamado_id }}" name="comentario" rows="4" placeholder="Digite sua resposta..." required></textarea>
-                        </div>
-                        <div class="form-group">
-                            <label for="anexo{{ $chamado->chamado_id }}">Anexo (Opcional)</label>
-                            <input type="file" class="form-control-file" id="anexo{{ $chamado->chamado_id }}" name="anexo" accept=".jpg,.jpeg,.png,.pdf,.doc,.docx,.txt">
-                            <small class="form-text text-muted">
-                                Formatos aceitos: JPG, PNG, PDF, DOC, DOCX, TXT. Tamanho máximo: 5MB
-                            </small>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">
-                            <i class="fas fa-times"></i> Cancelar
-                        </button>
-                        <button type="submit" class="btn btn-success">
-                            <i class="fas fa-reply"></i> Enviar Resposta
-                        </button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
+    @if($chamado->status_chamado_id == 6) {{-- Aguardando resposta do usuário --}}
+        @include('painel.chamados.modals.responder-meus-chamados')
+    @endif
+    
+    @if($chamado->status_chamado_id == 5) {{-- Não Avaliado --}}
+        @include('painel.chamados.modals.avaliar-meus-chamados')
     @endif
 @endforeach
 
@@ -282,6 +249,7 @@
 <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap4.min.css">
 <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.5.0/css/responsive.bootstrap4.min.css">
 <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.4.2/css/buttons.bootstrap4.min.css">
+@include('painel.chamados.modals._styles')
 <style>
 /* Cores customizadas para badges e cards */
 .bg-orange {
@@ -406,6 +374,8 @@
 <script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.html5.min.js"></script>
 <script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.print.min.js"></script>
 <script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.colVis.min.js"></script>
+
+@include('painel.chamados.modals._scripts')
 
 <script>
 $(document).ready(function() {
