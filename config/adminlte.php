@@ -353,7 +353,7 @@ return [
             'text' => 'Departamentos',
             'url'  => 'painel/departamentos',
             'icon' => 'fas fa-building',
-            'can' => 'gestor', // Nível 1 ou 2
+            'can' => 'super-admin', // Apenas nível 1
         ],
         [
             'text' => 'Problemas',
