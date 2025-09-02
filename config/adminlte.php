@@ -335,6 +335,7 @@ return [
             'text' => 'Meus Atendimentos',
             'url' => 'painel/meus-atendimentos',
             'icon' => 'fas fa-headset',
+            'can' => 'atender', // Nível 1, 2 ou 3
         ],
         [
             'text' => 'Equipe',
@@ -346,37 +347,43 @@ return [
             'text' => 'Avaliações',
             'url' => 'painel/avaliacoes',
             'icon' => 'fas fa-star',
-            'can' => 'gestor',
+            'can' => 'gestor', // Nível 1 ou 2
         ],
         [
             'text' => 'Departamentos',
             'url'  => 'painel/departamentos',
             'icon' => 'fas fa-building',
+            'can' => 'gestor', // Nível 1 ou 2
         ],
         [
             'text' => 'Problemas',
             'url'  => 'painel/problemas',
             'icon' => 'fas fa-exclamation-triangle',
+            'can' => 'gestor', // Nível 1 ou 2
         ],
         [
             'text' => 'Serviços',
             'url'  => 'painel/servicos',
             'icon' => 'fas fa-cogs',
+            'can' => 'gestor', // Nível 1 ou 2
         ],
         [
             'text' => 'Locais',
             'url'  => 'painel/locais',
             'icon' => 'fas fa-map-marker-alt',
+            'can' => 'super-admin', // Apenas nível 1
         ],
         [
             'text' => 'Usuários',
             'url'  => 'painel/usuarios',
             'icon' => 'fas fa-users',
+            'can' => 'super-admin', // Apenas nível 1
         ],
         [
             'text'    => 'Configurações',
             'icon'    => 'fas fa-cogs',
             'url'     => '#',
+            'can' => 'super-admin', // Apenas nível 1
             'submenu' => [
                 [
                     'text' => 'LDAP',
