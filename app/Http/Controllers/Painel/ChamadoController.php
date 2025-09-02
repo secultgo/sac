@@ -74,6 +74,7 @@ class ChamadoController extends Controller
         $chamado->lotacao_id = Auth::user()->departamento_id;
         $chamado->status_chamado_id = 1;
         $chamado->chamado_ip = $request->ip(); // Captura o IP do usuário
+        $chamado->chamado_abertura = now();
 
         // Upload do arquivo se fornecido
         if ($request->hasFile('chamado_anexo')) {
