@@ -170,7 +170,7 @@ use Illuminate\Support\Facades\Auth;
                 <hr>
                 <div class="row">
                     <div class="col-6">
-                        <strong>Não Avaliado em:</strong>
+                        <strong>Resolvido em:</strong>
                     </div>
                     <div class="col-6">
                         {{ is_string($chamado->chamado_resolvido) ? \Carbon\Carbon::parse($chamado->chamado_resolvido)->format('d/m/Y H:i:s') : $chamado->chamado_resolvido->format('d/m/Y H:i:s') }}
@@ -181,7 +181,7 @@ use Illuminate\Support\Facades\Auth;
                 <hr>
                 <div class="row">
                     <div class="col-6">
-                        <strong>Fechado em:</strong>
+                        <strong>Avaliado em:</strong>
                     </div>
                     <div class="col-6">
                         {{ is_string($chamado->chamado_fechado) ? \Carbon\Carbon::parse($chamado->chamado_fechado)->format('d/m/Y H:i:s') : $chamado->chamado_fechado->format('d/m/Y H:i:s') }}
