@@ -22,7 +22,7 @@
                     <div class="form-group">
                         <label for="avaliacao">Avaliação do Atendimento <span class="text-danger">*</span></label>
                         <div class="rating-container">
-                            @foreach(AvaliacaoChamado::orderBy('avaliacao_chamado_id', 'asc')->get() as $avaliacao)
+                            @foreach(\App\Models\AvaliacaoChamado::orderBy('avaliacao_chamado_id', 'asc')->get() as $avaliacao)
                             <div class="radio">
                                 <label for="{{ $avaliacao->avaliacao_chamado_id }}">
                                     <input type="radio" name="avaliacao" id="{{ $avaliacao->avaliacao_chamado_id }}" value="{{ $avaliacao->avaliacao_chamado_id }}" required>

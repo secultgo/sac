@@ -22,7 +22,7 @@
                         <label for="novoDepartamento">Novo Departamento <span class="text-danger">*</span></label>
                         <select class="form-control" id="novoDepartamento" name="novo_departamento_id" required>
                             <option value="">Selecione o departamento...</option>
-                            @foreach(Departamento::where('departamento_id', '!=', $chamado->departamento_id)->where('departamento_chamado', 1)->orderBy('departamento_nome')->get() as $dept)
+                            @foreach(\App\Models\Departamento::where('departamento_id', '!=', $chamado->departamento_id)->where('departamento_chamado', 1)->orderBy('departamento_nome')->get() as $dept)
                                 <option value="{{ $dept->departamento_id }}">{{ $dept->departamento_nome }}</option>
                             @endforeach
                         </select>

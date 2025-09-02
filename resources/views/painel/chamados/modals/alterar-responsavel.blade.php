@@ -22,7 +22,7 @@
                         <label for="novoResponsavel">Novo Responsável <span class="text-danger">*</span></label>
                         <select class="form-control" id="novoResponsavel" name="novo_responsavel_id" required>
                             <option value="">Selecione o responsável...</option>
-                            @foreach(User::where('departamento_id', $chamado->departamento_id)->where('usuario_id', '!=', $chamado->responsavel_id)->where('status_id', 1)->orderBy('usuario_nome')->get() as $usuario)
+                            @foreach(\App\Models\User::where('departamento_id', $chamado->departamento_id)->where('usuario_id', '!=', $chamado->responsavel_id)->where('status_id', 1)->orderBy('usuario_nome')->get() as $usuario)
                                 <option value="{{ $usuario->usuario_id }}">{{ $usuario->name }}</option>
                             @endforeach
                         </select>
