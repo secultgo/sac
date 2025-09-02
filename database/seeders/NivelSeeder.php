@@ -24,6 +24,11 @@ class NivelSeeder extends Seeder
                 'nivel_slug' => 'administrador'
             ],
             [
+                'nivel_id' => 3,
+                'nivel_nome' => 'Atendente',
+                'nivel_slug' => 'atendente'
+            ],
+            [
                 'nivel_id' => 4,
                 'nivel_nome' => 'Usuário',
                 'nivel_slug' => 'usuario'
