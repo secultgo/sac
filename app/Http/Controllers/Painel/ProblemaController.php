@@ -12,15 +12,27 @@ class ProblemaController extends Controller
 {
     public function index()
     {
-        $problemas = Problema::with(['departamento','status'])
-            ->orderBy('problema_nome')
-            ->get();
+        $query = Problema::with(['departamento','status']);
+        
+        // Se for gestor (não super admin), filtrar apenas problemas do seu departamento
+        if (auth()->user()->isGestor() && !auth()->user()->isSuperAdmin()) {
+            $query->where('departamento_id', auth()->user()->departamento_id);
+        }
+        
+        $problemas = $query->orderBy('problema_nome')->get();
         return view('painel.problemas.index', compact('problemas'));
     }
 
     public function create()
     {
-        $departamentos = Departamento::where('excluido_id', 2)->orderBy('departamento_nome')->get();
+        $query = Departamento::where('excluido_id', 2);
+        
+        // Se for gestor (não super admin), filtrar apenas seu departamento
+        if (auth()->user()->isGestor() && !auth()->user()->isSuperAdmin()) {
+            $query->where('departamento_id', auth()->user()->departamento_id);
+        }
+        
+        $departamentos = $query->orderBy('departamento_nome')->get();
         $statuses = Status::orderBy('status_nome')->get();
         return view('painel.problemas.create', compact('departamentos','statuses'));
     }
@@ -34,7 +46,14 @@ class ProblemaController extends Controller
 
     public function edit(Problema $problema)
     {
-        $departamentos = Departamento::where('excluido_id', 2)->orderBy('departamento_nome')->get();
+        $query = Departamento::where('excluido_id', 2);
+        
+        // Se for gestor (não super admin), filtrar apenas seu departamento
+        if (auth()->user()->isGestor() && !auth()->user()->isSuperAdmin()) {
+            $query->where('departamento_id', auth()->user()->departamento_id);
+        }
+        
+        $departamentos = $query->orderBy('departamento_nome')->get();
         $statuses = Status::orderBy('status_nome')->get();
         return view('painel.problemas.edit', compact('problema','departamentos','statuses'));
     }
