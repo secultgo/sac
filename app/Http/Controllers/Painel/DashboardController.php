@@ -16,6 +16,11 @@ class DashboardController extends Controller
 {
     public function index(Request $request)
     {
+        // Se for usuário comum (nível 4), redirecionar para meus chamados
+        if (Auth::user()->isUsuarioComum()) {
+            return redirect()->route('meus-chamados.index');
+        }
+
         $statusFiltro = $request->get('status', 1);
         
         $query = Chamado::with(['problema', 'departamento', 'local', 'usuario', 'responsavel', 'servicoChamado', 'statusChamado'])

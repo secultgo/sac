@@ -103,6 +103,17 @@ class User extends Authenticatable
     }
 
     /**
+     * Verifica se o usuário é apenas usuário comum (nível 4)
+     */
+    public function isUsuarioComum()
+    {
+        return \DB::table('nivel_usuario')
+            ->where('usuario_id', $this->usuario_id)
+            ->where('nivel_id', 4)
+            ->exists();
+    }
+
+    /**
      * Verifica se o usuário tem departamento cadastrado
      */
     public function temDepartamento()
