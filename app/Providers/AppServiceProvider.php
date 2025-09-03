@@ -39,5 +39,10 @@ class AppServiceProvider extends ServiceProvider
         Gate::define('atender', function ($user) {
             return $user->podeAtender();
         });
+
+        // Gate para verificar se o usuário NÃO é apenas usuário comum (nível 4)
+        Gate::define('nao-usuario-comum', function ($user) {
+            return !$user->isUsuarioComum();
+        });
     }
 }

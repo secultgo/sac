@@ -320,6 +320,7 @@ return [
             'text' => 'Início',
             'url'  => 'painel',
             'icon' => 'fas fa-home',
+            'can' => 'nao-usuario-comum', // Ocultar para usuários nível 4
         ],
         [
             'text' => 'Novo Chamado',
