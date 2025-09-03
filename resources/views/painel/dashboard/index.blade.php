@@ -212,6 +212,21 @@ use Illuminate\Support\Facades\Auth;
                                 </form>
                                 @endif
 
+                                <!-- Atribuir Responsável - para chamados ABERTOS (1) ou REABERTOS (8), apenas para super admin e gestor -->
+                                @can('gestor')
+                                    @if(in_array($chamado->status_chamado_id, [1, 8]))
+                                    <button type="button" class="btn btn-sm btn-info mr-1 mb-1" 
+                                            data-toggle="modal" 
+                                            data-target="#modalAtribuirResponsavel" 
+                                            data-chamado-id="{{ $chamado->chamado_id }}"
+                                            data-chamado-descricao="{{ Str::limit($chamado->chamado_descricao, 50) }}"
+                                            data-departamento-id="{{ $chamado->departamento_id }}"
+                                            title="Atribuir Responsável">
+                                        <i class="fas fa-user-plus"></i>
+                                    </button>
+                                    @endif
+                                @endcan
+
                                 <!-- Atender Chamado - apenas para chamados PENDENTES -->
                                 @if($chamado->status_chamado_id == 4)
                                 <form action="{{ route('chamados.atender', $chamado->chamado_id) }}" method="POST" style="display: inline;">
@@ -265,12 +280,14 @@ use Illuminate\Support\Facades\Auth;
                                 </a>
                                 @endif
 
-                                <!-- Alterar Responsável - não disponível para FECHADO (3), ABERTO (1) e NÃO AVALIADO (5) -->
-                                @if(!in_array($chamado->status_chamado_id, [3, 1, 5]) && Auth::user()->departamento_id == $chamado->departamento_id)
-                                <a href="{{ route('chamados.show', $chamado->chamado_id) }}" class="btn btn-sm btn-outline-primary mr-1 mb-1" title="Alterar Responsável">
-                                    <i class="fas fa-user-edit"></i>
-                                </a>
-                                @endif
+                                <!-- Alterar Responsável - apenas para super admin e gestor, não disponível para FECHADO (3), ABERTO (1) e NÃO AVALIADO (5) -->
+                                @can('gestor')
+                                    @if(!in_array($chamado->status_chamado_id, [3, 1, 5]))
+                                    <a href="{{ route('chamados.show', $chamado->chamado_id) }}" class="btn btn-sm btn-outline-primary mr-1 mb-1" title="Alterar Responsável">
+                                        <i class="fas fa-user-edit"></i>
+                                    </a>
+                                    @endif
+                                @endcan
 
                                 <!-- Avaliar Atendimento - apenas para chamados NÃO AVALIADOS (5) pelo usuário solicitante -->
                                 @if($chamado->status_chamado_id == 5 && Auth::user()->usuario_id == $chamado->usuario_id)
@@ -348,6 +365,50 @@ use Illuminate\Support\Facades\Auth;
     </div>
 </div>
 @endif
+
+<!-- Modal para Atribuir Responsável -->
+<div class="modal fade" id="modalAtribuirResponsavel" tabindex="-1" role="dialog" aria-labelledby="modalAtribuirResponsavelLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header bg-info">
+                <h5 class="modal-title" id="modalAtribuirResponsavelLabel">
+                    <i class="fas fa-user-plus"></i> Atribuir Responsável
+                </h5>
+                <button type="button" class="close text-white" data-dismiss="modal" aria-label="Fechar">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form id="formAtribuirResponsavel" method="POST">
+                @csrf
+                @method('PUT')
+                <div class="modal-body">
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle"></i>
+                        <strong>Chamado:</strong> <span id="chamadoDescricao"></span>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="responsavel_id">Selecione o Responsável:</label>
+                        <select class="form-control" id="responsavel_id" name="responsavel_id" required>
+                            <option value="">Selecione um responsável...</option>
+                        </select>
+                        <small class="form-text text-muted">
+                            Apenas usuários do mesmo departamento que podem atender chamados são listados.
+                        </small>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">
+                        <i class="fas fa-times"></i> Cancelar
+                    </button>
+                    <button type="submit" class="btn btn-info">
+                        <i class="fas fa-user-plus"></i> Atribuir Responsável
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
 
 @stop
 
@@ -593,5 +654,41 @@ $(document).ready(function() {
         }
     });
 @endif
+
+// Modal para Atribuir Responsável
+$('#modalAtribuirResponsavel').on('show.bs.modal', function (event) {
+    const button = $(event.relatedTarget);
+    const chamadoId = button.data('chamado-id');
+    const chamadoDescricao = button.data('chamado-descricao');
+    const departamentoId = button.data('departamento-id');
+    
+    const modal = $(this);
+    modal.find('#chamadoDescricao').text(chamadoDescricao);
+    modal.find('#formAtribuirResponsavel').attr('action', `/painel/chamados/${chamadoId}/atribuir-responsavel`);
+    
+    // Carregar usuários do departamento que podem atender
+    const select = modal.find('#responsavel_id');
+    select.empty().append('<option value="">Carregando...</option>');
+    
+    $.ajax({
+        url: `/painel/chamados/${chamadoId}/usuarios-departamento`,
+        method: 'GET',
+        success: function(data) {
+            select.empty().append('<option value="">Selecione um responsável...</option>');
+            data.forEach(function(usuario) {
+                select.append(`<option value="${usuario.usuario_id}">${usuario.usuario_nome}</option>`);
+            });
+        },
+        error: function() {
+            select.empty().append('<option value="">Erro ao carregar usuários</option>');
+            Swal.fire('Erro', 'Não foi possível carregar os usuários do departamento.', 'error');
+        }
+    });
+});
+
+// Limpar modal ao fechar
+$('#modalAtribuirResponsavel').on('hidden.bs.modal', function () {
+    $(this).find('#responsavel_id').empty();
+});
 </script>
 @stop
