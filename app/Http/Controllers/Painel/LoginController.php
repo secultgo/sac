@@ -66,6 +66,14 @@ class LoginController extends Controller
                 'usuario_email' => 'As credenciais informadas não conferem.',
                 ])->onlyInput('usuario_email');
             }
+        }  else {
+            // Se não for LDAP, valida senha MD5 no banco
+            $senhaForm = md5($credentials['usuario_senha']);
+            if ($senhaForm !== $user->usuario_senha) {
+                return back()->withErrors([
+                    'usuario_email' => 'As credenciais informadas não conferem.',
+                ])->onlyInput('usuario_email');
+            }
         }
 
         // Login bem-sucedido
