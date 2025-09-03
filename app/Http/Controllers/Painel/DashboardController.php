@@ -4,13 +4,8 @@ namespace App\Http\Controllers\Painel;
 
 use App\Http\Controllers\Controller; 
 use Illuminate\Http\Request;
-use App\Models\User;
 use App\Models\Chamado;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Session;
-use App\Models\Ldap;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
 
 class DashboardController extends Controller
 {
