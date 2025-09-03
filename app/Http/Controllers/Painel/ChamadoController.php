@@ -624,4 +624,74 @@ class ChamadoController extends Controller
 
         return redirect()->back()->with('success', 'Chamado reaberto com sucesso! O departamento responsável foi notificado.');
     }
+
+    /**
+     * Retorna os usuários do departamento que podem atender chamados
+     */
+    public function usuariosDepartamento($id)
+    {
+        $chamado = Chamado::findOrFail($id);
+        
+        // Buscar usuários do mesmo departamento que podem atender
+        $usuarios = User::whereHas('nivelUsuarios', function($query) {
+                $query->whereIn('nivel_id', [1, 2, 3]); // Super Admin, Gestor ou Atendente
+            })
+            ->where('departamento_id', $chamado->departamento_id)
+            ->where('status_id', 1) // Usuários ativos
+            ->orderBy('usuario_nome')
+            ->get(['usuario_id', 'usuario_nome']);
+
+        return response()->json($usuarios);
+    }
+
+    /**
+     * Atribui um responsável ao chamado e inicia o atendimento
+     */
+    public function atribuirResponsavel(Request $request, $id)
+    {
+        // Verificar se o usuário é gestor
+        if (!Auth::user()->isGestor()) {
+            return redirect()->back()->with('error', 'Você não tem permissão para atribuir responsáveis.');
+        }
+
+        $validated = $request->validate([
+            'responsavel_id' => 'required|exists:usuario,usuario_id',
+        ]);
+
+        $chamado = Chamado::findOrFail($id);
+        
+        // Verificar se o chamado está aberto ou reaberto
+        if (!in_array($chamado->status_chamado_id, [StatusChamado::ABERTO, StatusChamado::REABERTO])) {
+            return redirect()->back()->with('error', 'Só é possível atribuir responsável para chamados abertos ou reabertos.');
+        }
+
+        // Verificar se o responsável é do mesmo departamento
+        $responsavel = User::findOrFail($validated['responsavel_id']);
+        if ($responsavel->departamento_id !== $chamado->departamento_id) {
+            return redirect()->back()->with('error', 'O responsável deve ser do mesmo departamento do chamado.');
+        }
+
+        // Verificar se o responsável pode atender
+        if (!$responsavel->podeAtender()) {
+            return redirect()->back()->with('error', 'O usuário selecionado não possui permissão para atender chamados.');
+        }
+
+        // Atualizar o chamado
+        $chamado->responsavel_id = $validated['responsavel_id'];
+        $chamado->status_chamado_id = StatusChamado::ATENDIMENTO;
+        $chamado->chamado_atendimento = now();
+        $chamado->save();
+
+        // Adicionar comentário sobre a atribuição
+        $comentario = 'Responsável atribuído por ' . Auth::user()->usuario_nome . ': ' . $responsavel->usuario_nome;
+
+        ComentarioChamado::create([
+            'comentario_chamado_comentario' => $comentario,
+            'comentario_chamado_data' => now(),
+            'chamado_id' => $id,
+            'usuario_id' => Auth::user()->usuario_id
+        ]);
+
+        return redirect()->back()->with('success', 'Responsável atribuído e atendimento iniciado com sucesso!');
+    }
 }
