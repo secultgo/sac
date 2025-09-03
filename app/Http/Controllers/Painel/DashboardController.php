@@ -27,7 +27,6 @@ class DashboardController extends Controller
             $chamados = Chamado::with(['problema', 'departamento', 'local', 'usuario', 'responsavel', 'servicoChamado', 'statusChamado'])
                               ->where('departamento_id', Auth::user()->departamento_id)
                               ->whereIn('status_chamado_id', [1, 8])
-                              ->orderByRaw('FIELD(status_chamado_id, 8, 1)')
                               ->orderBy('chamado_id', 'asc')
                               ->get();
         } else {
