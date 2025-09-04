@@ -309,18 +309,17 @@ function criarGraficos(dados) {
     });
     charts = {};
     
-    // Definir cores dos status baseado no sistema
+    // Definir cores dos status baseado no sistema (exatamente como no dashboard)
     const coresStatus = {
-        'Aberto': '#dc3545',
-        'Em Atendimento': '#ffc107',
-        'Atendimento': '#ffc107',
-        'Fechado': '#28a745',
-        'Pendente': '#FF851B',
-        'Não Avaliado': '#17a2b8',
-        'Aguardando Usuário': '#6c757d',
-        'Aguardando Resposta': '#6c757d',
-        'Reaberto': '#8B008B',
-        'Cancelado': '#343a40'
+        'Aberto': '#dc3545',           // badge-danger
+        'Em Atendimento': '#ffc107',   // badge-warning
+        'Atendimento': '#ffc107',      // badge-warning
+        'Fechado': '#28a745',          // badge-success
+        'Pendente': '#FF851B',         // bg-orange
+        'Não Avaliado': '#17a2b8',     // badge-info
+        'Aguardando Usuário': '#6c757d', // badge-secondary
+        'Reaberto': '#8B008B',         // bg-purple (roxo escuro para reaberto)
+        'Cancelado': '#343a40'         // badge-dark
     };
     
     // 1. Gráfico de Status (Donut)
