@@ -47,6 +47,76 @@
         </div>
     </div>
 
+    <!-- Cards de Estatísticas -->
+    <div class="row mb-3" id="cards-estatisticas">
+        <div class="col-lg-2 col-md-4 col-sm-6 col-xs-12">
+            <div class="small-box bg-info">
+                <div class="inner">
+                    <h3 id="total-chamados">0</h3>
+                    <p>Total de Chamados</p>
+                </div>
+                <div class="icon">
+                    <i class="fas fa-ticket-alt"></i>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-2 col-md-4 col-sm-6 col-xs-12">
+            <div class="small-box bg-secondary">
+                <div class="inner">
+                    <h3 id="chamados-fechados">0</h3>
+                    <p>Chamados Fechados</p>
+                </div>
+                <div class="icon">
+                    <i class="fas fa-archive"></i>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-2 col-md-4 col-sm-6 col-xs-12">
+            <div class="small-box bg-success">
+                <div class="inner">
+                    <h3 id="chamados-resolvidos">0</h3>
+                    <p>Chamados Resolvidos</p>
+                </div>
+                <div class="icon">
+                    <i class="fas fa-check"></i>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-2 col-md-4 col-sm-6 col-xs-12">
+            <div class="small-box bg-warning">
+                <div class="inner">
+                    <h3 id="chamados-pendentes">0</h3>
+                    <p>Chamados Pendentes</p>
+                </div>
+                <div class="icon">
+                    <i class="fas fa-clock"></i>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-2 col-md-4 col-sm-6 col-xs-12">
+            <div class="small-box bg-primary">
+                <div class="inner">
+                    <h3 id="chamados-atendimento">0</h3>
+                    <p>Em Atendimento</p>
+                </div>
+                <div class="icon">
+                    <i class="fas fa-wrench"></i>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-2 col-md-4 col-sm-6 col-xs-12">
+            <div class="small-box bg-danger">
+                <div class="inner">
+                    <h3 id="chamados-abertos">0</h3>
+                    <p>Chamados Abertos</p>
+                </div>
+                <div class="icon">
+                    <i class="fas fa-exclamation-triangle"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Loading -->
     <div id="loading" class="text-center d-none">
         <div class="spinner-border" role="status">
@@ -148,6 +218,72 @@
             </div>
         </div>
     </div>
+
+    <!-- Tabelas Detalhadas -->
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Ranking de Atendentes</h3>
+                </div>
+                <div class="card-body">
+                    <table class="table table-striped" id="tabela-atendentes">
+                        <thead>
+                            <tr>
+                                <th>Posição</th>
+                                <th>Atendente</th>
+                                <th>Chamados</th>
+                                <th>Percentual</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Detalhes por Status</h3>
+                </div>
+                <div class="card-body">
+                    <table class="table table-striped" id="tabela-status">
+                        <thead>
+                            <tr>
+                                <th>Status</th>
+                                <th>Quantidade</th>
+                                <th>Percentual</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Detalhes por Departamento</h3>
+                </div>
+                <div class="card-body">
+                    <table class="table table-striped" id="tabela-departamento">
+                        <thead>
+                            <tr>
+                                <th>Departamento</th>
+                                <th>Quantidade</th>
+                                <th>Percentual</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 @stop
 
@@ -211,7 +347,72 @@ function carregarGraficos() {
     });
 }
 
+function atualizarCards(estatisticas) {
+    $('#total-chamados').text(estatisticas.total_chamados || 0);
+    $('#chamados-fechados').text(estatisticas.chamados_fechados || 0);
+    $('#chamados-resolvidos').text(estatisticas.chamados_resolvidos || 0);
+    $('#chamados-pendentes').text(estatisticas.chamados_pendentes || 0);
+    $('#chamados-atendimento').text(estatisticas.chamados_atendimento || 0);
+    $('#chamados-abertos').text(estatisticas.chamados_abertos || 0);
+}
+
+function preencherTabelas(dados) {
+    // Tabela de Atendentes
+    let htmlAtendentes = '';
+    const totalAtendentes = dados.atendentes.reduce((sum, item) => sum + parseInt(item.total), 0);
+    
+    dados.atendentes.forEach((item, index) => {
+        const percentual = totalAtendentes > 0 ? ((parseInt(item.total) / totalAtendentes) * 100).toFixed(1) : 0;
+        htmlAtendentes += `
+            <tr>
+                <td>${index + 1}º</td>
+                <td>${item.atendente}</td>
+                <td>${item.total}</td>
+                <td>${percentual}%</td>
+            </tr>
+        `;
+    });
+    $('#tabela-atendentes tbody').html(htmlAtendentes);
+    
+    // Tabela de Status
+    let htmlStatus = '';
+    const totalStatus = dados.chamados_por_status.reduce((sum, item) => sum + parseInt(item.total), 0);
+    
+    dados.chamados_por_status.forEach(item => {
+        const percentual = totalStatus > 0 ? ((parseInt(item.total) / totalStatus) * 100).toFixed(1) : 0;
+        htmlStatus += `
+            <tr>
+                <td>${item.status}</td>
+                <td>${item.total}</td>
+                <td>${percentual}%</td>
+            </tr>
+        `;
+    });
+    $('#tabela-status tbody').html(htmlStatus);
+    
+    // Tabela de Departamentos
+    let htmlDepartamento = '';
+    const totalDepartamento = dados.chamados_por_departamento.reduce((sum, item) => sum + parseInt(item.total), 0);
+    
+    dados.chamados_por_departamento.forEach(item => {
+        const percentual = totalDepartamento > 0 ? ((parseInt(item.total) / totalDepartamento) * 100).toFixed(1) : 0;
+        htmlDepartamento += `
+            <tr>
+                <td>${item.departamento}</td>
+                <td>${item.total}</td>
+                <td>${percentual}%</td>
+            </tr>
+        `;
+    });
+    $('#tabela-departamento tbody').html(htmlDepartamento);
+}
+
 function criarGraficos(dados) {
+    // Atualizar cards primeiro
+    if (dados.estatisticas) {
+        atualizarCards(dados.estatisticas);
+    }
+    
     // Destroi gráficos existentes
     Object.values(charts).forEach(chart => chart.destroy());
     charts = {};
@@ -379,6 +580,9 @@ function criarGraficos(dados) {
             }
         }
     });
+    
+    // Preencher tabelas detalhadas
+    preencherTabelas(dados);
 }
 </script>
 @stop

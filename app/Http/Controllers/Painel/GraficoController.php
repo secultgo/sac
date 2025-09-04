@@ -60,6 +60,7 @@ class GraficoController extends Controller
         }
         
         return response()->json([
+            'estatisticas' => $this->getEstatisticas($query),
             'chamados_por_status' => $this->getChamadosPorStatus($query),
             'chamados_por_departamento' => $this->getChamadosPorDepartamento($query),
             'evolucao_temporal' => $this->getEvolucaoTemporal($query, $dataInicio, $dataFim),
@@ -67,6 +68,27 @@ class GraficoController extends Controller
             'avaliacoes' => $this->getAvaliacoes($query),
             'atendentes' => $this->getAtendentes($query)
         ]);
+    }
+    
+    private function getEstatisticas($query)
+    {
+        $total = (clone $query)->count();
+        
+        // Status específicos (baseado nas cores dos pequenos boxes)
+        $fechados = (clone $query)->whereIn('status_chamado_id', [3, 4])->count(); // Fechado/Resolvido
+        $resolvidos = (clone $query)->where('status_chamado_id', 4)->count(); // Resolvido
+        $pendentes = (clone $query)->where('status_chamado_id', 2)->count(); // Pendente
+        $atendimento = (clone $query)->where('status_chamado_id', 5)->count(); // Em atendimento
+        $abertos = (clone $query)->where('status_chamado_id', 1)->count(); // Aberto
+        
+        return [
+            'total_chamados' => $total,
+            'chamados_fechados' => $fechados,
+            'chamados_resolvidos' => $resolvidos,
+            'chamados_pendentes' => $pendentes,
+            'chamados_atendimento' => $atendimento,
+            'chamados_abertos' => $abertos
+        ];
     }
     
     private function getChamadosPorStatus($query)
@@ -170,13 +192,13 @@ class GraficoController extends Controller
         return (clone $query)
             ->whereNotNull('responsavel_id')
             ->select('responsavel_id', DB::raw('count(*) as total'))
-            ->with('responsavel')
             ->groupBy('responsavel_id')
             ->orderBy('total', 'desc')
             ->get()
             ->map(function ($item) {
+                $responsavel = User::find($item->responsavel_id);
                 return [
-                    'atendente' => $item->responsavel->usuario_nome ?? 'Indefinido',
+                    'atendente' => $responsavel->usuario_nome ?? 'Indefinido',
                     'total' => $item->total
                 ];
             });
