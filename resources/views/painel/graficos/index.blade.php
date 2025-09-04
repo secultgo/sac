@@ -103,7 +103,7 @@
     <!-- Gráficos -->
     <div id="graficos-container" class="row">
         <!-- Chamados por Status -->
-        <div class="col-lg-6 col-md-12">
+        <div class="col-lg-4 col-md-12">
             <div class="card">
                 <div class="card-header">
                     <h3 class="card-title">Chamados por Status</h3>
@@ -114,8 +114,20 @@
             </div>
         </div>
 
+        <!-- Avaliações dos Chamados -->
+        <div class="col-lg-4 col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Avaliações dos Chamados</h3>
+                </div>
+                <div class="card-body">
+                    <div id="grafico-avaliacoes"></div>
+                </div>
+            </div>
+        </div>
+
         <!-- Chamados por Departamento -->
-        <div class="col-lg-6 col-md-12">
+        <div class="col-lg-4 col-md-12">
             <div class="card">
                 <div class="card-header">
                     <h3 class="card-title">Chamados por Departamento</h3>
@@ -138,58 +150,54 @@
             </div>
         </div>
 
-        <!-- Performance -->
-        <div class="col-lg-4 col-md-12">
-            <div class="card">
-                <div class="card-header">
-                    <h3 class="card-title">Performance (Tempo de Resolução)</h3>
-                </div>
-                <div class="card-body">
-                    <div class="info-box">
-                        <span class="info-box-icon bg-info"><i class="fas fa-clock"></i></span>
-                        <div class="info-box-content">
-                            <span class="info-box-text">Tempo Médio</span>
-                            <span class="info-box-number" id="tempo-medio">-- horas</span>
-                        </div>
-                    </div>
-                    <div class="info-box">
-                        <span class="info-box-icon bg-success"><i class="fas fa-tachometer-alt"></i></span>
-                        <div class="info-box-content">
-                            <span class="info-box-text">Tempo Mínimo</span>
-                            <span class="info-box-number" id="tempo-minimo">-- horas</span>
-                        </div>
-                    </div>
-                    <div class="info-box">
-                        <span class="info-box-icon bg-warning"><i class="fas fa-hourglass-end"></i></span>
-                        <div class="info-box-content">
-                            <span class="info-box-text">Tempo Máximo</span>
-                            <span class="info-box-number" id="tempo-maximo">-- horas</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Avaliações -->
-        <div class="col-lg-4 col-md-12">
-            <div class="card">
-                <div class="card-header">
-                    <h3 class="card-title">Avaliações dos Chamados</h3>
-                </div>
-                <div class="card-body">
-                    <div id="grafico-avaliacoes"></div>
-                </div>
-            </div>
-        </div>
-
         <!-- Atendentes -->
-        <div class="col-lg-4 col-md-12">
+        <div class="col-lg-12">
             <div class="card">
                 <div class="card-header">
                     <h3 class="card-title">Chamados por Atendente</h3>
                 </div>
                 <div class="card-body">
                     <div id="grafico-atendentes"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Performance -->
+        <div class="col-lg-12">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Performance (Tempo de Resolução)</h3>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-lg-4">
+                            <div class="info-box">
+                                <span class="info-box-icon bg-info"><i class="fas fa-clock"></i></span>
+                                <div class="info-box-content">
+                                    <span class="info-box-text">Tempo Médio</span>
+                                    <span class="info-box-number" id="tempo-medio">-- horas</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-4">
+                            <div class="info-box">
+                                <span class="info-box-icon bg-success"><i class="fas fa-tachometer-alt"></i></span>
+                                <div class="info-box-content">
+                                    <span class="info-box-text">Tempo Mínimo</span>
+                                    <span class="info-box-number" id="tempo-minimo">-- horas</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-4">
+                            <div class="info-box">
+                                <span class="info-box-icon bg-warning"><i class="fas fa-hourglass-end"></i></span>
+                                <div class="info-box-content">
+                                    <span class="info-box-text">Tempo Máximo</span>
+                                    <span class="info-box-number" id="tempo-maximo">-- horas</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
