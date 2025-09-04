@@ -173,7 +173,7 @@
                 </div>
                 <div class="card-body">
                     <div class="row">
-                        <div class="col-lg-3">
+                        <div class="col-lg-4">
                             <div class="info-box bg-gradient-info">
                                 <span class="info-box-icon"><i class="fas fa-chart-line"></i></span>
                                 <div class="info-box-content">
@@ -182,7 +182,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="col-lg-3">
+                        <div class="col-lg-4">
                             <div class="info-box bg-gradient-success">
                                 <span class="info-box-icon"><i class="fas fa-tachometer-alt"></i></span>
                                 <div class="info-box-content">
@@ -191,21 +191,12 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="col-lg-3">
+                        <div class="col-lg-4">
                             <div class="info-box bg-gradient-warning">
                                 <span class="info-box-icon"><i class="fas fa-hourglass-end"></i></span>
                                 <div class="info-box-content">
                                     <span class="info-box-text"><strong>Tempo Máximo</strong></span>
                                     <span class="info-box-number" id="tempo-maximo" style="font-size: 14px;">-- </span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-lg-3">
-                            <div class="info-box bg-gradient-primary">
-                                <span class="info-box-icon"><i class="fas fa-check-circle"></i></span>
-                                <div class="info-box-content">
-                                    <span class="info-box-text"><strong>Total Resolvidos</strong></span>
-                                    <span class="info-box-number" id="total-resolvidos" style="font-size: 16px;">-- </span>
                                 </div>
                             </div>
                         </div>
@@ -588,8 +579,6 @@ function criarGraficos(dados) {
             <div class="tempo-principal">${formatarTempo(performance.tempo_maximo_minutos)}</div>
             <div class="tempo-secundario">(${performance.tempo_maximo_horas}h)</div>
         `);
-        
-        $('#total-resolvidos').text(performance.total_resolvidos.toLocaleString('pt-BR') + ' chamados');
     }
     
     // 5. Gráfico de Avaliações (Barras Verticais)
