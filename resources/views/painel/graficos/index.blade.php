@@ -295,7 +295,10 @@ let charts = {};
 
 // Função para formatar tempo em minutos para dias, horas e minutos
 function formatarTempo(minutos) {
-    if (!minutos || minutos === 0) return '0 min';
+    // Garantir que não é negativo ou nulo
+    minutos = Math.max(0, minutos || 0);
+    
+    if (minutos === 0) return '0 min';
     
     const dias = Math.floor(minutos / (24 * 60));
     const horas = Math.floor((minutos % (24 * 60)) / 60);
