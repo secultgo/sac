@@ -506,22 +506,74 @@ function criarGraficos(dados) {
         },
         plotOptions: {
             bar: {
-                borderRadius: 4,
+                borderRadius: 6,
                 horizontal: false,
+                columnWidth: '70%',
+                distributed: true,
+                dataLabels: {
+                    position: 'top'
+                }
             }
         },
         dataLabels: {
-            enabled: true
+            enabled: true,
+            formatter: function(val) {
+                return val.toLocaleString('pt-BR');
+            },
+            offsetY: -20,
+            style: {
+                fontSize: '12px',
+                fontWeight: 'bold',
+                colors: ['#000']
+            }
         },
         xaxis: {
-            categories: dados.avaliacoes.map(item => item.avaliacao)
+            categories: dados.avaliacoes.map(item => item.avaliacao),
+            labels: {
+                style: {
+                    fontSize: '12px',
+                    fontWeight: 'bold'
+                }
+            }
         },
         yaxis: {
             title: {
-                text: 'Quantidade'
+                text: 'Quantidade de Avaliações',
+                style: {
+                    fontSize: '12px',
+                    fontWeight: 'bold'
+                }
+            },
+            labels: {
+                formatter: function(val) {
+                    return val.toLocaleString('pt-BR');
+                }
             }
         },
-        colors: ['#dc3545', '#ffc107', '#6c757d', '#28a745', '#17a2b8']
+        colors: dados.avaliacoes.map(item => {
+            switch(item.avaliacao) {
+                case 'Ótimo': return '#28a745';     // Verde vibrante
+                case 'Bom': return '#20c997';       // Verde-água
+                case 'Regular': return '#ffc107';   // Amarelo
+                case 'Ruim': return '#fd7e14';      // Laranja
+                case 'Péssimo': return '#dc3545';   // Vermelho
+                default: return '#6c757d';          // Cinza padrão
+            }
+        }),
+        grid: {
+            borderColor: '#e7e7e7',
+            strokeDashArray: 5
+        },
+        tooltip: {
+            y: {
+                formatter: function(val) {
+                    return val.toLocaleString('pt-BR') + ' avaliações';
+                }
+            }
+        },
+        legend: {
+            show: false
+        }
     };
     charts.avaliacoes = new ApexCharts(document.querySelector("#grafico-avaliacoes"), avaliacoesOptions);
     charts.avaliacoes.render();
