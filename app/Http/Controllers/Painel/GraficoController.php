@@ -75,16 +75,16 @@ class GraficoController extends Controller
         $total = (clone $query)->count();
         
         // Status específicos (baseado nas cores dos pequenos boxes)
-        $fechados = (clone $query)->whereIn('status_chamado_id', [3, 4])->count(); // Fechado/Resolvido
-        $resolvidos = (clone $query)->where('status_chamado_id', 4)->count(); // Resolvido
-        $pendentes = (clone $query)->where('status_chamado_id', 2)->count(); // Pendente
-        $atendimento = (clone $query)->where('status_chamado_id', 5)->count(); // Em atendimento
+        $fechados = (clone $query)->where('status_chamado_id', 3)->count(); // Fechado
+        $naoAvaliados = (clone $query)->where('status_chamado_id', 5)->count(); // Não Avaliado
+        $pendentes = (clone $query)->where('status_chamado_id', 4)->count(); // Pendente
+        $atendimento = (clone $query)->where('status_chamado_id', 2)->count(); // Em atendimento
         $abertos = (clone $query)->where('status_chamado_id', 1)->count(); // Aberto
         
         return [
             'total_chamados' => $total,
             'chamados_fechados' => $fechados,
-            'chamados_resolvidos' => $resolvidos,
+            'chamados_nao_avaliados' => $naoAvaliados,
             'chamados_pendentes' => $pendentes,
             'chamados_atendimento' => $atendimento,
             'chamados_abertos' => $abertos

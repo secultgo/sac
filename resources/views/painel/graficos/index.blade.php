@@ -47,71 +47,47 @@
         </div>
     </div>
 
-    <!-- Cards de Estatísticas -->
+    <!-- Cards de Estatísticas Dinâmicos -->
     <div class="row mb-3" id="cards-estatisticas">
         <div class="col-lg-2 col-md-4 col-sm-6 col-xs-12">
-            <div class="small-box bg-info">
-                <div class="inner">
-                    <h3 id="total-chamados">0</h3>
-                    <p>Total de Chamados</p>
-                </div>
-                <div class="icon">
-                    <i class="fas fa-ticket-alt"></i>
+            <div class="card">
+                <div class="card-body p-2">
+                    <div id="card-total-chamados"></div>
                 </div>
             </div>
         </div>
         <div class="col-lg-2 col-md-4 col-sm-6 col-xs-12">
-            <div class="small-box bg-secondary">
-                <div class="inner">
-                    <h3 id="chamados-fechados">0</h3>
-                    <p>Chamados Fechados</p>
-                </div>
-                <div class="icon">
-                    <i class="fas fa-archive"></i>
+            <div class="card">
+                <div class="card-body p-2">
+                    <div id="card-chamados-fechados"></div>
                 </div>
             </div>
         </div>
         <div class="col-lg-2 col-md-4 col-sm-6 col-xs-12">
-            <div class="small-box bg-success">
-                <div class="inner">
-                    <h3 id="chamados-resolvidos">0</h3>
-                    <p>Chamados Resolvidos</p>
-                </div>
-                <div class="icon">
-                    <i class="fas fa-check"></i>
+            <div class="card">
+                <div class="card-body p-2">
+                    <div id="card-chamados-nao-avaliados"></div>
                 </div>
             </div>
         </div>
         <div class="col-lg-2 col-md-4 col-sm-6 col-xs-12">
-            <div class="small-box bg-warning">
-                <div class="inner">
-                    <h3 id="chamados-pendentes">0</h3>
-                    <p>Chamados Pendentes</p>
-                </div>
-                <div class="icon">
-                    <i class="fas fa-clock"></i>
+            <div class="card">
+                <div class="card-body p-2">
+                    <div id="card-chamados-pendentes"></div>
                 </div>
             </div>
         </div>
         <div class="col-lg-2 col-md-4 col-sm-6 col-xs-12">
-            <div class="small-box bg-primary">
-                <div class="inner">
-                    <h3 id="chamados-atendimento">0</h3>
-                    <p>Em Atendimento</p>
-                </div>
-                <div class="icon">
-                    <i class="fas fa-wrench"></i>
+            <div class="card">
+                <div class="card-body p-2">
+                    <div id="card-chamados-atendimento"></div>
                 </div>
             </div>
         </div>
         <div class="col-lg-2 col-md-4 col-sm-6 col-xs-12">
-            <div class="small-box bg-danger">
-                <div class="inner">
-                    <h3 id="chamados-abertos">0</h3>
-                    <p>Chamados Abertos</p>
-                </div>
-                <div class="icon">
-                    <i class="fas fa-exclamation-triangle"></i>
+            <div class="card">
+                <div class="card-body p-2">
+                    <div id="card-chamados-abertos"></div>
                 </div>
             </div>
         </div>
@@ -234,6 +210,24 @@
     .card {
         margin-bottom: 20px;
     }
+    
+    #cards-estatisticas .card {
+        border: 1px solid #dee2e6;
+        box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+        transition: all 0.15s ease-in-out;
+    }
+    
+    #cards-estatisticas .card:hover {
+        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+        transform: translateY(-2px);
+    }
+    
+    #cards-estatisticas .card-body {
+        min-height: 120px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
 </style>
 @stop
 
@@ -287,12 +281,70 @@ function carregarGraficos() {
 }
 
 function atualizarCards(estatisticas) {
-    $('#total-chamados').text(estatisticas.total_chamados || 0);
-    $('#chamados-fechados').text(estatisticas.chamados_fechados || 0);
-    $('#chamados-resolvidos').text(estatisticas.chamados_resolvidos || 0);
-    $('#chamados-pendentes').text(estatisticas.chamados_pendentes || 0);
-    $('#chamados-atendimento').text(estatisticas.chamados_atendimento || 0);
-    $('#chamados-abertos').text(estatisticas.chamados_abertos || 0);
+    // Destroi cards existentes
+    if (charts.cards) {
+        charts.cards.forEach(card => {
+            if (card.destroy) {
+                card.destroy();
+            }
+        });
+    }
+    charts.cards = [];
+    
+    // Configuração base para os cards
+    const cardsConfig = [
+        {
+            id: 'card-total-chamados',
+            title: 'Total de Chamados',
+            value: estatisticas.total_chamados || 0,
+            color: '#17a2b8'
+        },
+        {
+            id: 'card-chamados-fechados',
+            title: 'Chamados Fechados',
+            value: estatisticas.chamados_fechados || 0,
+            color: '#28a745'
+        },
+        {
+            id: 'card-chamados-nao-avaliados',
+            title: 'Não Avaliados',
+            value: estatisticas.chamados_nao_avaliados || 0,
+            color: '#17a2b8'
+        },
+        {
+            id: 'card-chamados-pendentes',
+            title: 'Chamados Pendentes',
+            value: estatisticas.chamados_pendentes || 0,
+            color: '#FF851B'
+        },
+        {
+            id: 'card-chamados-atendimento',
+            title: 'Em Atendimento',
+            value: estatisticas.chamados_atendimento || 0,
+            color: '#007bff'
+        },
+        {
+            id: 'card-chamados-abertos',
+            title: 'Chamados Abertos',
+            value: estatisticas.chamados_abertos || 0,
+            color: '#dc3545'
+        }
+    ];
+    
+    // Criar cards apenas com HTML (sem gráficos)
+    cardsConfig.forEach(config => {
+        const elemento = document.querySelector(`#${config.id}`);
+        elemento.innerHTML = `
+            <div class="text-center">
+                <h2 style="color: ${config.color}; font-size: 2.5rem; font-weight: bold; margin-bottom: 5px;">
+                    ${config.value}
+                </h2>
+                <p style="color: #666; font-size: 0.9rem; margin: 0;">
+                    ${config.title}
+                </p>
+            </div>
+        `;
+    });
 }
 
 function criarGraficos(dados) {
@@ -303,7 +355,7 @@ function criarGraficos(dados) {
     
     // Destroi gráficos ApexCharts existentes
     Object.values(charts).forEach(chart => {
-        if (chart.destroy) {
+        if (chart && chart.destroy) {
             chart.destroy();
         }
     });
