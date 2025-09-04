@@ -24,14 +24,21 @@ class GraficoController extends Controller
         }
         
         // Se for gestor, filtra apenas o departamento dele
-        $departamentos = $user->isSuperAdmin() 
-            ? Departamento::all() 
-            : Departamento::where('departamento_id', $user->departamento_id)->get();
+        // Se for super admin, mostra apenas departamentos que atendem chamados
+        if ($user->isSuperAdmin()) {
+            $departamentos = Departamento::whereIn('departamento_id', function($query) {
+                $query->select('departamento_id')
+                      ->from('chamado')
+                      ->distinct();
+            })->get();
+        } else {
+            $departamentos = Departamento::where('departamento_id', $user->departamento_id)->get();
+        }
             
         // Buscar a data do primeiro chamado para definir data inicial
         $query = Chamado::query();
         if (!$user->isSuperAdmin()) {
-            $query->where('departamento_id', $user->departamento_id);
+            $query->where('chamado.departamento_id', $user->departamento_id);
         }
         
         $primeiroChamado = $query->orderBy('chamado_abertura', 'asc')->first();
@@ -54,9 +61,9 @@ class GraficoController extends Controller
         
         // Filtro por departamento para gestores
         if (!$user->isSuperAdmin()) {
-            $query->where('departamento_id', $user->departamento_id);
+            $query->where('chamado.departamento_id', $user->departamento_id);
         } elseif ($departamentoId && $departamentoId != 'todos') {
-            $query->where('departamento_id', $departamentoId);
+            $query->where('chamado.departamento_id', $departamentoId);
         }
         
         return response()->json([
@@ -109,9 +116,9 @@ class GraficoController extends Controller
     private function getChamadosPorDepartamento($query)
     {
         return (clone $query)
-            ->select('departamento_id', DB::raw('count(*) as total'))
+            ->select('chamado.departamento_id', DB::raw('count(*) as total'))
             ->with('departamento')
-            ->groupBy('departamento_id')
+            ->groupBy('chamado.departamento_id')
             ->get()
             ->map(function ($item) {
                 return [
