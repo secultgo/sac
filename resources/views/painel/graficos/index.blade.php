@@ -457,7 +457,17 @@ function criarGraficos(dados) {
         },
         stroke: {
             curve: 'smooth',
-            width: 3
+            width: 3,
+            colors: ['#4BC0C0']
+        },
+        markers: {
+            size: 4,
+            colors: ['#4BC0C0'],
+            strokeColors: '#fff',
+            strokeWidth: 2,
+            hover: {
+                size: 6
+            }
         },
         xaxis: {
             categories: dados.evolucao_temporal.map(item => item.periodo)
@@ -469,13 +479,8 @@ function criarGraficos(dados) {
         },
         colors: ['#4BC0C0'],
         fill: {
-            type: 'gradient',
-            gradient: {
-                shadeIntensity: 1,
-                opacityFrom: 0.7,
-                opacityTo: 0.2,
-                stops: [0, 90, 100]
-            }
+            type: 'solid',
+            opacity: 0.1
         }
     };
     charts.temporal = new ApexCharts(document.querySelector("#grafico-temporal"), temporalOptions);
