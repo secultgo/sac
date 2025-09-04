@@ -29,28 +29,28 @@ Route::prefix('painel')
          Route::get('/usuarios/completar-perfil', [UserController::class, 'completarPerfil'])->name('usuarios.completar-perfil');
          Route::put('/usuarios/atualizar-perfil', [UserController::class, 'atualizarPerfil'])->name('usuarios.atualizar-perfil');
          
-         Route::resource('departamentos', DepartamentoController::class);
+         Route::resource('departamentos', DepartamentoController::class)->middleware('can:super-admin');
 
-         Route::resource('problemas', ProblemaController::class);
+         Route::resource('problemas', ProblemaController::class)->middleware('can:gestor');
          Route::put('problemas/{problema}/desativar', [ProblemaController::class, 'desativar'])
-            ->name('problemas.desativar');
+            ->name('problemas.desativar')->middleware('can:gestor');
          Route::put('problemas/{problema}/ativar', [ProblemaController::class, 'ativar'])
-            ->name('problemas.ativar');
+            ->name('problemas.ativar')->middleware('can:gestor');
 
-        Route::resource('servicos', ServicoChamadoController::class)->parameters(['servicos' => 'servicosChamado']);
-        Route::get('servicos/problemas-por-departamento/{departamento}', [ServicoChamadoController::class, 'problemasPorDepartamento'])->name('servicos.problemasPorDepartamento');
+        Route::resource('servicos', ServicoChamadoController::class)->parameters(['servicos' => 'servicosChamado'])->middleware('can:gestor');
+        Route::get('servicos/problemas-por-departamento/{departamento}', [ServicoChamadoController::class, 'problemasPorDepartamento'])->name('servicos.problemasPorDepartamento')->middleware('can:gestor');
 
-        Route::resource('locais', LocalController::class)->parameters(['locais' => 'local']);
+        Route::resource('locais', LocalController::class)->parameters(['locais' => 'local'])->middleware('can:super-admin');
 
-        Route::resource('usuarios', UserController::class)->names('usuarios')->except(['show']);
+        Route::resource('usuarios', UserController::class)->names('usuarios')->except(['show'])->middleware('can:super-admin');
         Route::get('usuarios/{usuario}/edit-nivel', [UserController::class, 'edit_nivel'])->name('usuarios.edit_nivel')->middleware('can:gestor');
         Route::put('usuarios/{usuario}/nivel', [UserController::class, 'updateNivel'])->name('usuarios.update_nivel')->middleware('can:gestor');
-        Route::put('usuarios/{usuario}/ativar', [UserController::class, 'ativar'])->name('usuarios.ativar');
-        Route::put('usuarios/{usuario}/desativar', [UserController::class, 'desativar'])->name('usuarios.desativar');
+        Route::put('usuarios/{usuario}/ativar', [UserController::class, 'ativar'])->name('usuarios.ativar')->middleware('can:super-admin');
+        Route::put('usuarios/{usuario}/desativar', [UserController::class, 'desativar'])->name('usuarios.desativar')->middleware('can:super-admin');
 
-        Route::get('usuarios/ldap', [UserController::class, 'importarLdap'])->name('usuarios.importar.ldap');
-        Route::post('usuarios/importar-ldap', [UserController::class, 'importFromLdap'])->name('usuarios.importar.ldap.post');
-        Route::resource('ldap', LdapController::class);
+        Route::get('usuarios/ldap', [UserController::class, 'importarLdap'])->name('usuarios.importar.ldap')->middleware('can:super-admin');
+        Route::post('usuarios/importar-ldap', [UserController::class, 'importFromLdap'])->name('usuarios.importar.ldap.post')->middleware('can:super-admin');
+        Route::resource('ldap', LdapController::class)->middleware('can:super-admin');
 
         Route::get('chamados/create', [ChamadoController::class, 'create'])->name('chamados.create');
         Route::post('chamados', [ChamadoController::class, 'store'])->name('chamados.store');
