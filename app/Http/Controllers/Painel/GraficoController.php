@@ -26,9 +26,20 @@ class GraficoController extends Controller
         // Se for gestor, filtra apenas o departamento dele
         $departamentos = $user->isSuperAdmin() 
             ? Departamento::all() 
-            : Departamento::where('id', $user->departamento_id)->get();
+            : Departamento::where('departamento_id', $user->departamento_id)->get();
             
-        return view('painel.graficos.index', compact('departamentos'));
+        // Buscar a data do primeiro chamado para definir data inicial
+        $query = Chamado::query();
+        if (!$user->isSuperAdmin()) {
+            $query->where('departamento_id', $user->departamento_id);
+        }
+        
+        $primeiroChamado = $query->orderBy('chamado_abertura', 'asc')->first();
+        $dataInicial = $primeiroChamado 
+            ? Carbon::parse($primeiroChamado->chamado_abertura)->format('Y-m-d')
+            : Carbon::now()->subMonth()->format('Y-m-d');
+            
+        return view('painel.graficos.index', compact('departamentos', 'dataInicial'));
     }
     
     public function dadosGraficos(Request $request)
@@ -161,6 +172,7 @@ class GraficoController extends Controller
             ->select('responsavel_id', DB::raw('count(*) as total'))
             ->with('responsavel')
             ->groupBy('responsavel_id')
+            ->orderBy('total', 'desc')
             ->get()
             ->map(function ($item) {
                 return [

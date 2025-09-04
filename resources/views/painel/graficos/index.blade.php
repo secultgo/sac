@@ -19,7 +19,7 @@
                     <div class="row">
                         <div class="col-md-3">
                             <label for="data_inicio">Data Início:</label>
-                            <input type="date" id="data_inicio" class="form-control" value="{{ date('Y-m-d', strtotime('-1 month')) }}">
+                            <input type="date" id="data_inicio" class="form-control" value="{{ $dataInicial }}">
                         </div>
                         <div class="col-md-3">
                             <label for="data_fim">Data Fim:</label>
@@ -216,18 +216,33 @@ function criarGraficos(dados) {
     Object.values(charts).forEach(chart => chart.destroy());
     charts = {};
     
+    // Definir cores dos status baseado no sistema (cores exatas do Bootstrap + customizadas)
+    const coresStatus = {
+        'Aberto': '#dc3545',              // badge-danger
+        'Em Atendimento': '#ffc107',      // badge-warning
+        'Atendimento': '#ffc107',         // badge-warning
+        'Fechado': '#28a745',             // badge-success
+        'Pendente': '#FF851B',            // bg-orange (cor customizada do sistema)
+        'Não Avaliado': '#17a2b8',        // badge-info
+        'Aguardando Usuário': '#6c757d',  // badge-secondary
+        'Aguardando Resposta': '#6c757d', // badge-secondary
+        'Reaberto': '#8B008B',            // bg-purple (cor customizada para reaberto)
+        'Cancelado': '#343a40'            // badge-dark
+    };
+    
     // Gráfico de Status
     const ctxStatus = document.getElementById('grafico-status').getContext('2d');
+    const coresStatusGrafico = dados.chamados_por_status.map(item => 
+        coresStatus[item.status] || '#6c757d'
+    );
+    
     charts.status = new Chart(ctxStatus, {
         type: 'doughnut',
         data: {
             labels: dados.chamados_por_status.map(item => item.status),
             datasets: [{
                 data: dados.chamados_por_status.map(item => item.total),
-                backgroundColor: [
-                    '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', 
-                    '#9966FF', '#FF9F40', '#FF6384', '#C9CBCF'
-                ]
+                backgroundColor: coresStatusGrafico
             }]
         },
         options: {
@@ -299,7 +314,7 @@ function criarGraficos(dados) {
     $('#tempo-minimo').text(dados.performance.tempo_minimo + ' horas');
     $('#tempo-maximo').text(dados.performance.tempo_maximo + ' horas');
     
-    // Gráfico de Avaliações
+    // Gráfico de Avaliações com cores do sistema
     const ctxAval = document.getElementById('grafico-avaliacoes').getContext('2d');
     charts.avaliacoes = new Chart(ctxAval, {
         type: 'bar',
@@ -309,7 +324,7 @@ function criarGraficos(dados) {
                 label: 'Quantidade',
                 data: dados.avaliacoes.map(item => item.total),
                 backgroundColor: [
-                    '#FF6384', '#FF9F40', '#FFCD56', '#4BC0C0', '#36A2EB'
+                    '#dc3545', '#ffc107', '#6c757d', '#28a745', '#17a2b8'
                 ]
             }]
         },
@@ -329,26 +344,37 @@ function criarGraficos(dados) {
         }
     });
     
-    // Gráfico de Atendentes
+    // Gráfico de Atendentes - MODIFICADO para barras HORIZONTAIS ordenadas
     const ctxAtend = document.getElementById('grafico-atendentes').getContext('2d');
+    
+    // Ordenar atendentes por quantidade (maior para menor)
+    const atendentesOrdenados = dados.atendentes.sort((a, b) => b.total - a.total);
+    
     charts.atendentes = new Chart(ctxAtend, {
-        type: 'pie',
+        type: 'bar',
         data: {
-            labels: dados.atendentes.map(item => item.atendente),
+            labels: atendentesOrdenados.map(item => item.atendente),
             datasets: [{
-                data: dados.atendentes.map(item => item.total),
-                backgroundColor: [
-                    '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', 
-                    '#9966FF', '#FF9F40', '#FF6384', '#C9CBCF'
-                ]
+                label: 'Chamados Atendidos',
+                data: atendentesOrdenados.map(item => item.total),
+                backgroundColor: '#36A2EB'
             }]
         },
         options: {
             responsive: true,
             maintainAspectRatio: false,
+            indexAxis: 'y', // Isso faz as barras ficarem horizontais (Chart.js v3+)
             plugins: {
                 legend: {
-                    position: 'bottom'
+                    display: false
+                }
+            },
+            scales: {
+                x: {
+                    beginAtZero: true
+                },
+                y: {
+                    beginAtZero: true
                 }
             }
         }
