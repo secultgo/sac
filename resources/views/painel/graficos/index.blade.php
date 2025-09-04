@@ -166,34 +166,46 @@
         <div class="col-lg-12">
             <div class="card">
                 <div class="card-header">
-                    <h3 class="card-title">Performance (Tempo de Resolução)</h3>
+                    <h3 class="card-title">
+                        <i class="fas fa-clock mr-2"></i>
+                        Performance (Tempo de Resolução)
+                    </h3>
                 </div>
                 <div class="card-body">
                     <div class="row">
-                        <div class="col-lg-4">
-                            <div class="info-box">
-                                <span class="info-box-icon bg-info"><i class="fas fa-clock"></i></span>
+                        <div class="col-lg-3">
+                            <div class="info-box bg-gradient-info">
+                                <span class="info-box-icon"><i class="fas fa-chart-line"></i></span>
                                 <div class="info-box-content">
-                                    <span class="info-box-text">Tempo Médio</span>
-                                    <span class="info-box-number" id="tempo-medio">-- horas</span>
+                                    <span class="info-box-text"><strong>Tempo Médio</strong></span>
+                                    <span class="info-box-number" id="tempo-medio" style="font-size: 14px;">-- </span>
                                 </div>
                             </div>
                         </div>
-                        <div class="col-lg-4">
-                            <div class="info-box">
-                                <span class="info-box-icon bg-success"><i class="fas fa-tachometer-alt"></i></span>
+                        <div class="col-lg-3">
+                            <div class="info-box bg-gradient-success">
+                                <span class="info-box-icon"><i class="fas fa-tachometer-alt"></i></span>
                                 <div class="info-box-content">
-                                    <span class="info-box-text">Tempo Mínimo</span>
-                                    <span class="info-box-number" id="tempo-minimo">-- horas</span>
+                                    <span class="info-box-text"><strong>Tempo Mínimo</strong></span>
+                                    <span class="info-box-number" id="tempo-minimo" style="font-size: 14px;">-- </span>
                                 </div>
                             </div>
                         </div>
-                        <div class="col-lg-4">
-                            <div class="info-box">
-                                <span class="info-box-icon bg-warning"><i class="fas fa-hourglass-end"></i></span>
+                        <div class="col-lg-3">
+                            <div class="info-box bg-gradient-warning">
+                                <span class="info-box-icon"><i class="fas fa-hourglass-end"></i></span>
                                 <div class="info-box-content">
-                                    <span class="info-box-text">Tempo Máximo</span>
-                                    <span class="info-box-number" id="tempo-maximo">-- horas</span>
+                                    <span class="info-box-text"><strong>Tempo Máximo</strong></span>
+                                    <span class="info-box-number" id="tempo-maximo" style="font-size: 14px;">-- </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-3">
+                            <div class="info-box bg-gradient-primary">
+                                <span class="info-box-icon"><i class="fas fa-check-circle"></i></span>
+                                <div class="info-box-content">
+                                    <span class="info-box-text"><strong>Total Resolvidos</strong></span>
+                                    <span class="info-box-number" id="total-resolvidos" style="font-size: 16px;">-- </span>
                                 </div>
                             </div>
                         </div>
@@ -236,6 +248,43 @@
         align-items: center;
         justify-content: center;
     }
+    
+    /* Estilos para Performance */
+    .tempo-principal {
+        font-weight: bold;
+        font-size: 14px;
+        line-height: 1.2;
+        color: #fff;
+    }
+    
+    .tempo-secundario {
+        font-size: 11px;
+        opacity: 0.8;
+        color: #fff;
+        margin-top: 2px;
+    }
+    
+    .info-box.bg-gradient-info,
+    .info-box.bg-gradient-success,
+    .info-box.bg-gradient-warning,
+    .info-box.bg-gradient-primary {
+        color: white;
+        border-radius: 8px;
+        box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+        transition: transform 0.2s ease;
+    }
+    
+    .info-box.bg-gradient-info:hover,
+    .info-box.bg-gradient-success:hover,
+    .info-box.bg-gradient-warning:hover,
+    .info-box.bg-gradient-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+    }
+    
+    .info-box .info-box-icon {
+        border-radius: 8px 0 0 8px;
+    }
 </style>
 @stop
 
@@ -243,6 +292,29 @@
 <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
 <script>
 let charts = {};
+
+// Função para formatar tempo em minutos para dias, horas e minutos
+function formatarTempo(minutos) {
+    if (!minutos || minutos === 0) return '0 min';
+    
+    const dias = Math.floor(minutos / (24 * 60));
+    const horas = Math.floor((minutos % (24 * 60)) / 60);
+    const mins = Math.floor(minutos % 60);
+    
+    let resultado = [];
+    
+    if (dias > 0) {
+        resultado.push(dias + (dias === 1 ? ' dia' : ' dias'));
+    }
+    if (horas > 0) {
+        resultado.push(horas + (horas === 1 ? ' hora' : ' horas'));
+    }
+    if (mins > 0 || resultado.length === 0) {
+        resultado.push(mins + (mins === 1 ? ' min' : ' mins'));
+    }
+    
+    return resultado.join(', ');
+}
 
 $(document).ready(function() {
     carregarGraficos();
@@ -494,10 +566,28 @@ function criarGraficos(dados) {
     charts.temporal = new ApexCharts(document.querySelector("#grafico-temporal"), temporalOptions);
     charts.temporal.render();
     
-    // 4. Performance (manter como está)
-    $('#tempo-medio').text(dados.performance.tempo_medio + ' horas');
-    $('#tempo-minimo').text(dados.performance.tempo_minimo + ' horas');
-    $('#tempo-maximo').text(dados.performance.tempo_maximo + ' horas');
+    // 4. Performance - Melhorado com formatação correta e visual aprimorado
+    if (dados.performance) {
+        const performance = dados.performance;
+        
+        // Atualizar textos com formatação correta
+        $('#tempo-medio').html(`
+            <div class="tempo-principal">${formatarTempo(performance.tempo_medio_minutos)}</div>
+            <div class="tempo-secundario">(${performance.tempo_medio_horas}h)</div>
+        `);
+        
+        $('#tempo-minimo').html(`
+            <div class="tempo-principal">${formatarTempo(performance.tempo_minimo_minutos)}</div>
+            <div class="tempo-secundario">(${performance.tempo_minimo_horas}h)</div>
+        `);
+        
+        $('#tempo-maximo').html(`
+            <div class="tempo-principal">${formatarTempo(performance.tempo_maximo_minutos)}</div>
+            <div class="tempo-secundario">(${performance.tempo_maximo_horas}h)</div>
+        `);
+        
+        $('#total-resolvidos').text(performance.total_resolvidos.toLocaleString('pt-BR') + ' chamados');
+    }
     
     // 5. Gráfico de Avaliações (Barras Verticais)
     const avaliacoesOptions = {

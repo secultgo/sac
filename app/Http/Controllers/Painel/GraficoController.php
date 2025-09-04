@@ -157,16 +157,21 @@ class GraficoController extends Controller
         $dados = (clone $query)
             ->whereNotNull('chamado_resolvido')
             ->select(
-                DB::raw('AVG(TIMESTAMPDIFF(HOUR, chamado_abertura, chamado_resolvido)) as tempo_medio'),
-                DB::raw('MIN(TIMESTAMPDIFF(HOUR, chamado_abertura, chamado_resolvido)) as tempo_minimo'),
-                DB::raw('MAX(TIMESTAMPDIFF(HOUR, chamado_abertura, chamado_resolvido)) as tempo_maximo')
+                DB::raw('AVG(TIMESTAMPDIFF(MINUTE, chamado_abertura, chamado_resolvido)) as tempo_medio_minutos'),
+                DB::raw('MIN(TIMESTAMPDIFF(MINUTE, chamado_abertura, chamado_resolvido)) as tempo_minimo_minutos'),
+                DB::raw('MAX(TIMESTAMPDIFF(MINUTE, chamado_abertura, chamado_resolvido)) as tempo_maximo_minutos'),
+                DB::raw('COUNT(*) as total_resolvidos')
             )
             ->first();
             
         return [
-            'tempo_medio' => round($dados->tempo_medio ?? 0, 1),
-            'tempo_minimo' => $dados->tempo_minimo ?? 0,
-            'tempo_maximo' => $dados->tempo_maximo ?? 0
+            'tempo_medio_minutos' => round($dados->tempo_medio_minutos ?? 0),
+            'tempo_minimo_minutos' => $dados->tempo_minimo_minutos ?? 0,
+            'tempo_maximo_minutos' => $dados->tempo_maximo_minutos ?? 0,
+            'total_resolvidos' => $dados->total_resolvidos ?? 0,
+            'tempo_medio_horas' => round(($dados->tempo_medio_minutos ?? 0) / 60, 1),
+            'tempo_minimo_horas' => round(($dados->tempo_minimo_minutos ?? 0) / 60, 1),
+            'tempo_maximo_horas' => round(($dados->tempo_maximo_minutos ?? 0) / 60, 1)
         ];
     }
     
