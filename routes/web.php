@@ -11,6 +11,7 @@ use App\Http\Controllers\Painel\LdapController;
 use App\Http\Controllers\Painel\ChamadoController;
 use App\Http\Controllers\Painel\LoginController;
 use App\Http\Controllers\Painel\DashboardController;
+use App\Http\Controllers\Painel\GraficoController;
 
 Route::get('/', function () {
     return redirect('/painel');
@@ -79,6 +80,12 @@ Route::prefix('painel')
             ->middleware('can:gestor');
         Route::post('avaliacoes/{chamado}/ciente', [UserController::class, 'marcarCiente'])
             ->name('avaliacoes.ciente')
+            ->middleware('can:gestor');
+        Route::get('graficos', [GraficoController::class, 'index'])
+            ->name('graficos.index')
+            ->middleware('can:gestor');
+        Route::get('graficos/dados', [GraficoController::class, 'dadosGraficos'])
+            ->name('graficos.dados')
             ->middleware('can:gestor');
         Route::get('meus-chamados', [ChamadoController::class, 'meusChamados'])->name('meus-chamados.index');
         Route::get('chamados/problemas/{departamento}', [ChamadoController::class, 'problemasPorDepartamento'])->name('chamados.problemasPorDepartamento');
