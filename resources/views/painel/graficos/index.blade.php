@@ -133,7 +133,7 @@
                     <h3 class="card-title">Chamados por Status</h3>
                 </div>
                 <div class="card-body">
-                    <canvas id="grafico-status" height="300"></canvas>
+                    <div id="grafico-status"></div>
                 </div>
             </div>
         </div>
@@ -145,7 +145,7 @@
                     <h3 class="card-title">Chamados por Departamento</h3>
                 </div>
                 <div class="card-body">
-                    <canvas id="grafico-departamento" height="300"></canvas>
+                    <div id="grafico-departamento"></div>
                 </div>
             </div>
         </div>
@@ -157,7 +157,7 @@
                     <h3 class="card-title">Evolução Temporal dos Chamados</h3>
                 </div>
                 <div class="card-body">
-                    <canvas id="grafico-temporal" height="200"></canvas>
+                    <div id="grafico-temporal"></div>
                 </div>
             </div>
         </div>
@@ -201,7 +201,7 @@
                     <h3 class="card-title">Avaliações dos Chamados</h3>
                 </div>
                 <div class="card-body">
-                    <canvas id="grafico-avaliacoes" height="300"></canvas>
+                    <div id="grafico-avaliacoes"></div>
                 </div>
             </div>
         </div>
@@ -213,73 +213,7 @@
                     <h3 class="card-title">Chamados por Atendente</h3>
                 </div>
                 <div class="card-body">
-                    <canvas id="grafico-atendentes" height="300"></canvas>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Tabelas Detalhadas -->
-    <div class="row">
-        <div class="col-md-6">
-            <div class="card">
-                <div class="card-header">
-                    <h3 class="card-title">Ranking de Atendentes</h3>
-                </div>
-                <div class="card-body">
-                    <table class="table table-striped" id="tabela-atendentes">
-                        <thead>
-                            <tr>
-                                <th>Posição</th>
-                                <th>Atendente</th>
-                                <th>Chamados</th>
-                                <th>Percentual</th>
-                            </tr>
-                        </thead>
-                        <tbody></tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-md-6">
-            <div class="card">
-                <div class="card-header">
-                    <h3 class="card-title">Detalhes por Status</h3>
-                </div>
-                <div class="card-body">
-                    <table class="table table-striped" id="tabela-status">
-                        <thead>
-                            <tr>
-                                <th>Status</th>
-                                <th>Quantidade</th>
-                                <th>Percentual</th>
-                            </tr>
-                        </thead>
-                        <tbody></tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="row">
-        <div class="col-md-12">
-            <div class="card">
-                <div class="card-header">
-                    <h3 class="card-title">Detalhes por Departamento</h3>
-                </div>
-                <div class="card-body">
-                    <table class="table table-striped" id="tabela-departamento">
-                        <thead>
-                            <tr>
-                                <th>Departamento</th>
-                                <th>Quantidade</th>
-                                <th>Percentual</th>
-                            </tr>
-                        </thead>
-                        <tbody></tbody>
-                    </table>
+                    <div id="grafico-atendentes"></div>
                 </div>
             </div>
         </div>
@@ -304,7 +238,7 @@
 @stop
 
 @section('js')
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
 <script>
 let charts = {};
 
@@ -322,27 +256,32 @@ $(document).ready(function() {
 });
 
 function carregarGraficos() {
-    $('#loading').removeClass('d-none');
+    $('#loading').show();
     $('#graficos-container').hide();
     
-    const dados = {
+    const filtros = {
         data_inicio: $('#data_inicio').val(),
         data_fim: $('#data_fim').val(),
-        departamento_id: $('#departamento_id').val() || null
+        departamento_id: $('#departamento_id').val()
     };
-    
+
     $.ajax({
         url: '{{ route("graficos.dados") }}',
         method: 'GET',
-        data: dados,
-        success: function(response) {
-            criarGraficos(response);
-            $('#loading').addClass('d-none');
+        data: filtros,
+        dataType: 'json',
+        success: function(dados) {
+            $('#loading').hide();
             $('#graficos-container').show();
+            criarGraficos(dados);
         },
-        error: function() {
-            alert('Erro ao carregar os dados dos gráficos');
-            $('#loading').addClass('d-none');
+        error: function(xhr, status, error) {
+            console.error('Erro ao carregar dados dos gráficos:', error);
+            console.error('Status:', xhr.status);
+            console.error('Response:', xhr.responseText);
+            
+            $('#loading').hide();
+            alert('Erro ao carregar dados dos gráficos. Verifique o console para mais detalhes.');
         }
     });
 }
@@ -356,233 +295,252 @@ function atualizarCards(estatisticas) {
     $('#chamados-abertos').text(estatisticas.chamados_abertos || 0);
 }
 
-function preencherTabelas(dados) {
-    // Tabela de Atendentes
-    let htmlAtendentes = '';
-    const totalAtendentes = dados.atendentes.reduce((sum, item) => sum + parseInt(item.total), 0);
-    
-    dados.atendentes.forEach((item, index) => {
-        const percentual = totalAtendentes > 0 ? ((parseInt(item.total) / totalAtendentes) * 100).toFixed(1) : 0;
-        htmlAtendentes += `
-            <tr>
-                <td>${index + 1}º</td>
-                <td>${item.atendente}</td>
-                <td>${item.total}</td>
-                <td>${percentual}%</td>
-            </tr>
-        `;
-    });
-    $('#tabela-atendentes tbody').html(htmlAtendentes);
-    
-    // Tabela de Status
-    let htmlStatus = '';
-    const totalStatus = dados.chamados_por_status.reduce((sum, item) => sum + parseInt(item.total), 0);
-    
-    dados.chamados_por_status.forEach(item => {
-        const percentual = totalStatus > 0 ? ((parseInt(item.total) / totalStatus) * 100).toFixed(1) : 0;
-        htmlStatus += `
-            <tr>
-                <td>${item.status}</td>
-                <td>${item.total}</td>
-                <td>${percentual}%</td>
-            </tr>
-        `;
-    });
-    $('#tabela-status tbody').html(htmlStatus);
-    
-    // Tabela de Departamentos
-    let htmlDepartamento = '';
-    const totalDepartamento = dados.chamados_por_departamento.reduce((sum, item) => sum + parseInt(item.total), 0);
-    
-    dados.chamados_por_departamento.forEach(item => {
-        const percentual = totalDepartamento > 0 ? ((parseInt(item.total) / totalDepartamento) * 100).toFixed(1) : 0;
-        htmlDepartamento += `
-            <tr>
-                <td>${item.departamento}</td>
-                <td>${item.total}</td>
-                <td>${percentual}%</td>
-            </tr>
-        `;
-    });
-    $('#tabela-departamento tbody').html(htmlDepartamento);
-}
-
 function criarGraficos(dados) {
     // Atualizar cards primeiro
     if (dados.estatisticas) {
         atualizarCards(dados.estatisticas);
     }
     
-    // Destroi gráficos existentes
-    Object.values(charts).forEach(chart => chart.destroy());
+    // Destroi gráficos ApexCharts existentes
+    Object.values(charts).forEach(chart => {
+        if (chart.destroy) {
+            chart.destroy();
+        }
+    });
     charts = {};
     
-    // Definir cores dos status baseado no sistema (cores exatas do Bootstrap + customizadas)
+    // Definir cores dos status baseado no sistema
     const coresStatus = {
-        'Aberto': '#dc3545',              // badge-danger
-        'Em Atendimento': '#ffc107',      // badge-warning
-        'Atendimento': '#ffc107',         // badge-warning
-        'Fechado': '#28a745',             // badge-success
-        'Pendente': '#FF851B',            // bg-orange (cor customizada do sistema)
-        'Não Avaliado': '#17a2b8',        // badge-info
-        'Aguardando Usuário': '#6c757d',  // badge-secondary
-        'Aguardando Resposta': '#6c757d', // badge-secondary
-        'Reaberto': '#8B008B',            // bg-purple (cor customizada para reaberto)
-        'Cancelado': '#343a40'            // badge-dark
+        'Aberto': '#dc3545',
+        'Em Atendimento': '#ffc107',
+        'Atendimento': '#ffc107',
+        'Fechado': '#28a745',
+        'Pendente': '#FF851B',
+        'Não Avaliado': '#17a2b8',
+        'Aguardando Usuário': '#6c757d',
+        'Aguardando Resposta': '#6c757d',
+        'Reaberto': '#8B008B',
+        'Cancelado': '#343a40'
     };
     
-    // Gráfico de Status
-    const ctxStatus = document.getElementById('grafico-status').getContext('2d');
-    const coresStatusGrafico = dados.chamados_por_status.map(item => 
-        coresStatus[item.status] || '#6c757d'
-    );
-    
-    charts.status = new Chart(ctxStatus, {
-        type: 'doughnut',
-        data: {
-            labels: dados.chamados_por_status.map(item => item.status),
-            datasets: [{
-                data: dados.chamados_por_status.map(item => item.total),
-                backgroundColor: coresStatusGrafico
-            }]
+    // 1. Gráfico de Status (Donut)
+    const statusOptions = {
+        series: dados.chamados_por_status.map(item => parseInt(item.total)),
+        chart: {
+            type: 'donut',
+            height: 300
         },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
+        labels: dados.chamados_por_status.map(item => item.status),
+        colors: dados.chamados_por_status.map(item => coresStatus[item.status] || '#6c757d'),
+        legend: {
+            position: 'bottom'
+        },
+        responsive: [{
+            breakpoint: 480,
+            options: {
+                chart: {
+                    width: 200
+                },
                 legend: {
                     position: 'bottom'
                 }
             }
-        }
-    });
+        }]
+    };
+    charts.status = new ApexCharts(document.querySelector("#grafico-status"), statusOptions);
+    charts.status.render();
     
-    // Gráfico de Departamento
-    const ctxDept = document.getElementById('grafico-departamento').getContext('2d');
-    charts.departamento = new Chart(ctxDept, {
-        type: 'bar',
-        data: {
-            labels: dados.chamados_por_departamento.map(item => item.departamento),
-            datasets: [{
-                label: 'Quantidade de Chamados',
-                data: dados.chamados_por_departamento.map(item => item.total),
-                backgroundColor: '#36A2EB'
-            }]
+    // 2. Gráfico de Departamento (Barras Verticais)
+    const departamentoOptions = {
+        series: [{
+            name: 'Chamados',
+            data: dados.chamados_por_departamento.map(item => parseInt(item.total))
+        }],
+        chart: {
+            type: 'bar',
+            height: 300,
+            toolbar: {
+                show: false
+            }
         },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: {
-                    display: false
-                }
-            },
-            scales: {
-                y: {
-                    beginAtZero: true
-                }
+        plotOptions: {
+            bar: {
+                borderRadius: 4,
+                horizontal: false,
+            }
+        },
+        dataLabels: {
+            enabled: false
+        },
+        xaxis: {
+            categories: dados.chamados_por_departamento.map(item => item.departamento),
+            labels: {
+                rotate: -45
+            }
+        },
+        yaxis: {
+            title: {
+                text: 'Quantidade de Chamados'
+            }
+        },
+        colors: ['#36A2EB']
+    };
+    charts.departamento = new ApexCharts(document.querySelector("#grafico-departamento"), departamentoOptions);
+    charts.departamento.render();
+    
+    // 3. Gráfico Temporal (Linha)
+    const temporalOptions = {
+        series: [{
+            name: 'Chamados Abertos',
+            data: dados.evolucao_temporal.map(item => parseInt(item.total))
+        }],
+        chart: {
+            type: 'line',
+            height: 200,
+            toolbar: {
+                show: false
+            }
+        },
+        dataLabels: {
+            enabled: false
+        },
+        stroke: {
+            curve: 'smooth',
+            width: 3
+        },
+        xaxis: {
+            categories: dados.evolucao_temporal.map(item => item.periodo)
+        },
+        yaxis: {
+            title: {
+                text: 'Quantidade de Chamados'
+            }
+        },
+        colors: ['#4BC0C0'],
+        fill: {
+            type: 'gradient',
+            gradient: {
+                shadeIntensity: 1,
+                opacityFrom: 0.7,
+                opacityTo: 0.2,
+                stops: [0, 90, 100]
             }
         }
-    });
+    };
+    charts.temporal = new ApexCharts(document.querySelector("#grafico-temporal"), temporalOptions);
+    charts.temporal.render();
     
-    // Gráfico Temporal
-    const ctxTemporal = document.getElementById('grafico-temporal').getContext('2d');
-    charts.temporal = new Chart(ctxTemporal, {
-        type: 'line',
-        data: {
-            labels: dados.evolucao_temporal.map(item => item.periodo),
-            datasets: [{
-                label: 'Chamados Abertos',
-                data: dados.evolucao_temporal.map(item => item.total),
-                borderColor: '#4BC0C0',
-                backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                tension: 0.4
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            scales: {
-                y: {
-                    beginAtZero: true
-                }
-            }
-        }
-    });
-    
-    // Performance
+    // 4. Performance (manter como está)
     $('#tempo-medio').text(dados.performance.tempo_medio + ' horas');
     $('#tempo-minimo').text(dados.performance.tempo_minimo + ' horas');
     $('#tempo-maximo').text(dados.performance.tempo_maximo + ' horas');
     
-    // Gráfico de Avaliações com cores do sistema
-    const ctxAval = document.getElementById('grafico-avaliacoes').getContext('2d');
-    charts.avaliacoes = new Chart(ctxAval, {
-        type: 'bar',
-        data: {
-            labels: dados.avaliacoes.map(item => item.avaliacao),
-            datasets: [{
-                label: 'Quantidade',
-                data: dados.avaliacoes.map(item => item.total),
-                backgroundColor: [
-                    '#dc3545', '#ffc107', '#6c757d', '#28a745', '#17a2b8'
-                ]
-            }]
+    // 5. Gráfico de Avaliações (Barras Verticais)
+    const avaliacoesOptions = {
+        series: [{
+            name: 'Quantidade',
+            data: dados.avaliacoes.map(item => parseInt(item.total))
+        }],
+        chart: {
+            type: 'bar',
+            height: 300,
+            toolbar: {
+                show: false
+            }
         },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: {
-                    display: false
-                }
+        plotOptions: {
+            bar: {
+                borderRadius: 4,
+                horizontal: false,
+            }
+        },
+        dataLabels: {
+            enabled: true
+        },
+        xaxis: {
+            categories: dados.avaliacoes.map(item => item.avaliacao)
+        },
+        yaxis: {
+            title: {
+                text: 'Quantidade'
+            }
+        },
+        colors: ['#dc3545', '#ffc107', '#6c757d', '#28a745', '#17a2b8']
+    };
+    charts.avaliacoes = new ApexCharts(document.querySelector("#grafico-avaliacoes"), avaliacoesOptions);
+    charts.avaliacoes.render();
+    
+    // 6. Gráfico de Atendentes (Barras Horizontais) - já implementado
+    if (charts.atendentes) {
+        charts.atendentes.destroy();
+    }
+    
+    const atendentesData = (dados.atendentes || []).slice(0, 20);
+    
+    const atendentesOptions = {
+        series: [{
+            name: 'Chamados Atendidos',
+            data: atendentesData.map(item => parseInt(item.total))
+        }],
+        chart: {
+            type: 'bar',
+            height: 800,
+            toolbar: {
+                show: false
             },
-            scales: {
-                y: {
-                    beginAtZero: true
+            animations: {
+                enabled: false
+            }
+        },
+        plotOptions: {
+            bar: {
+                horizontal: true,
+                barHeight: '70%',
+                borderRadius: 4
+            }
+        },
+        dataLabels: {
+            enabled: true,
+            formatter: function (val) {
+                return val;
+            },
+            offsetX: 10,
+            style: {
+                fontSize: '12px',
+                colors: ['#304758']
+            }
+        },
+        xaxis: {
+            categories: atendentesData.map(item => item.atendente),
+            title: {
+                text: 'Número de Chamados'
+            }
+        },
+        yaxis: {
+            title: {
+                text: 'Atendentes'
+            }
+        },
+        colors: ['#36A2EB'],
+        grid: {
+            show: true,
+            borderColor: '#e7e7e7',
+            row: {
+                colors: ['#f3f3f3', 'transparent'],
+                opacity: 0.5
+            }
+        },
+        tooltip: {
+            y: {
+                formatter: function (val) {
+                    return val + " chamados";
                 }
             }
         }
-    });
+    };
     
-    // Gráfico de Atendentes - MODIFICADO para barras HORIZONTAIS ordenadas
-    const ctxAtend = document.getElementById('grafico-atendentes').getContext('2d');
-    
-    // Ordenar atendentes por quantidade (maior para menor)
-    const atendentesOrdenados = dados.atendentes.sort((a, b) => b.total - a.total);
-    
-    charts.atendentes = new Chart(ctxAtend, {
-        type: 'bar',
-        data: {
-            labels: atendentesOrdenados.map(item => item.atendente),
-            datasets: [{
-                label: 'Chamados Atendidos',
-                data: atendentesOrdenados.map(item => item.total),
-                backgroundColor: '#36A2EB'
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            indexAxis: 'y', // Isso faz as barras ficarem horizontais (Chart.js v3+)
-            plugins: {
-                legend: {
-                    display: false
-                }
-            },
-            scales: {
-                x: {
-                    beginAtZero: true
-                },
-                y: {
-                    beginAtZero: true
-                }
-            }
-        }
-    });
-    
-    // Preencher tabelas detalhadas
-    preencherTabelas(dados);
+    charts.atendentes = new ApexCharts(document.querySelector("#grafico-atendentes"), atendentesOptions);
+    charts.atendentes.render();
 }
 </script>
 @stop

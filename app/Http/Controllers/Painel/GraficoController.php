@@ -191,14 +191,14 @@ class GraficoController extends Controller
     {
         return (clone $query)
             ->whereNotNull('responsavel_id')
-            ->select('responsavel_id', DB::raw('count(*) as total'))
-            ->groupBy('responsavel_id')
+            ->join('usuario', 'chamado.responsavel_id', '=', 'usuario.usuario_id')
+            ->select('responsavel_id', 'usuario.usuario_nome', DB::raw('count(*) as total'))
+            ->groupBy('responsavel_id', 'usuario.usuario_nome')
             ->orderBy('total', 'desc')
             ->get()
             ->map(function ($item) {
-                $responsavel = User::find($item->responsavel_id);
                 return [
-                    'atendente' => $responsavel->usuario_nome ?? 'Indefinido',
+                    'atendente' => $item->usuario_nome,
                     'total' => $item->total
                 ];
             });
