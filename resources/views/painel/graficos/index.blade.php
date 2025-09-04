@@ -102,6 +102,18 @@
 
     <!-- Gráficos -->
     <div id="graficos-container" class="row">
+        <!-- Chamados por Departamento -->
+        <div class="col-lg-4 col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Chamados por Departamento</h3>
+                </div>
+                <div class="card-body">
+                    <div id="grafico-departamento"></div>
+                </div>
+            </div>
+        </div>
+
         <!-- Chamados por Status -->
         <div class="col-lg-4 col-md-12">
             <div class="card">
@@ -122,18 +134,6 @@
                 </div>
                 <div class="card-body">
                     <div id="grafico-avaliacoes"></div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Chamados por Departamento -->
-        <div class="col-lg-4 col-md-12">
-            <div class="card">
-                <div class="card-header">
-                    <h3 class="card-title">Chamados por Departamento</h3>
-                </div>
-                <div class="card-body">
-                    <div id="grafico-departamento"></div>
                 </div>
             </div>
         </div>
