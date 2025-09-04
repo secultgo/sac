@@ -166,22 +166,15 @@ class GraficoController extends Controller
     private function getAvaliacoes($query)
     {
         return (clone $query)
-            ->whereNotNull('avaliacao_chamado_id')
-            ->select('avaliacao_chamado_id', DB::raw('count(*) as total'))
-            ->groupBy('avaliacao_chamado_id')
+            ->whereNotNull('chamado.avaliacao_chamado_id')
+            ->join('avaliacao_chamado', 'chamado.avaliacao_chamado_id', '=', 'avaliacao_chamado.avaliacao_chamado_id')
+            ->select('chamado.avaliacao_chamado_id', 'avaliacao_chamado.avaliacao_chamado_nome', DB::raw('count(*) as total'))
+            ->groupBy('chamado.avaliacao_chamado_id', 'avaliacao_chamado.avaliacao_chamado_nome')
+            ->orderBy('chamado.avaliacao_chamado_id')
             ->get()
             ->map(function ($item) {
-                $avaliacaoTexto = match($item->avaliacao_chamado_id) {
-                    1 => 'Muito Insatisfeito',
-                    2 => 'Insatisfeito', 
-                    3 => 'Neutro',
-                    4 => 'Satisfeito',
-                    5 => 'Muito Satisfeito',
-                    default => 'Não Avaliado'
-                };
-                
                 return [
-                    'avaliacao' => $avaliacaoTexto,
+                    'avaliacao' => $item->avaliacao_chamado_nome,
                     'total' => $item->total
                 ];
             });
