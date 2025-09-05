@@ -48,6 +48,8 @@ Route::prefix('painel')
         Route::put('usuarios/{usuario}/ativar', [UserController::class, 'ativar'])->name('usuarios.ativar')->middleware('can:super-admin');
         Route::put('usuarios/{usuario}/desativar', [UserController::class, 'desativar'])->name('usuarios.desativar')->middleware('can:super-admin');
 
+        Route::get('usuarios/{usuario}/edit-cor', [UserController::class, 'edit_cor'])->name('usuarios.edit_cor')->middleware('can:gestor');
+        Route::put('usuarios/{usuario}/cor', [UserController::class, 'updateCor'])->name('usuarios.update_cor')->middleware('can:gestor');
         Route::get('usuarios/ldap', [UserController::class, 'importarLdap'])->name('usuarios.importar.ldap')->middleware('can:super-admin');
         Route::post('usuarios/importar-ldap', [UserController::class, 'importFromLdap'])->name('usuarios.importar.ldap.post')->middleware('can:super-admin');
         Route::resource('ldap', LdapController::class)->middleware('can:super-admin');

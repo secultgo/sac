@@ -11,6 +11,7 @@ use Illuminate\Http\Request;
 use App\Http\Requests\UserRequest;
 use App\Models\Nivel;
 use App\Models\Ldap;
+use App\Models\Cor;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 
@@ -71,6 +72,34 @@ class UserController extends Controller
         }
     } 
 
+    public function edit_cor(User $usuario)
+    {
+        // Verifica se é gestor (nível 1 ou 2)
+        if (!auth()->user()->isGestor()) {
+            abort(403, 'Acesso negado. Apenas gestores podem alterar cores de usuários.');
+        }
+
+        $cores = Cor::all();
+        return view('painel.usuarios.edit_cor', compact('usuario', 'cores'));
+    }
+    public function updateCor(Request $request, User $usuario)
+        {
+            $validated = $request->validate([
+                'usuario_cor' => 'required|exists:cores,cor_id',
+            ]);
+
+            $usuario->usuario_cor = $validated['usuario_cor'];
+            $usuario->save();
+
+            return redirect()
+                ->route('equipe.index')
+                ->with('success', 'Cor do usuário atualizada com sucesso!');
+        }
+    
+    public function cor()
+    {
+        return $this->belongsTo(Cor::class, 'usuario_cor', 'cor_id');
+    }       
 
     public function edit(User $usuario)
     {
