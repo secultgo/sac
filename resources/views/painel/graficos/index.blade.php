@@ -9,7 +9,7 @@
 @section('content')
 <div class="container-fluid">
     <!-- Filtros -->
-    <div class="row mb-3">
+    <div class="row mb-3 no-print">
         <div class="col-md-12">
             <div class="card">
                 <div class="card-header">
@@ -37,8 +37,11 @@
                         </div>
                         @endif
                         <div class="col-md-3 d-flex align-items-end">
-                            <button type="button" id="btn-atualizar" class="btn btn-primary">
+                            <button type="button" id="btn-atualizar" class="btn btn-primary mr-2">
                                 <i class="fas fa-sync"></i> Atualizar
+                            </button>
+                            <button type="button" id="btn-imprimir" class="btn btn-secondary">
+                                <i class="fas fa-print"></i> Imprimir
                             </button>
                         </div>
                     </div>
@@ -94,7 +97,7 @@
     </div>
 
     <!-- Loading -->
-    <div id="loading" class="text-center d-none">
+    <div id="loading" class="text-center d-none no-print">
         <div class="spinner-border" role="status">
             <span class="sr-only">Carregando...</span>
         </div>
@@ -276,6 +279,86 @@
     .info-box .info-box-icon {
         border-radius: 8px 0 0 8px;
     }
+    
+    /* Estilos para impressão */
+    @media print {
+        .no-print {
+            display: none !important;
+        }
+        
+        body {
+            background: white !important;
+        }
+        
+        .card {
+            border: 1px solid #ddd !important;
+            box-shadow: none !important;
+            page-break-inside: avoid;
+            margin-bottom: 20px !important;
+            background: white !important;
+        }
+        
+        .row {
+            page-break-inside: avoid;
+        }
+        
+        #cards-estatisticas .card-body {
+            min-height: auto !important;
+        }
+        
+        .info-box {
+            margin-bottom: 10px !important;
+            background: white !important;
+        }
+        
+        .info-box.bg-gradient-info,
+        .info-box.bg-gradient-success,
+        .info-box.bg-gradient-warning,
+        .info-box.bg-gradient-primary {
+            background: white !important;
+            border: 1px solid #ddd !important;
+        }
+        
+        .info-box .info-box-content {
+            color: #000 !important;
+        }
+        
+        .tempo-principal,
+        .tempo-secundario {
+            color: #000 !important;
+        }
+        
+        h1, h3 {
+            color: #000 !important;
+        }
+        
+        /* Garantir que os gráficos apareçam */
+        #graficos-container {
+            display: block !important;
+        }
+        
+        .apexcharts-canvas {
+            max-width: 100% !important;
+        }
+        
+        /* Quebra de página entre seções */
+        #cards-estatisticas {
+            page-break-after: always;
+        }
+        
+        .col-lg-12 .card {
+            page-break-before: always;
+        }
+        
+        .col-lg-12:first-of-type .card {
+            page-break-before: auto;
+        }
+        
+        /* Ajustes para gráficos de barras horizontais */
+        #grafico-atendentes {
+            max-height: 600px !important;
+        }
+    }
 </style>
 @stop
 
@@ -317,11 +400,56 @@ $(document).ready(function() {
         carregarGraficos();
     });
     
+    $('#btn-imprimir').click(function() {
+        imprimirGraficos();
+    });
+    
     // Atualização automática dos filtros
     $('#data_inicio, #data_fim, #departamento_id').change(function() {
         carregarGraficos();
     });
 });
+
+function imprimirGraficos() {
+    // Salvar título original
+    const tituloOriginal = document.title;
+    
+    // Definir novo título para impressão
+    document.title = 'Relatório de Gráficos - SAC';
+    
+    // Verificar se os gráficos estão carregados
+    const graficosCarregados = Object.keys(charts).length > 0;
+    
+    if (!graficosCarregados) {
+        alert('Aguarde os gráficos carregarem antes de imprimir.');
+        document.title = tituloOriginal;
+        return;
+    }
+    
+    // Aguardar um pouco mais para garantir que os gráficos estão completamente renderizados
+    setTimeout(function() {
+        // Forçar re-renderização dos gráficos ApexCharts para impressão
+        Object.values(charts).forEach(chart => {
+            if (chart && chart.render) {
+                try {
+                    chart.updateOptions({}, false, true);
+                } catch (e) {
+                    console.log('Erro ao atualizar gráfico para impressão:', e);
+                }
+            }
+        });
+        
+        // Aguardar mais um pouco antes de imprimir
+        setTimeout(function() {
+            window.print();
+            
+            // Restaurar título original após impressão
+            setTimeout(function() {
+                document.title = tituloOriginal;
+            }, 1000);
+        }, 1000);
+    }, 500);
+}
 
 function carregarGraficos() {
     $('#loading').show();
