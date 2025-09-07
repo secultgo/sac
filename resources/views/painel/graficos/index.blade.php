@@ -406,6 +406,33 @@ async function gerarPDF() {
         doc.setFontSize(20);
         doc.setFont(undefined, 'bold');
         doc.text('Relatório de Gráficos - SAC', margin, currentY);
+        
+        // Adicionar logo da SECULT no lado direito
+        try {
+            // Criar uma imagem temporária para capturar a logo
+            const logoImg = new Image();
+            logoImg.crossOrigin = 'anonymous';
+            
+            // Aguardar o carregamento da logo
+            await new Promise((resolve, reject) => {
+                logoImg.onload = resolve;
+                logoImg.onerror = reject;
+                logoImg.src = '/vendor/adminlte/dist/img/SECULT-LOGO-2022.png'; // Caminho correto da logo
+            });
+            
+            // Calcular posição da logo (lado direito)
+            const logoWidth = 40; // largura da logo em mm
+            const logoHeight = 20; // altura da logo em mm
+            const logoX = pageWidth - margin - logoWidth;
+            const logoY = currentY - 15; // Alinhar com o título
+            
+            // Adicionar logo ao PDF
+            doc.addImage(logoImg, 'PNG', logoX, logoY, logoWidth, logoHeight);
+        } catch (error) {
+            console.log('Erro ao carregar logo da SECULT:', error);
+            // Continuar sem a logo se houver erro
+        }
+        
         currentY += 10;
         
         doc.setFontSize(12);
