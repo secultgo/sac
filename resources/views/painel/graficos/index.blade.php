@@ -441,11 +441,12 @@ async function gerarPDF() {
                 logoImg.src = '/vendor/adminlte/dist/img/SECULT-LOGO-2022.png'; // Caminho correto da logo
             });
             
-            // Calcular posição da logo (lado direito)
-            const logoWidth = 40; // largura da logo em mm
-            const logoHeight = 20; // altura da logo em mm
-            const logoX = pageWidth - margin - logoWidth;
-            const logoY = currentY - 15; // Alinhar com o título
+            // Calcular posição da logo (lado direito com margem)
+            // Logo da SECULT tem proporção 3304x1732 = 1.9:1 (mais larga que alta)
+            const logoWidth = 38; // largura da logo em mm 
+            const logoHeight = 20; // altura da logo em mm (proporção 1.9:1)
+            const logoX = pageWidth - margin - logoWidth - 10; // Margem menor - mais à direita
+            const logoY = currentY - 10; // Alinhamento com a linha do título
             
             // Adicionar logo ao PDF
             doc.addImage(logoImg, 'PNG', logoX, logoY, logoWidth, logoHeight);
