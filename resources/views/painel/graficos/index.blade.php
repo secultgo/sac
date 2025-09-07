@@ -671,10 +671,10 @@ function criarGraficos(dados) {
             type: 'donut',
             height: 350
         },
-        labels: dados.chamados_por_problema.map(item => item.problema),
+        labels: dados.chamados_por_problema.map(item => `${item.problema} (${item.total})`),
         colors: [
-            '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF', 
-            '#FF9F40', '#FF6384', '#C9CBCF', '#4BC0C0', '#36A2EB'
+            '#e74c3c', '#3498db', '#f39c12', '#2ecc71', '#9b59b6', 
+            '#e67e22', '#34495e', '#1abc9c', '#f1c40f', '#95a5a6'
         ],
         legend: {
             position: 'bottom',
@@ -709,10 +709,10 @@ function criarGraficos(dados) {
             type: 'donut',
             height: 350
         },
-        labels: dados.chamados_por_servico.map(item => item.servico),
+        labels: dados.chamados_por_servico.map(item => `${item.servico} (${item.total})`),
         colors: [
-            '#4BC0C0', '#9966FF', '#FF9F40', '#FF6384', '#36A2EB', 
-            '#FFCE56', '#C9CBCF', '#4BC0C0', '#FF6384', '#36A2EB'
+            '#16a085', '#8e44ad', '#d35400', '#c0392b', '#2980b9', 
+            '#f4d03f', '#7d3c98', '#148f77', '#d68910', '#5d6d7e'
         ],
         legend: {
             position: 'bottom',
