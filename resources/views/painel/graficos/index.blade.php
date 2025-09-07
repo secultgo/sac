@@ -40,8 +40,8 @@
                             <button type="button" id="btn-atualizar" class="btn btn-primary mr-2">
                                 <i class="fas fa-sync"></i> Atualizar
                             </button>
-                            <button type="button" id="btn-imprimir" class="btn btn-secondary">
-                                <i class="fas fa-print"></i> Imprimir
+                            <button type="button" id="btn-gerar-pdf" class="btn btn-secondary">
+                                <i class="fas fa-file-pdf"></i> Gerar PDF
                             </button>
                         </div>
                     </div>
@@ -303,90 +303,23 @@
         border-radius: 8px 0 0 8px;
     }
     
-    /* Estilos para impressão */
-    @media print {
-        .no-print {
-            display: none !important;
-        }
-        
-        body {
-            background: white !important;
-        }
-        
-        .card {
-            border: 1px solid #ddd !important;
-            box-shadow: none !important;
-            page-break-inside: avoid;
-            margin-bottom: 20px !important;
-            background: white !important;
-        }
-        
-        .row {
-            page-break-inside: avoid;
-        }
-        
-        #cards-estatisticas .card-body {
-            min-height: auto !important;
-        }
-        
-        .info-box {
-            margin-bottom: 10px !important;
-            background: white !important;
-        }
-        
-        .info-box.bg-gradient-info,
-        .info-box.bg-gradient-success,
-        .info-box.bg-gradient-warning,
-        .info-box.bg-gradient-primary {
-            background: white !important;
-            border: 1px solid #ddd !important;
-        }
-        
-        .info-box .info-box-content {
-            color: #000 !important;
-        }
-        
-        .tempo-principal,
-        .tempo-secundario {
-            color: #000 !important;
-        }
-        
-        h1, h3 {
-            color: #000 !important;
-        }
-        
-        /* Garantir que os gráficos apareçam */
-        #graficos-container {
-            display: block !important;
-        }
-        
-        .apexcharts-canvas {
-            max-width: 100% !important;
-        }
-        
-        /* Quebra de página entre seções */
-        #cards-estatisticas {
-            page-break-after: always;
-        }
-        
-        .col-lg-12 .card {
-            page-break-before: always;
-        }
-        
-        .col-lg-12:first-of-type .card {
-            page-break-before: auto;
-        }
-        
-        /* Ajustes para gráficos de barras horizontais */
-        #grafico-atendentes {
-            max-height: 600px !important;
-        }
+    /* Estilos básicos para visualização */
+    .apexcharts-canvas {
+        max-width: 100% !important;
+    }
+    
+    /* Ajustes para gráficos de barras horizontais */
+    #grafico-atendentes {
+        max-height: 600px !important;
     }
 </style>
 @stop
 
 @section('js')
 <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script>
 let charts = {};
 
@@ -423,8 +356,8 @@ $(document).ready(function() {
         carregarGraficos();
     });
     
-    $('#btn-imprimir').click(function() {
-        imprimirGraficos();
+    $('#btn-gerar-pdf').click(function() {
+        gerarPDF();
     });
     
     // Atualização automática dos filtros
@@ -433,45 +366,216 @@ $(document).ready(function() {
     });
 });
 
-function imprimirGraficos() {
-    // Salvar título original
-    const tituloOriginal = document.title;
-    
-    // Definir novo título para impressão
-    document.title = 'Relatório de Gráficos - SAC';
-    
-    // Verificar se os gráficos estão carregados
+// Função para gerar PDF
+async function gerarPDF() {
     const graficosCarregados = Object.keys(charts).length > 0;
     
     if (!graficosCarregados) {
-        alert('Aguarde os gráficos carregarem antes de imprimir.');
-        document.title = tituloOriginal;
+        Swal.fire({
+            title: 'Aguarde!',
+            text: 'Os gráficos ainda estão carregando. Tente novamente em alguns segundos.',
+            icon: 'warning',
+            confirmButtonText: 'OK'
+        });
         return;
     }
     
-    // Aguardar um pouco mais para garantir que os gráficos estão completamente renderizados
-    setTimeout(function() {
-        // Forçar re-renderização dos gráficos ApexCharts para impressão
-        Object.values(charts).forEach(chart => {
-            if (chart && chart.render) {
-                try {
-                    chart.updateOptions({}, false, true);
-                } catch (e) {
-                    console.log('Erro ao atualizar gráfico para impressão:', e);
-                }
+    // Mostrar loading
+    Swal.fire({
+        title: 'Gerando PDF...',
+        text: 'Aguarde enquanto criamos seu relatório em PDF.',
+        allowOutsideClick: false,
+        allowEscapeKey: false,
+        showConfirmButton: false,
+        didOpen: () => {
+            Swal.showLoading();
+        }
+    });
+    
+    try {
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF('l', 'mm', 'a4'); // 'l' para landscape (horizontal)
+        
+        // Configurações
+        const pageWidth = doc.internal.pageSize.getWidth();
+        const pageHeight = doc.internal.pageSize.getHeight();
+        const margin = 15;
+        let currentY = margin;
+        
+        // Cabeçalho
+        doc.setFontSize(20);
+        doc.setFont(undefined, 'bold');
+        doc.text('Relatório de Gráficos - SAC', margin, currentY);
+        currentY += 10;
+        
+        doc.setFontSize(12);
+        doc.setFont(undefined, 'normal');
+        doc.text(`Data de geração: ${new Date().toLocaleString('pt-BR')}`, margin, currentY);
+        currentY += 5;
+        
+        // Período do relatório
+        const dataInicio = document.getElementById('data_inicio').value;
+        const dataFim = document.getElementById('data_fim').value;
+        
+        // Formatar datas para o padrão brasileiro
+        const formatarData = (data) => {
+            if (!data) return '';
+            const partes = data.split('-');
+            return `${partes[2]}/${partes[1]}/${partes[0]}`;
+        };
+        
+        doc.text(`Período: ${formatarData(dataInicio)} até ${formatarData(dataFim)}`, margin, currentY);
+        currentY += 15;
+        
+        // Capturar cards de estatísticas
+        const cardsElement = document.getElementById('cards-estatisticas');
+        if (cardsElement) {
+            const canvas = await html2canvas(cardsElement, {
+                scale: 2,
+                useCORS: true,
+                allowTaint: false
+            });
+            
+            const imgData = canvas.toDataURL('image/png');
+            const imgWidth = pageWidth - (margin * 2);
+            const imgHeight = (canvas.height * imgWidth) / canvas.width;
+            
+            if (currentY + imgHeight > pageHeight - margin) {
+                doc.addPage();
+                currentY = margin;
             }
+            
+            doc.addImage(imgData, 'PNG', margin, currentY, imgWidth, imgHeight);
+            currentY += imgHeight + 10;
+        }
+        
+        // Capturar cada gráfico individualmente respeitando o layout original
+        
+        // Primeira linha: 3 gráficos lado a lado (Departamento, Status, Avaliações)
+        const primeiraLinha = ['grafico-departamento', 'grafico-status', 'grafico-avaliacoes'];
+        let graficosCapturados = [];
+        
+        for (const graficoId of primeiraLinha) {
+            const elemento = document.getElementById(graficoId);
+            if (elemento && elemento.offsetParent !== null) {
+                const canvas = await html2canvas(elemento.closest('.card'), {
+                    scale: 2,
+                    useCORS: true,
+                    allowTaint: false
+                });
+                graficosCapturados.push({
+                    id: graficoId,
+                    canvas: canvas,
+                    imgData: canvas.toDataURL('image/png')
+                });
+            }
+        }
+        
+        // Adicionar primeira linha de gráficos (3 lado a lado)
+        if (graficosCapturados.length > 0) {
+            const graficosWidth = (pageWidth - (margin * 4)) / 3; // 3 gráficos com margens
+            const maxHeight = Math.max(...graficosCapturados.map(g => (g.canvas.height * graficosWidth) / g.canvas.width));
+            
+            if (currentY + maxHeight > pageHeight - margin) {
+                doc.addPage();
+                currentY = margin;
+            }
+            
+            let xPos = margin;
+            for (const grafico of graficosCapturados) {
+                const imgHeight = (grafico.canvas.height * graficosWidth) / grafico.canvas.width;
+                doc.addImage(grafico.imgData, 'PNG', xPos, currentY, graficosWidth, imgHeight);
+                xPos += graficosWidth + margin;
+            }
+            currentY += maxHeight + 15;
+        }
+        
+        // Segunda linha: 2 gráficos lado a lado (Problemas e Serviços)
+        const segundaLinha = ['grafico-problemas', 'grafico-servicos'];
+        graficosCapturados = [];
+        
+        for (const graficoId of segundaLinha) {
+            const elemento = document.getElementById(graficoId);
+            if (elemento && elemento.offsetParent !== null) {
+                const canvas = await html2canvas(elemento.closest('.card'), {
+                    scale: 2,
+                    useCORS: true,
+                    allowTaint: false
+                });
+                graficosCapturados.push({
+                    id: graficoId,
+                    canvas: canvas,
+                    imgData: canvas.toDataURL('image/png')
+                });
+            }
+        }
+        
+        // Adicionar segunda linha de gráficos (2 lado a lado)
+        if (graficosCapturados.length > 0) {
+            const graficosWidth = (pageWidth - (margin * 3)) / 2; // 2 gráficos com margens
+            const maxHeight = Math.max(...graficosCapturados.map(g => (g.canvas.height * graficosWidth) / g.canvas.width));
+            
+            if (currentY + maxHeight > pageHeight - margin) {
+                doc.addPage();
+                currentY = margin;
+            }
+            
+            let xPos = margin;
+            for (const grafico of graficosCapturados) {
+                const imgHeight = (grafico.canvas.height * graficosWidth) / grafico.canvas.width;
+                doc.addImage(grafico.imgData, 'PNG', xPos, currentY, graficosWidth, imgHeight);
+                xPos += graficosWidth + margin;
+            }
+            currentY += maxHeight + 15;
+        }
+        
+        // Terceira seção: Gráficos que ocupam a linha inteira (Temporal e Atendentes)
+        const graficosCompletos = ['grafico-temporal', 'grafico-atendentes'];
+        
+        for (const graficoId of graficosCompletos) {
+            const elemento = document.getElementById(graficoId);
+            if (elemento && elemento.offsetParent !== null) {
+                const canvas = await html2canvas(elemento.closest('.card'), {
+                    scale: 2,
+                    useCORS: true,
+                    allowTaint: false
+                });
+                
+                const imgData = canvas.toDataURL('image/png');
+                const imgWidth = pageWidth - (margin * 2);
+                const imgHeight = (canvas.height * imgWidth) / canvas.width;
+                
+                // Verificar se cabe na página atual
+                if (currentY + imgHeight > pageHeight - margin) {
+                    doc.addPage();
+                    currentY = margin;
+                }
+                
+                doc.addImage(imgData, 'PNG', margin, currentY, imgWidth, imgHeight);
+                currentY += imgHeight + 15;
+            }
+        }
+        
+        // Salvar PDF
+        const nomeArquivo = `relatorio-graficos-sac-${new Date().toISOString().split('T')[0]}.pdf`;
+        doc.save(nomeArquivo);
+        
+        Swal.fire({
+            title: 'Sucesso!',
+            text: 'Relatório PDF gerado e baixado com sucesso!',
+            icon: 'success',
+            confirmButtonText: 'OK'
         });
         
-        // Aguardar mais um pouco antes de imprimir
-        setTimeout(function() {
-            window.print();
-            
-            // Restaurar título original após impressão
-            setTimeout(function() {
-                document.title = tituloOriginal;
-            }, 1000);
-        }, 1000);
-    }, 500);
+    } catch (error) {
+        console.error('Erro ao gerar PDF:', error);
+        Swal.fire({
+            title: 'Erro!',
+            text: 'Ocorreu um erro ao gerar o PDF. Tente novamente.',
+            icon: 'error',
+            confirmButtonText: 'OK'
+        });
+    }
 }
 
 function carregarGraficos() {
@@ -492,6 +596,10 @@ function carregarGraficos() {
         success: function(dados) {
             $('#loading').hide();
             $('#graficos-container').show();
+            
+            // Tornar dados globais para uso nas funções de exportação
+            window.dados = dados;
+            
             criarGraficos(dados);
         },
         error: function(xhr, status, error) {
