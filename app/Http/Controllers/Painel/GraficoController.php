@@ -70,6 +70,8 @@ class GraficoController extends Controller
             'estatisticas' => $this->getEstatisticas($query),
             'chamados_por_status' => $this->getChamadosPorStatus($query),
             'chamados_por_departamento' => $this->getChamadosPorDepartamento($query),
+            'chamados_por_problema' => $this->getChamadosPorProblema($query),
+            'chamados_por_servico' => $this->getChamadosPorServico($query),
             'evolucao_temporal' => $this->getEvolucaoTemporal($query, $dataInicio, $dataFim),
             'performance' => $this->getPerformance($query),
             'avaliacoes' => $this->getAvaliacoes($query),
@@ -211,6 +213,40 @@ class GraficoController extends Controller
             ->map(function ($item) {
                 return [
                     'atendente' => $item->usuario_nome,
+                    'total' => $item->total
+                ];
+            });
+    }
+
+    private function getChamadosPorProblema($query)
+    {
+        return (clone $query)
+            ->join('problema', 'chamado.problema_id', '=', 'problema.problema_id')
+            ->select('problema.problema_nome as problema', DB::raw('COUNT(*) as total'))
+            ->groupBy('problema.problema_id', 'problema.problema_nome')
+            ->orderBy('total', 'desc')
+            ->limit(10)
+            ->get()
+            ->map(function ($item) {
+                return [
+                    'problema' => $item->problema,
+                    'total' => $item->total
+                ];
+            });
+    }
+
+    private function getChamadosPorServico($query)
+    {
+        return (clone $query)
+            ->join('servico_chamado', 'chamado.servico_chamado_id', '=', 'servico_chamado.servico_chamado_id')
+            ->select('servico_chamado.servico_chamado_nome as servico', DB::raw('COUNT(*) as total'))
+            ->groupBy('servico_chamado.servico_chamado_id', 'servico_chamado.servico_chamado_nome')
+            ->orderBy('total', 'desc')
+            ->limit(10)
+            ->get()
+            ->map(function ($item) {
+                return [
+                    'servico' => $item->servico,
                     'total' => $item->total
                 ];
             });

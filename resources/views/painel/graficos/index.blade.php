@@ -141,6 +141,29 @@
             </div>
         </div>
 
+        <!-- Problemas e Serviços -->
+        <div class="col-lg-6">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Chamados por Problema</h3>
+                </div>
+                <div class="card-body">
+                    <div id="grafico-problemas"></div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-6">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Chamados por Serviço</h3>
+                </div>
+                <div class="card-body">
+                    <div id="grafico-servicos"></div>
+                </div>
+            </div>
+        </div>
+
         <!-- Evolução Temporal -->
         <div class="col-lg-12">
             <div class="card">
@@ -641,7 +664,83 @@ function criarGraficos(dados) {
     charts.departamento = new ApexCharts(document.querySelector("#grafico-departamento"), departamentoOptions);
     charts.departamento.render();
     
-    // 3. Gráfico Temporal (Linha)
+    // 3. Gráfico de Problemas (Donut)
+    const problemasOptions = {
+        series: dados.chamados_por_problema.map(item => parseInt(item.total)),
+        chart: {
+            type: 'donut',
+            height: 350
+        },
+        labels: dados.chamados_por_problema.map(item => item.problema),
+        colors: [
+            '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF', 
+            '#FF9F40', '#FF6384', '#C9CBCF', '#4BC0C0', '#36A2EB'
+        ],
+        legend: {
+            position: 'bottom',
+            fontSize: '12px'
+        },
+        responsive: [{
+            breakpoint: 480,
+            options: {
+                chart: {
+                    width: 200
+                },
+                legend: {
+                    position: 'bottom'
+                }
+            }
+        }],
+        tooltip: {
+            y: {
+                formatter: function(val) {
+                    return val.toLocaleString('pt-BR') + ' chamados';
+                }
+            }
+        }
+    };
+    charts.problemas = new ApexCharts(document.querySelector("#grafico-problemas"), problemasOptions);
+    charts.problemas.render();
+    
+    // 4. Gráfico de Serviços (Donut)
+    const servicosOptions = {
+        series: dados.chamados_por_servico.map(item => parseInt(item.total)),
+        chart: {
+            type: 'donut',
+            height: 350
+        },
+        labels: dados.chamados_por_servico.map(item => item.servico),
+        colors: [
+            '#4BC0C0', '#9966FF', '#FF9F40', '#FF6384', '#36A2EB', 
+            '#FFCE56', '#C9CBCF', '#4BC0C0', '#FF6384', '#36A2EB'
+        ],
+        legend: {
+            position: 'bottom',
+            fontSize: '12px'
+        },
+        responsive: [{
+            breakpoint: 480,
+            options: {
+                chart: {
+                    width: 200
+                },
+                legend: {
+                    position: 'bottom'
+                }
+            }
+        }],
+        tooltip: {
+            y: {
+                formatter: function(val) {
+                    return val.toLocaleString('pt-BR') + ' chamados';
+                }
+            }
+        }
+    };
+    charts.servicos = new ApexCharts(document.querySelector("#grafico-servicos"), servicosOptions);
+    charts.servicos.render();
+    
+    // 5. Gráfico Temporal (Linha)
     const temporalOptions = {
         series: [{
             name: 'Chamados Abertos',
@@ -688,7 +787,7 @@ function criarGraficos(dados) {
     charts.temporal = new ApexCharts(document.querySelector("#grafico-temporal"), temporalOptions);
     charts.temporal.render();
     
-    // 4. Performance - Melhorado com formatação correta e visual aprimorado
+    // 6. Performance - Melhorado com formatação correta e visual aprimorado
     if (dados.performance) {
         const performance = dados.performance;
         
@@ -709,7 +808,7 @@ function criarGraficos(dados) {
         `);
     }
     
-    // 5. Gráfico de Avaliações (Barras Verticais)
+    // 7. Gráfico de Avaliações (Barras Verticais)
     const avaliacoesOptions = {
         series: [{
             name: 'Quantidade',
@@ -796,7 +895,7 @@ function criarGraficos(dados) {
     charts.avaliacoes = new ApexCharts(document.querySelector("#grafico-avaliacoes"), avaliacoesOptions);
     charts.avaliacoes.render();
     
-    // 6. Gráfico de Atendentes (Barras Horizontais) - já implementado
+    // 8. Gráfico de Atendentes (Barras Horizontais) - já implementado
     if (charts.atendentes) {
         charts.atendentes.destroy();
     }
