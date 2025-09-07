@@ -391,10 +391,31 @@ async function gerarPDF() {
             Swal.showLoading();
         }
     });
+
+    // Função auxiliar para otimizar html2canvas
+    const captureElementOptimized = async (element, options = {}) => {
+        const defaultOptions = {
+            scale: 1.5,
+            useCORS: true,
+            allowTaint: false,
+            backgroundColor: '#ffffff',
+            removeContainer: true,
+            logging: false,
+            imageTimeout: 15000,
+            ...options
+        };
+        
+        return await html2canvas(element, defaultOptions);
+    };
     
     try {
         const { jsPDF } = window.jspdf;
-        const doc = new jsPDF('l', 'mm', 'a4'); // 'l' para landscape (horizontal)
+        const doc = new jsPDF({
+            orientation: 'l', // landscape (horizontal)
+            unit: 'mm',
+            format: 'a4',
+            compress: true // Ativar compressão do PDF
+        });
         
         // Configurações
         const pageWidth = doc.internal.pageSize.getWidth();
@@ -457,13 +478,9 @@ async function gerarPDF() {
         // Capturar cards de estatísticas
         const cardsElement = document.getElementById('cards-estatisticas');
         if (cardsElement) {
-            const canvas = await html2canvas(cardsElement, {
-                scale: 2,
-                useCORS: true,
-                allowTaint: false
-            });
+            const canvas = await captureElementOptimized(cardsElement);
             
-            const imgData = canvas.toDataURL('image/png');
+            const imgData = canvas.toDataURL('image/jpeg', 0.85); // JPEG com 85% de qualidade
             const imgWidth = pageWidth - (margin * 2);
             const imgHeight = (canvas.height * imgWidth) / canvas.width;
             
@@ -472,7 +489,7 @@ async function gerarPDF() {
                 currentY = margin;
             }
             
-            doc.addImage(imgData, 'PNG', margin, currentY, imgWidth, imgHeight);
+            doc.addImage(imgData, 'JPEG', margin, currentY, imgWidth, imgHeight);
             currentY += imgHeight + 10;
         }
         
@@ -485,15 +502,11 @@ async function gerarPDF() {
         for (const graficoId of primeiraLinha) {
             const elemento = document.getElementById(graficoId);
             if (elemento && elemento.offsetParent !== null) {
-                const canvas = await html2canvas(elemento.closest('.card'), {
-                    scale: 2,
-                    useCORS: true,
-                    allowTaint: false
-                });
+                const canvas = await captureElementOptimized(elemento.closest('.card'));
                 graficosCapturados.push({
                     id: graficoId,
                     canvas: canvas,
-                    imgData: canvas.toDataURL('image/png')
+                    imgData: canvas.toDataURL('image/jpeg', 0.85) // JPEG com 85% de qualidade
                 });
             }
         }
@@ -511,7 +524,7 @@ async function gerarPDF() {
             let xPos = margin;
             for (const grafico of graficosCapturados) {
                 const imgHeight = (grafico.canvas.height * graficosWidth) / grafico.canvas.width;
-                doc.addImage(grafico.imgData, 'PNG', xPos, currentY, graficosWidth, imgHeight);
+                doc.addImage(grafico.imgData, 'JPEG', xPos, currentY, graficosWidth, imgHeight);
                 xPos += graficosWidth + margin;
             }
             currentY += maxHeight + 15;
@@ -524,15 +537,11 @@ async function gerarPDF() {
         for (const graficoId of segundaLinha) {
             const elemento = document.getElementById(graficoId);
             if (elemento && elemento.offsetParent !== null) {
-                const canvas = await html2canvas(elemento.closest('.card'), {
-                    scale: 2,
-                    useCORS: true,
-                    allowTaint: false
-                });
+                const canvas = await captureElementOptimized(elemento.closest('.card'));
                 graficosCapturados.push({
                     id: graficoId,
                     canvas: canvas,
-                    imgData: canvas.toDataURL('image/png')
+                    imgData: canvas.toDataURL('image/jpeg', 0.85) // JPEG com 85% de qualidade
                 });
             }
         }
@@ -550,7 +559,7 @@ async function gerarPDF() {
             let xPos = margin;
             for (const grafico of graficosCapturados) {
                 const imgHeight = (grafico.canvas.height * graficosWidth) / grafico.canvas.width;
-                doc.addImage(grafico.imgData, 'PNG', xPos, currentY, graficosWidth, imgHeight);
+                doc.addImage(grafico.imgData, 'JPEG', xPos, currentY, graficosWidth, imgHeight);
                 xPos += graficosWidth + margin;
             }
             currentY += maxHeight + 15;
@@ -562,13 +571,9 @@ async function gerarPDF() {
         for (const graficoId of graficosCompletos) {
             const elemento = document.getElementById(graficoId);
             if (elemento && elemento.offsetParent !== null) {
-                const canvas = await html2canvas(elemento.closest('.card'), {
-                    scale: 2,
-                    useCORS: true,
-                    allowTaint: false
-                });
+                const canvas = await captureElementOptimized(elemento.closest('.card'));
                 
-                const imgData = canvas.toDataURL('image/png');
+                const imgData = canvas.toDataURL('image/jpeg', 0.85); // JPEG com 85% de qualidade
                 const imgWidth = pageWidth - (margin * 2);
                 const imgHeight = (canvas.height * imgWidth) / canvas.width;
                 
@@ -578,7 +583,7 @@ async function gerarPDF() {
                     currentY = margin;
                 }
                 
-                doc.addImage(imgData, 'PNG', margin, currentY, imgWidth, imgHeight);
+                doc.addImage(imgData, 'JPEG', margin, currentY, imgWidth, imgHeight);
                 currentY += imgHeight + 15;
             }
         }
