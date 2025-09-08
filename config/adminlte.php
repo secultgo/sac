@@ -351,6 +351,43 @@ return [
             'can' => 'gestor', // Nível 1 ou 2
         ],
         [
+            'text' => 'Relatórios',
+            'icon' => 'fas fa-chart-bar',
+            'can' => 'gestor', // Nível 1 ou 2
+            'submenu' => [
+                [
+                    'text' => 'Todos',
+                    'url' => 'painel/relatorios/todos',
+                    'icon' => 'fas fa-list',
+                ],
+                [
+                    'text' => 'GT',
+                    'url' => 'painel/relatorios/departamento/1',
+                    'icon' => 'fas fa-building',
+                ],
+                [
+                    'text' => 'GAAL',
+                    'url' => 'painel/relatorios/departamento/2',
+                    'icon' => 'fas fa-building',
+                ],
+                [
+                    'text' => 'GGDP',
+                    'url' => 'painel/relatorios/departamento/3',
+                    'icon' => 'fas fa-building',
+                ],
+                [
+                    'text' => 'CS',
+                    'url' => 'painel/relatorios/departamento/9',
+                    'icon' => 'fas fa-building',
+                ],
+                [
+                    'text' => 'GFMOPC',
+                    'url' => 'painel/relatorios/departamento/22',
+                    'icon' => 'fas fa-building',
+                ],
+            ],
+        ],
+        [
             'text' => 'Departamentos',
             'url'  => 'painel/departamentos',
             'icon' => 'fas fa-building',
