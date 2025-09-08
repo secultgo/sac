@@ -23,15 +23,15 @@
                 @endif
 
                 <div class="form-group mb-3">
-                    <label for="usuario_cor">Cores disponíveis</label>
-                      <select name="usuario_cor" id="usuario_cor" class="form-control @error('usuario_cor') is-invalid @enderror">
+                    <label for="usuario_cor_id">Cores disponíveis</label>
+                      <select name="usuario_cor_id" id="usuario_cor_id" class="form-control @error('usuario_cor_id') is-invalid @enderror">
                           @foreach($cores as $cor)
                             <option value="{{ $cor->cor_id }}">
                                 {{ $cor->cor_nome }}
                             </option>
                         @endforeach
                     </select>
-                    @error('usuario_cor')
+                    @error('usuario_cor_id')
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
                 </div>

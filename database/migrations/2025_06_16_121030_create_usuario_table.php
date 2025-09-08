@@ -38,7 +38,7 @@ return new class extends Migration
             $table->string('usuario_bairro', 45)->nullable();
             $table->boolean('usuario_ldap')->default(false);
 
-            $table->foreign('usuario_cor')->references('cor_id')->on('cor');
+            $table->foreign('usuario_cor_id')->references('cor_id')->on('cor');
             $table->foreign('status_id')->references('status_id')->on('status');
             $table->foreign('departamento_id')->references('departamento_id')->on('departamento');
             $table->foreign('excluido_id')->references('excluido_id')->on('excluido');

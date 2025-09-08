@@ -85,10 +85,10 @@ class UserController extends Controller
     public function updateCor(Request $request, User $usuario)
         {
             $validated = $request->validate([
-                'usuario_cor' => 'required|exists:cor,cor_id',
+                'usuario_cor_id' => 'required|exists:cor,cor_id',
             ]);
 
-            $usuario->usuario_cor = $validated['usuario_cor'];
+            $usuario->usuario_cor = $validated['usuario_cor_id'];
             $usuario->save();
 
             return redirect()
@@ -98,7 +98,7 @@ class UserController extends Controller
     
     public function cor()
     {
-        return $this->belongsTo(Cor::class, 'usuario_cor', 'cor_id');
+        return $this->belongsTo(Cor::class, 'usuario_cor_id', 'cor_id');
     }       
 
     public function edit(User $usuario)
