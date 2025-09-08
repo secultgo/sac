@@ -85,7 +85,7 @@ class UserController extends Controller
     public function updateCor(Request $request, User $usuario)
         {
             $validated = $request->validate([
-                'usuario_cor' => 'required|exists:cores,cor_id',
+                'usuario_cor' => 'required|exists:cor,cor_id',
             ]);
 
             $usuario->usuario_cor = $validated['usuario_cor'];
