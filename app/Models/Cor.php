@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Cor extends Model
 {
 
-    protected $table = 'cores';
+    protected $table = 'cor';
     protected $primaryKey = 'cor_id';
     public $timestamps = true;
 

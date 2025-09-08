@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('cores', function (Blueprint $table) {
+        Schema::create('cor', function (Blueprint $table) {
             $table->id('cor_id'); // INT UNSIGNED AUTO_INCREMENT
             $table->string('cor_nome', 50);
         });
@@ -22,6 +22,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('cores');
+        Schema::dropIfExists('cor');
     }
 };
