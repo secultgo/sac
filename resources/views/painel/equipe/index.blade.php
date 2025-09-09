@@ -5,6 +5,10 @@
     <h1>Equipe do Departamento</h1>
 @stop
 
+@section('css')
+    <link rel="stylesheet" href="{{ asset('custom-colors.css') }}">
+@stop
+
 @section('content')
 @if(session('success'))
     <div class="alert alert-success alert-dismissible fade show" role="alert">
@@ -45,7 +49,31 @@
                     <tbody>
                         @foreach($usuarios as $usuario)
                         <tr>
-                            <td>{{ $usuario->usuario_nome }}</td>
+                            <td>
+                            @switch($usuario->usuario_cor)
+                                @case(1)<span class="badge badge-primary">{{ $usuario->usuario_nome }}</span>@break
+                                @case(2)<span class="badge badge-danger">{{ $usuario->usuario_nome }}</span>@break
+                                @case(3)<span class="badge badge-success">{{ $usuario->usuario_nome }}</span>@break
+                                @case(4)<span class="badge badge-warning">{{ $usuario->usuario_nome }}</span>@break
+                                @case(5)<span class="badge badge-purple">{{ $usuario->usuario_nome }}</span>@break
+                                @case(6)<span class="badge badge-orange">{{ $usuario->usuario_nome }}</span>@break
+                                @case(7)<span class="badge badge-pink">{{ $usuario->usuario_nome }}</span>@break
+                                @case(8)<span class="badge badge-brown">{{ $usuario->usuario_nome }}</span>@break
+                                @case(9)<span class="badge badge-secondary">{{ $usuario->usuario_nome }}</span>@break
+                                @case(10)<span class="badge badge-dark">{{ $usuario->usuario_nome }}</span>@break
+                                @case(11)<span class="badge badge-light">{{ $usuario->usuario_nome }}</span>@break
+                                @case(12)<span class="badge badge-info">{{ $usuario->usuario_nome }}</span>@break
+                                @case(13)<span class="badge badge-primary">{{ $usuario->usuario_nome }}</span>@break
+                                @case(14)<span class="badge badge-success">{{ $usuario->usuario_nome }}</span>@break
+                                @case(15)<span class="badge badge-success">{{ $usuario->usuario_nome }}</span>@break
+                                @case(16)<span class="badge badge-warning">{{ $usuario->usuario_nome }}</span>@break
+                                @case(17)<span class="badge badge-secondary">{{ $usuario->usuario_nome }}</span>@break
+                                @case(18)<span class="badge badge-light">{{ $usuario->usuario_nome }}</span>@break
+                                @case(19)<span class="badge badge-info">{{ $usuario->usuario_nome }}</span>@break
+                                @case(20)<span class="badge badge-purple">{{ $usuario->usuario_nome }}</span>@break
+                                @default<span class="badge badge-secondary">{{ $usuario->usuario_nome }}</span>
+                            @endswitch
+                            </td>
                             <td>{{ $usuario->usuario_email }}</td>
                             <td>{{ $usuario->usuario_usuario }}</td>
                             <td>
@@ -81,6 +109,11 @@
                                        class="btn btn-sm btn-warning" 
                                        title="Alterar Nível">
                                         <i class="fas fa-user-cog"></i> Nível
+                                    </a>
+                                    <a href="{{ route('usuarios.edit_cor', $usuario->usuario_id) }}" 
+                                       class="btn btn-sm btn-primary" 
+                                       title="Alterar Cor">
+                                        <i class="fas fa-user-cog"></i> Cor do Usuário
                                     </a>
                                 @else
                                     <span class="text-muted">-</span>
