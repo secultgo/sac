@@ -12,8 +12,9 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('cor', function (Blueprint $table) {
-            $table->id('cor_id'); // INT UNSIGNED AUTO_INCREMENT
-            $table->string('cor_nome', 50);
+            $table->id('cor_id');
+            $table->string('nome');
+            $table->timestamps();
         });
     }
 

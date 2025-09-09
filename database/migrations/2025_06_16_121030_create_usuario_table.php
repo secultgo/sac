@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('usuario', function (Blueprint $table) {
             $table->increments('usuario_id');
             $table->string('usuario_nome', 100);
+            $table->unsignedBigInteger('usuario_cor_id')->nullable();
             $table->string('usuario_usuario', 50)->nullable();
             $table->string('usuario_email', 100);
             $table->string('usuario_senha', 64)->nullable();
