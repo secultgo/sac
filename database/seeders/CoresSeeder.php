@@ -13,7 +13,7 @@ class CoresSeeder extends Seeder
      */
     public function run(): void
     {
-        DB::table('cores')->insert([
+        DB::table('cor')->insert([
             ['cor_id' => 1, 'cor_nome' => 'azul'],
             ['cor_id' => 2, 'cor_nome' => 'vermelho'],
             ['cor_id' => 3, 'cor_nome' => 'verde'],
