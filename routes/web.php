@@ -11,6 +11,7 @@ use App\Http\Controllers\Painel\LdapController;
 use App\Http\Controllers\Painel\ChamadoController;
 use App\Http\Controllers\Painel\LoginController;
 use App\Http\Controllers\Painel\DashboardController;
+use App\Http\Controllers\Painel\GraficoController;
 use App\Http\Controllers\Painel\RelatoriosController;
 
 Route::get('/', function () {
@@ -49,6 +50,8 @@ Route::prefix('painel')
         Route::put('usuarios/{usuario}/ativar', [UserController::class, 'ativar'])->name('usuarios.ativar')->middleware('can:super-admin');
         Route::put('usuarios/{usuario}/desativar', [UserController::class, 'desativar'])->name('usuarios.desativar')->middleware('can:super-admin');
 
+        Route::get('usuarios/{usuario}/edit-cor', [UserController::class, 'edit_cor'])->name('usuarios.edit_cor')->middleware('can:gestor');
+        Route::put('usuarios/{usuario}/cor', [UserController::class, 'updateCor'])->name('usuarios.update_cor')->middleware('can:gestor');
         Route::get('usuarios/ldap', [UserController::class, 'importarLdap'])->name('usuarios.importar.ldap')->middleware('can:super-admin');
         Route::post('usuarios/importar-ldap', [UserController::class, 'importFromLdap'])->name('usuarios.importar.ldap.post')->middleware('can:super-admin');
         Route::resource('ldap', LdapController::class)->middleware('can:super-admin');
@@ -80,6 +83,12 @@ Route::prefix('painel')
             ->middleware('can:gestor');
         Route::post('avaliacoes/{chamado}/ciente', [UserController::class, 'marcarCiente'])
             ->name('avaliacoes.ciente')
+            ->middleware('can:gestor');
+        Route::get('graficos', [GraficoController::class, 'index'])
+            ->name('graficos.index')
+            ->middleware('can:gestor');
+        Route::get('graficos/dados', [GraficoController::class, 'dadosGraficos'])
+            ->name('graficos.dados')
             ->middleware('can:gestor');
         Route::get('meus-chamados', [ChamadoController::class, 'meusChamados'])->name('meus-chamados.index');
         Route::get('chamados/problemas/{departamento}', [ChamadoController::class, 'problemasPorDepartamento'])->name('chamados.problemasPorDepartamento');

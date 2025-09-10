@@ -25,7 +25,11 @@ class RelatoriosController extends Controller
 
         $chamados = $this->getChamadosCompletos();
         
-        return view('painel.relatorios.todos', compact('chamados'));
+        $titulo = 'Relatórios - Todos os Chamados';
+        $subtitulo = 'Todos os Chamados';
+        $mensagem_vazia = 'Nenhum chamado encontrado.';
+        
+        return view('painel.relatorios.index', compact('chamados', 'titulo', 'subtitulo', 'mensagem_vazia'));
     }
 
     public function departamento($departamento_id)
@@ -41,7 +45,11 @@ class RelatoriosController extends Controller
         $departamento = Departamento::findOrFail($departamento_id);
         $chamados = $this->getChamadosCompletos($departamento_id);
         
-        return view('painel.relatorios.departamento', compact('chamados', 'departamento'));
+        $titulo = 'Relatórios - ' . $departamento->departamento_nome . ' (' . $departamento->departamento_sigla . ')';
+        $subtitulo = 'Chamados do Departamento: ' . $departamento->departamento_sigla;
+        $mensagem_vazia = 'Nenhum chamado encontrado para este departamento.';
+        
+        return view('painel.relatorios.index', compact('chamados', 'titulo', 'subtitulo', 'mensagem_vazia'));
     }
 
     private function getChamadosCompletos($departamento_id = null)

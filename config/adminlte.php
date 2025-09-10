@@ -350,6 +350,12 @@ return [
             'icon' => 'fas fa-star',
             'can' => 'gestor', // Nível 1 ou 2
         ],
+        [
+            'text' => 'Gráficos',
+            'url' => 'painel/graficos',
+            'icon' => 'fas fa-chart-bar',
+            'can' => 'gestor', // Nível 1 ou 2
+        ],
         // Menu de Relatórios será carregado dinamicamente pelo MenuServiceProvider
         [
             'key' => 'departamentos',

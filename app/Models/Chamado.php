@@ -83,7 +83,7 @@ class Chamado extends Model
 
     public function statusChamado()
     {
-        return $this->belongsTo(Status::class, 'status_chamado_id', 'status_id');
+        return $this->belongsTo(StatusChamado::class, 'status_chamado_id', 'status_chamado_id');
     }
 
     public function comentarios()

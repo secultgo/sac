@@ -1,15 +1,15 @@
 @extends('adminlte::page')
 
-@section('title', 'Relatórios - ' . $departamento->departamento_sigla)
+@section('title', 'Relatórios - ' . $titulo)
 
 @section('content_header')
-    <h1>Relatórios - {{ $departamento->departamento_nome }} ({{ $departamento->departamento_sigla }})</h1>
+    <h1>{{ $titulo }}</h1>
 @stop
 
 @section('content')
     <div class="card">
         <div class="card-header">
-            <h3 class="card-title">Chamados do Departamento: {{ $departamento->departamento_sigla }}</h3>
+            <h3 class="card-title">{{ $subtitulo }}</h3>
         </div>
 
         <div class="card-body p-0">
@@ -54,7 +54,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="15" class="text-center">Nenhum chamado encontrado para este departamento.</td>
+                            <td colspan="15" class="text-center">{{ $mensagem_vazia ?? 'Nenhum chamado encontrado.' }}</td>
                         </tr>
                     @endforelse
                 </tbody>

@@ -10,6 +10,10 @@ use Illuminate\Support\Facades\Auth;
     <h1>Dashboard Painel de Controle</h1>
 @stop
 
+@section('css')
+    <link rel="stylesheet" href="{{ asset('custom-colors.css') }}">
+@stop
+
 @section('content')
 
 <div class="row mb-4">
@@ -152,7 +156,35 @@ use Illuminate\Support\Facades\Auth;
                         <td>{{ $chamado->usuario->usuario_nome ?? 'N/A' }}</td>
                         <td>{{ $chamado->departamentoLotacao->departamento_nome ?? 'N/A' }}</td>
                         <td>{{ $chamado->local->local_nome ?? 'N/A' }}</td>
-                        <td>{{ $chamado->responsavel->usuario_nome ?? 'Não atribuído' }}</td>
+                        <td>
+                            @if($chamado->responsavel)
+                                @switch($chamado->responsavel->usuario_cor)
+                                    @case(1)<span class="badge badge-primary">{{ $chamado->responsavel->usuario_nome }}</span>@break
+                                    @case(2)<span class="badge badge-danger">{{ $chamado->responsavel->usuario_nome }}</span>@break
+                                    @case(3)<span class="badge badge-success">{{ $chamado->responsavel->usuario_nome }}</span>@break
+                                    @case(4)<span class="badge badge-warning">{{ $chamado->responsavel->usuario_nome }}</span>@break
+                                    @case(5)<span class="badge badge-purple">{{ $chamado->responsavel->usuario_nome }}</span>@break
+                                    @case(6)<span class="badge badge-orange">{{ $chamado->responsavel->usuario_nome }}</span>@break
+                                    @case(7)<span class="badge badge-pink">{{ $chamado->responsavel->usuario_nome }}</span>@break
+                                    @case(8)<span class="badge badge-brown">{{ $chamado->responsavel->usuario_nome }}</span>@break
+                                    @case(9)<span class="badge badge-secondary">{{ $chamado->responsavel->usuario_nome }}</span>@break
+                                    @case(10)<span class="badge badge-dark">{{ $chamado->responsavel->usuario_nome }}</span>@break
+                                    @case(11)<span class="badge badge-light">{{ $chamado->responsavel->usuario_nome }}</span>@break
+                                    @case(12)<span class="badge badge-info">{{ $chamado->responsavel->usuario_nome }}</span>@break
+                                    @case(13)<span class="badge badge-primary">{{ $chamado->responsavel->usuario_nome }}</span>@break
+                                    @case(14)<span class="badge badge-success">{{ $chamado->responsavel->usuario_nome }}</span>@break
+                                    @case(15)<span class="badge badge-success">{{ $chamado->responsavel->usuario_nome }}</span>@break
+                                    @case(16)<span class="badge badge-warning">{{ $chamado->responsavel->usuario_nome }}</span>@break
+                                    @case(17)<span class="badge badge-secondary">{{ $chamado->responsavel->usuario_nome }}</span>@break
+                                    @case(18)<span class="badge badge-light">{{ $chamado->responsavel->usuario_nome }}</span>@break
+                                    @case(19)<span class="badge badge-info">{{ $chamado->responsavel->usuario_nome }}</span>@break
+                                    @case(20)<span class="badge badge-purple">{{ $chamado->responsavel->usuario_nome }}</span>@break
+                                    @default<span class="badge badge-secondary">{{ $chamado->responsavel->usuario_nome }}</span>
+                                @endswitch
+                            @else
+                                <span class="text-muted">Não atribuído</span>
+                            @endif
+                        </td>
                         <td>
                             @if($chamado->chamado_abertura)
                                 {{ is_string($chamado->chamado_abertura) ? \Carbon\Carbon::parse($chamado->chamado_abertura)->format('d/m/Y H:i:s') : $chamado->chamado_abertura->format('d/m/Y H:i:s') }}
