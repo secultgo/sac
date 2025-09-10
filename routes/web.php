@@ -12,6 +12,7 @@ use App\Http\Controllers\Painel\ChamadoController;
 use App\Http\Controllers\Painel\LoginController;
 use App\Http\Controllers\Painel\DashboardController;
 use App\Http\Controllers\Painel\GraficoController;
+use App\Http\Controllers\Painel\RelatoriosController;
 
 Route::get('/', function () {
     return redirect('/painel');
@@ -92,4 +93,8 @@ Route::prefix('painel')
         Route::get('meus-chamados', [ChamadoController::class, 'meusChamados'])->name('meus-chamados.index');
         Route::get('chamados/problemas/{departamento}', [ChamadoController::class, 'problemasPorDepartamento'])->name('chamados.problemasPorDepartamento');
         Route::get('chamados/servicos/{problema}', [ChamadoController::class, 'servicosPorProblema'])->name('chamados.servicosPorProblema');
+        
+        // Rotas de Relatórios
+        Route::get('relatorios/todos', [RelatoriosController::class, 'todos'])->name('relatorios.todos')->middleware('can:super-admin');
+        Route::get('relatorios/departamento/{departamento_id}', [RelatoriosController::class, 'departamento'])->name('relatorios.departamento')->middleware('can:gestor');
      });

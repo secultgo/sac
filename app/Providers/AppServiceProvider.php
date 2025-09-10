@@ -44,5 +44,10 @@ class AppServiceProvider extends ServiceProvider
         Gate::define('nao-usuario-comum', function ($user) {
             return !$user->isUsuarioComum();
         });
+
+        // Gate para verificar se o usuário é gestor mas não super admin
+        Gate::define('gestor-nao-super-admin', function ($user) {
+            return $user->isGestor() && !$user->isSuperAdmin();
+        });
     }
 }
