@@ -88,7 +88,7 @@ class UserController extends Controller
                 'usuario_cor_id' => 'required|exists:cor,cor_id',
             ]);
 
-            $usuario->usuario_cor = $validated['usuario_cor_id'];
+            $usuario->usuario_cor_id = $validated['usuario_cor_id'];
             $usuario->save();
 
             return redirect()

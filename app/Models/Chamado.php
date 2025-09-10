@@ -29,8 +29,9 @@ class Chamado extends Model
         'local_id',
         'departamento_id',
         'lotacao_id',
-    'chamado_ciente_gestor',
-    'chamado_ciente_gestor_id',
+        'chamado_ciente_gestor',
+        'chamado_ciente_gestor_id',
+        'avalicao_chamado_id'
     ];
 
     protected $casts = [
