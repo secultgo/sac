@@ -351,6 +351,12 @@ return [
             'can' => 'gestor', // Nível 1 ou 2
         ],
         [
+            'text' => 'Gráficos',
+            'url' => 'painel/graficos',
+            'icon' => 'fas fa-chart-bar',
+            'can' => 'gestor', // Nível 1 ou 2
+        ],
+        [
             'text' => 'Departamentos',
             'url'  => 'painel/departamentos',
             'icon' => 'fas fa-building',
