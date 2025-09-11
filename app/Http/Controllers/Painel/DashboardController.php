@@ -136,32 +136,45 @@ class DashboardController extends Controller
         ];
 
         $chamados->transform(function ($chamado) {
-            $inicio = is_string($chamado->chamado_atendimento) ? Carbon::parse($chamado->chamado_atendimento) : $chamado->chamado_atendimento;
-            $fim = $chamado->chamado_fechado
-                ? (is_string($chamado->chamado_fechado) ? Carbon::parse($chamado->chamado_fechado) : $chamado->chamado_fechado)
+            $inicio = !empty($chamado->chamado_atendimento)
+                ? (is_string($chamado->chamado_atendimento) 
+                    ? Carbon::parse($chamado->chamado_atendimento) 
+                    : $chamado->chamado_atendimento)
+                : null;
+        
+            $fim = !empty($chamado->chamado_fechado)
+                ? (is_string($chamado->chamado_fechado) 
+                    ? Carbon::parse($chamado->chamado_fechado) 
+                    : $chamado->chamado_fechado)
                 : now();
         
-            $diff = $inicio->diff($fim);
-        
             $tempoFormatado = '';
-            if ($diff->d > 0) {
-                $tempoFormatado .= $diff->d . ' dia' . ($diff->d > 1 ? 's' : '') . ' ';
-            }
-            if ($diff->h > 0) {
-                $tempoFormatado .= $diff->h . 'h ';
-            }
-            if ($diff->i > 0) {
-                $tempoFormatado .= $diff->i . 'min ';
-            }
-            if ($diff->s > 0 || empty($tempoFormatado)) {
-                $tempoFormatado .= $diff->s . 's';
+        
+            if ($inicio) {
+                $diff = $inicio->diff($fim);
+        
+                if ($diff->d > 0) {
+                    $tempoFormatado .= $diff->d . ' dia' . ($diff->d > 1 ? 's' : '') . ' ';
+                }
+                if ($diff->h > 0) {
+                    $tempoFormatado .= $diff->h . 'h ';
+                }
+                if ($diff->i > 0) {
+                    $tempoFormatado .= $diff->i . 'min ';
+                }
+                if ($diff->s > 0 || empty($tempoFormatado)) {
+                    $tempoFormatado .= $diff->s . 's';
+                }
+            } else {
+                // Caso não tenha início de atendimento registrado
+                $tempoFormatado = 'Não iniciado';
             }
         
             $chamado->tempo_atendimento = trim($tempoFormatado);
         
             return $chamado;
-        });
+        });        
 
         return view('painel.dashboard.fechado', compact('chamados', 'contadores', 'statusFiltro')); 
-    }    
+    }        
 }

@@ -123,7 +123,7 @@ use Illuminate\Support\Facades\Auth;
             <a href="{{ route('painel.dashboard', ['status' => 5]) }}" class="btn btn-sm btn-info rounded-pill px-3 mr-2 mb-2 {{ $statusFiltro == 5 ? 'active' : '' }}">
                 Não Avaliados <span class="badge badge-light ml-1">{{ $contadores['resolvidos'] ?? 0 }}</span>
             </a>
-            <a href="{{ route('painel.dashboard', ['status' => 3]) }}" class="btn btn-sm btn-success rounded-pill px-3 mr-2 mb-2 {{ $statusFiltro == 3 ? 'active' : '' }}">
+            <a href="{{ route('painel.dashboard.fechados', ['status' => 3]) }}" class="btn btn-sm btn-success rounded-pill px-3 mr-2 mb-2 {{ $statusFiltro == 3 ? 'active' : '' }}">
                 Fechados <span class="badge badge-light ml-1">{{ $contadores['fechados'] ?? 0 }}</span>
             </a>
         </div>
