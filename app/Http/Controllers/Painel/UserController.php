@@ -362,9 +362,9 @@ class UserController extends Controller
             'departamentoLotacao',
         ])
         ->where('departamento_id', $departamentoId)
-        ->whereIn('avaliacao_chamado_id', [3,4])
+        ->whereIn('avaliacao_chamado_id', [3, 4])
         ->whereNotNull('avaliacao_chamado_id')
-        ->where('chamado_ciente_gestor', 0)
+        ->where('chamado_ciente_gestor', [0 ,1])
         ->orderBy('chamado_fechado', 'desc')
         ->get();
 
@@ -372,26 +372,44 @@ class UserController extends Controller
         $totalRuins = Chamado::where('departamento_id', $departamentoId)
             ->where('avaliacao_chamado_id', 4)
             ->whereNotNull('avaliacao_chamado_id')
-            ->where('chamado_ciente_gestor', 0)
+            ->where('chamado_ciente_gestor', [0 ,1])
             ->count();
         $totalRegulares = Chamado::where('departamento_id', $departamentoId)
             ->where('avaliacao_chamado_id', 3)
             ->whereNotNull('avaliacao_chamado_id')
-            ->where('chamado_ciente_gestor', 0)
+            ->where('chamado_ciente_gestor', [0 ,1])
             ->count();
         $totalAvaliacoes = Chamado::where('departamento_id', $departamentoId)
-            ->whereIn('avaliacao_chamado_id', [3,4])
+            ->whereIn('avaliacao_chamado_id', [3, 4])
             ->whereNotNull('avaliacao_chamado_id')
-            ->where('chamado_ciente_gestor', 0)
             ->count();
+        $totalCientes = Chamado::where('departamento_id', $departamentoId)
+            ->whereIn('avaliacao_chamado_id', [3, 4])
+            ->whereNotNull('avaliacao_chamado_id')
+            ->where('chamado_ciente_gestor', 1)
+            ->count();
+        
 
         return view('painel.avaliacoes.index', compact(
             'chamadosAvaliados',
             'totalAvaliacoes',
             'totalRuins',
-            'totalRegulares'
+            'totalRegulares',
+            'totalCientes'
         ));
     }
+
+    public function cientes()
+    {
+        $cientes = Chamado::with(['usuario','responsavel','local','departamentoLotacao','avaliacaoChamado'])
+            ->whereNotNull('avaliacao_chamado_id')
+            ->whereIn('avaliacao_chamado_id', [3,4]) // Ruim / Regular
+            ->where('chamado_ciente_gestor', 1)
+            ->get();
+        
+        return view('painel.avaliacoes.cientes', compact('cientes'));
+    }
+
 
     /**
      * Marca ciência do gestor em um chamado avaliado (3/4)

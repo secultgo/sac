@@ -81,6 +81,9 @@ Route::prefix('painel')
         Route::get('avaliacoes', [UserController::class, 'avaliacoes'])
             ->name('avaliacoes.index')
             ->middleware('can:gestor');
+        Route::get('/avaliacoes/cientes', [UserController::class, 'cientes'])
+            ->name('avaliacoes.cientes')
+            ->middleware('can:gestor');
         Route::post('avaliacoes/{chamado}/ciente', [UserController::class, 'marcarCiente'])
             ->name('avaliacoes.ciente')
             ->middleware('can:gestor');
