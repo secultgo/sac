@@ -50,7 +50,7 @@
                         @foreach($usuarios as $usuario)
                         <tr>
                             <td>
-                            @switch($usuario->usuario_cor)
+                            @switch($usuario->usuario_cor_id)
                                 @case(1)<span class="badge badge-primary">{{ $usuario->usuario_nome }}</span>@break
                                 @case(2)<span class="badge badge-danger">{{ $usuario->usuario_nome }}</span>@break
                                 @case(3)<span class="badge badge-success">{{ $usuario->usuario_nome }}</span>@break
