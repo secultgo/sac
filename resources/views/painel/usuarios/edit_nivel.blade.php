@@ -42,7 +42,11 @@
                 </div>
 
                 <button type="submit" class="btn btn-primary">Salvar</button>
-                <a href="{{ route('usuarios.index') }}" class="btn btn-secondary">Cancelar</a>
+                @if(request()->headers->get('referer') && str_contains(request()->headers->get('referer'), '/equipe'))
+                    <a href="{{ route('equipe.index') }}" class="btn btn-secondary">Cancelar</a>
+                @else
+                    <a href="{{ route('usuarios.index') }}" class="btn btn-secondary">Cancelar</a>
+                @endif
             </form>
         </div>
     </div>
