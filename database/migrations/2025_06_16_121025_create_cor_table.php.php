@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('cor', function (Blueprint $table) {
             $table->id('cor_id');
-            $table->string('nome');
+            $table->string('cor_nome');
             $table->timestamps();
         });
     }
