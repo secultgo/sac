@@ -613,8 +613,9 @@ $(document).ready(function() {
         "pageLength": 25,
         "lengthMenu": [[10, 25, 50, 100, -1], [10, 25, 50, 100, "Todos"]],
         // Manter ordenação do servidor quando filtro = Abertos (1);
+        // Ordenação crescente para Atendimento (2), Pendentes (4) e Aguardando Usuário (6);
         // para outros filtros, ordenar por ID decrescente
-        "order": {!! $statusFiltro == 1 ? '[]' : '[[0, "desc"]]' !!},
+        "order": {!! $statusFiltro == 1 ? '[]' : (in_array($statusFiltro, [2, 4, 6]) ? '[[0, "asc"]]' : '[[0, "desc"]]') !!},
         "columnDefs": [
             {
                 "targets": [9], // Coluna de ações
