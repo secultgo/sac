@@ -46,7 +46,7 @@
                             <td>{{ $chamado->local_nome ?? '' }}</td>
                             <td>{{ $chamado->problema_nome ?? '' }}</td>
                             <td>{{ $chamado->servico_chamado_nome ?? '' }}</td>
-                            <td>{{ $chamado->chamado_ip ?? '' }}</td>
+                            <td>{{ $chamado->usuario_fone_residencial ?? '' }}</td>
                             <td>{{ $chamado->responsavel_nome ?? '' }}</td>
                             <td>{{ $chamado->departamento_sigla ?? '' }}</td>
                             <td>{{ $chamado->status_chamado_nome ?? '' }}</td>
