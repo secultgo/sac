@@ -193,6 +193,16 @@ class UserController extends Controller
             'usuario_nivel' => 'required|exists:nivel,nivel_id',
         ]);
 
+        // Verifica se um gestor (nível 2) está tentando atribuir Super Usuário (nível 1)
+        $usuarioLogadoNivel = auth()->user()->nivelUsuarios->first();
+        if ($usuarioLogadoNivel && $usuarioLogadoNivel->nivel_id == 2 && $request->usuario_nivel == 1) {
+            // Verifica se veio da tela de equipe para redirect correto
+            if ($request->has('from_equipe')) {
+                return redirect()->route('equipe.index')->with('error', 'Gestores não podem atribuir o nível Super Usuário.');
+            }
+            return redirect()->route('usuarios.index')->with('error', 'Gestores não podem atribuir o nível Super Usuário.');
+        }
+
         NivelUsuario::updateOrCreate(
             ['usuario_id' => $usuario->usuario_id],
             ['nivel_id' => $request->usuario_nivel]
