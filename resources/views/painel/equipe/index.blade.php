@@ -42,7 +42,6 @@
                             <th>Email</th>
                             <th>Usuário</th>
                             <th>Nível</th>
-                            <th>Status</th>
                             <th>Ações</th>
                         </tr>
                     </thead>
@@ -95,13 +94,6 @@
                                             <span class="badge badge-dark">Nível {{ $nivelUsuario->nivel_id }}</span>
                                     @endswitch
                                 @endforeach
-                            </td>
-                            <td>
-                                @if($usuario->status_id == 1)
-                                    <span class="badge badge-success">Ativo</span>
-                                @else
-                                    <span class="badge badge-danger">Inativo</span>
-                                @endif
                             </td>
                             <td>
                                 @if($usuario->usuario_id !== auth()->user()->usuario_id)
