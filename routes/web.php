@@ -26,6 +26,7 @@ Route::prefix('painel')
      ->middleware('auth')
      ->group(function () {
          Route::get('/', [DashboardController::class, 'index'])->name('painel.dashboard');
+         Route::get('/fechados', [DashboardController::class, 'fechados'])->name('painel.dashboard.fechados');
          
          // Rotas de perfil
          Route::get('/usuarios/completar-perfil', [UserController::class, 'completarPerfil'])->name('usuarios.completar-perfil');

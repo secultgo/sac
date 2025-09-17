@@ -123,7 +123,7 @@ use Illuminate\Support\Facades\Auth;
             <a href="{{ route('painel.dashboard', ['status' => 5]) }}" class="btn btn-sm btn-info rounded-pill px-3 mr-2 mb-2 {{ $statusFiltro == 5 ? 'active' : '' }}">
                 Não Avaliados <span class="badge badge-light ml-1">{{ $contadores['resolvidos'] ?? 0 }}</span>
             </a>
-            <a href="{{ route('painel.dashboard.fechados', ['status' => 3]) }}" class="btn btn-sm btn-success rounded-pill px-3 mr-2 mb-2 {{ $statusFiltro == 3 ? 'active' : '' }}">
+            <a href="{{ route('painel.dashboard', ['status' => 3]) }}" class="btn btn-sm btn-success rounded-pill px-3 mr-2 mb-2 {{ $statusFiltro == 3 ? 'active' : '' }}">
                 Fechados <span class="badge badge-light ml-1">{{ $contadores['fechados'] ?? 0 }}</span>
             </a>
         </div>
@@ -141,8 +141,9 @@ use Illuminate\Support\Facades\Auth;
                         <th>Local</th>
                         <th>Responsável</th>
                         <th>Data de Criação</th>
-                        <th>Data Atendimento</th>
+                        <th>Tempo em Atendimento</th>
                         <th>Status</th>
+                        <th>Avaliação</th>
                         <th class="text-right">Ações</th>
                     </tr>
                 </thead>
@@ -192,14 +193,10 @@ use Illuminate\Support\Facades\Auth;
                                 N/A
                             @endif
                         </td>
-                        <td>
-                            @if($chamado->chamado_atendimento)
-                                {{ is_string($chamado->chamado_atendimento) ? \Carbon\Carbon::parse($chamado->chamado_atendimento)->format('d/m/Y H:i:s') : $chamado->chamado_atendimento->format('d/m/Y H:i:s') }}
-                            @else
-                                N/A
-                            @endif
+                        <td class="text-center">
+                          <span class="badge badge-info">{{ $chamado->tempo_atendimento }}</span>
                         </td>
-                        <td>
+                     <td>
                             @switch($chamado->status_chamado_id)
                                 @case(1)
                                     <span class="badge badge-danger">Aberto</span>
@@ -226,6 +223,28 @@ use Illuminate\Support\Facades\Auth;
                                     <span class="badge badge-dark">Status {{ $chamado->status_chamado_id }}</span>
                             @endswitch
                         </td>
+                        <td>
+                          @switch($chamado->avaliacao_chamado_id)
+                              @case(1)
+                                  <span class="badge badge-danger">Ruim</span>
+                                  @break
+                              @case(2)
+                                  <span class="badge badge-warning">Regular</span>
+                                  @break
+                              @case(3)
+                                  <span class="badge badge-info">Bom</span>
+                                  @break
+                              @case(4)
+                                  <span class="badge badge-primary">Muito Bom</span>
+                                  @break
+                              @case(5)
+                                  <span class="badge badge-success">Excelente</span>
+                                  @break
+                              @default
+                                  <span class="badge badge-secondary">Não Avaliado</span>
+                          @endswitch
+                      </td>
+
                         <td class="text-right">
                             <div class="d-flex flex-wrap justify-content-end">
                                 <!-- Botão Ver (sempre visível) -->
