@@ -130,7 +130,7 @@ Aberto → Atendimento → Pendente → Resolvido → Avaliado → Fechado
 - 🔵 **Aguardando Usuário** - Solicitação de informações ao solicitante
 - 🟢 **Resolvido** - Aguardando avaliação
 - ✅ **Fechado** - Concluído e avaliado
-- 🟣 **Reaberto** - Reaberto após fechamento
+- 🟣 **Reaberto** - Reaberto após resolvido
 
 ## 🔧 Comandos Úteis
 
