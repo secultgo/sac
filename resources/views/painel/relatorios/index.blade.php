@@ -137,7 +137,18 @@ $(document).ready(function() {
             },
             {
                 extend: 'pdfHtml5',
-                text: 'PDF'
+                text: 'PDF',
+                orientation: 'landscape',
+                pageSize: 'A4',
+                exportOptions: {
+                    columns: ':visible'
+                },
+                customize: function (doc) {
+                    doc.content[1].table.widths = ['5%', '8%', '8%', '8%', '8%', '10%', '8%', '8%', '8%', '8%', '8%', '10%', '10%', '8%', '5%'];
+                    doc.styles.tableHeader.fontSize = 9;
+                    doc.defaultStyle.fontSize = 8;
+                    doc.content[1].margin = [0, 0, 0, 0];
+                }
             },
             {
                 extend: 'print',
