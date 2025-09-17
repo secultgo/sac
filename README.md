@@ -1,63 +1,215 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# SAC - Sistema de Atendimento de Chamados
 
 <p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
+  <img src="https://img.shields.io/badge/Laravel-FF2D20?style=for-the-badge&logo=laravel&logoColor=white" alt="Laravel">
+  <img src="https://img.shields.io/badge/PHP-8.2-777BB4?style=for-the-badge&logo=php&logoColor=white" alt="PHP">
+  <img src="https://img.shields.io/badge/MySQL-8.0-4479A1?style=for-the-badge&logo=mysql&logoColor=white" alt="MySQL">
+  <img src="https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white" alt="Docker">
 </p>
 
-## About Laravel
+## 📋 Sobre o Projeto
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+O **SAC (Sistema de Atendimento de Chamados)** é uma aplicação web desenvolvida para gerenciar chamados de suporte técnico e atendimento ao cliente. O sistema oferece um fluxo completo de abertura, acompanhamento, atendimento e resolução de chamados, com diferentes níveis de acesso e permissões.
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+### 🎯 Principais Funcionalidades
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+- **Abertura de Chamados** - Interface intuitiva para abertura de solicitações
+- **Dashboard Interativo** - Painéis com estatísticas e gráficos em tempo real
+- **Sistema de Permissões** - 4 níveis de acesso (Super Usuário, Gestor, Atendente, Usuário)
+- **Gestão de Equipes** - Controle de usuários por departamento
+- **Avaliação de Atendimento** - Sistema de feedback com ícones interativos
+- **Relatórios Detalhados** - Exportação em PDF e Excel com DataTables
+- **Atribuição de Responsáveis** - Distribuição automática e manual de chamados
+- **Timeline de Atividades** - Histórico completo de todas as interações
+- **Sistema de Status** - Controle de fluxo (Aberto → Atendimento → Pendente → Resolvido → Fechado)
 
-## Learning Laravel
+## 🛠️ Tecnologias Utilizadas
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+### Backend
+- **Laravel 11** - Framework PHP
+- **PHP 8.2** - Linguagem de programação
+- **MySQL 8.0** - Banco de dados
+- **Eloquent ORM** - Mapeamento objeto-relacional
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+### Frontend
+- **AdminLTE 3** - Template administrativo
+- **Bootstrap 4** - Framework CSS
+- **jQuery** - Biblioteca JavaScript
+- **Chart.js** - Gráficos interativos
+- **DataTables** - Tabelas avançadas com filtros e exportação
+- **SweetAlert2** - Alertas e modais elegantes
+- **Font Awesome** - Ícones
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+### Ferramentas e Infraestrutura
+- **Docker & Docker Compose** - Containerização
+- **Nginx** - Servidor web
+- **Redis** - Cache e sessões
+- **Composer** - Gerenciador de dependências PHP
+- **NPM/Vite** - Build de assets frontend
 
-## Laravel Sponsors
+## 📦 Instalação e Configuração
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+### Pré-requisitos
+- Docker e Docker Compose
+- Git
 
-### Premium Partners
+### 1. Clone do Repositório
+```bash
+git clone https://github.com/secultgo/sac.git
+cd sac
+```
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+### 2. Configuração do Ambiente
+```bash
+# Copiar arquivo de ambiente
+cp .env.example .env
 
-## Contributing
+# Configurar variáveis no .env (banco de dados, etc.)
+```
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+### 3. Inicialização com Docker
+```bash
+# Subir os containers
+docker-compose up -d
 
-## Code of Conduct
+# Instalar dependências PHP
+docker exec -it sac-app composer install
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+# Gerar chave da aplicação
+docker exec -it sac-app php artisan key:generate
 
-## Security Vulnerabilities
+# Executar migrations
+docker exec -it sac-app php artisan migrate
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+# Executar seeders (dados iniciais)
+docker exec -it sac-app php artisan db:seed
+```
 
-## License
+### 4. Instalação dos Assets
+```bash
+# Instalar dependências Node
+docker exec -it sac-app npm install
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+# Build dos assets
+docker exec -it sac-app npm run build
+```
 
-e ser feito dentro do container com o comando php artisan key:generate, ou diretamente via Sail utilizando ./vendor/bin/sail artisan key:generate
+## 🚀 Uso do Sistema
+
+### Acessos Padrão (após seeders)
+- **Super Usuário**: admin@sistema.com / senha123
+- **Gestor**: gestor@sistema.com / senha123
+- **Atendente**: atendente@sistema.com / senha123
+- **Usuário**: usuario@sistema.com / senha123
+
+### URLs Principais
+- **Aplicação**: http://localhost:8000
+- **Dashboard**: http://localhost:8000/painel/dashboard
+- **Relatórios**: http://localhost:8000/painel/relatorios
+- **Gráficos**: http://localhost:8000/painel/graficos
+
+## 📊 Estrutura do Sistema
+
+### Níveis de Acesso
+1. **Super Usuário** - Acesso total ao sistema
+2. **Gestor** - Gerência de departamento e equipe
+3. **Atendente** - Atendimento e resolução de chamados
+4. **Usuário** - Abertura e acompanhamento de chamados
+
+### Fluxo de Chamados
+```
+Aberto → Atendimento → Pendente → Resolvido → Avaliado → Fechado
+                    ↘ Aguardando Usuário ↗
+                    ↘ Transferido ↗
+```
+
+### Status Disponíveis
+- 🔴 **Aberto** - Aguardando início do atendimento
+- 🟡 **Atendimento** - Em andamento
+- 🟠 **Pendente** - Aguardando informações/recursos
+- 🔵 **Aguardando Usuário** - Solicitação de informações ao solicitante
+- 🟢 **Resolvido** - Aguardando avaliação
+- ✅ **Fechado** - Concluído e avaliado
+- 🟣 **Reaberto** - Reaberto após fechamento
+
+## 🔧 Comandos Úteis
+
+### Docker
+```bash
+# Visualizar logs
+docker-compose logs -f
+
+# Parar containers
+docker-compose down
+
+# Rebuild dos containers
+docker-compose up -d --build
+```
+
+### Laravel (dentro do container)
+```bash
+# Acessar container
+docker exec -it sac-app bash
+
+# Limpar cache
+php artisan cache:clear
+php artisan config:clear
+php artisan view:clear
+
+# Rodar migrations específicas
+php artisan migrate --path=/database/migrations/2025_06_16_120954_create_status_table.php
+
+# Executar seeders específicos
+php artisan db:seed --class=StatusSeeder
+php artisan db:seed --class=NivelSeeder
+```
+
+## 📈 Recursos Avançados
+
+### Gráficos e Relatórios
+- Dashboard com 6 tipos de gráficos interativos
+- Exportação PDF em paisagem com colunas otimizadas
+- Filtros por departamento, período e status
+- Tabelas responsivas com busca avançada
+
+### Sistema de Avaliação
+- 4 níveis de avaliação com ícones Font Awesome
+- Notificações automáticas para avaliações pendentes
+- Relatórios de satisfação por departamento
+
+### Gestão de Equipes
+- Controle de cores por usuário (20 cores disponíveis)
+- Atribuição automática e manual de responsáveis
+- Filtros por departamento e nível de acesso
+
+## 🔐 Segurança
+
+- Autenticação Laravel nativa
+- Sistema de permissões por Gates
+- Proteção CSRF em todos os formulários
+- Validação de dados server-side
+- Sanitização de inputs
+
+## 📝 Contribuição
+
+1. Faça um fork do projeto
+2. Crie uma branch para sua feature (`git checkout -b feature/nova-funcionalidade`)
+3. Commit suas alterações (`git commit -m 'Adiciona nova funcionalidade'`)
+4. Push para a branch (`git push origin feature/nova-funcionalidade`)
+5. Abra um Pull Request
+
+## 📄 Licença
+
+Este projeto está sob a licença [MIT](https://opensource.org/licenses/MIT).
+
+## 🤝 Suporte
+
+Para suporte e dúvidas:
+- **Email**: suporte@sistema.com
+- **Issues**: [GitHub Issues](https://github.com/secultgo/sac/issues)
+
+---
+
+<p align="center">
+  Desenvolvido pela Gerência de Tecnologia da Secretaria de Cultura do Estado de Goiás
+</p>
