@@ -69,6 +69,13 @@
     </div>
 </div>
 
+<div class="card-header d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center flex-wrap">
+    <h3 class="card-title mb-2 mb-md-0">Chamados</h3>
+        <a href="{{ route('avaliacoes.cientes') }}" class="btn btn-sm btn-primary rounded-pill px-3 mr-2 mb-2">
+            Cientes <span class="badge badge-light ml-1">{{ $totalCientes ?? 0 }}</span>
+        </a>      
+</div>
+
 <div class="card mt-3">
     <div class="card-header bg-primary">
         <h3 class="card-title">
