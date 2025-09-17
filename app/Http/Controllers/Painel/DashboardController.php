@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Chamado;
 use Illuminate\Support\Facades\Auth;
+use Carbon\Carbon;
 
 class DashboardController extends Controller
 {
@@ -48,11 +49,11 @@ class DashboardController extends Controller
                                   ->whereYear('chamado_abertura', now()->year)
                                   ->count();
         
+        // Contar quantos chamados ABERTOS no mês vigente já foram FECHADOS (independente de quando foram fechados)
         $chamadosFechadosMes = Chamado::where('departamento_id', Auth::user()->departamento_id)
-                                     ->where('status_chamado_id', 3)
-                                     ->whereMonth('chamado_fechado', now()->month)
-                                     ->whereYear('chamado_fechado', now()->year)
-                                     ->whereNotNull('chamado_fechado')
+                                     ->where('status_chamado_id', 3) // Status fechado
+                                     ->whereMonth('chamado_abertura', now()->month) // Abertos no mês vigente
+                                     ->whereYear('chamado_abertura', now()->year)
                                      ->count();
         
         $percentualFechadosMes = $chamadosMesAtual > 0 ? round(($chamadosFechadosMes / $chamadosMesAtual) * 100, 1) : 0;
@@ -114,11 +115,11 @@ class DashboardController extends Controller
                                   ->whereYear('chamado_abertura', now()->year)
                                   ->count();
         
+        // Contar quantos chamados ABERTOS no mês vigente já foram FECHADOS (independente de quando foram fechados)
         $chamadosFechadosMes = Chamado::where('departamento_id', Auth::user()->departamento_id)
-                                     ->where('status_chamado_id', 3)
-                                     ->whereMonth('chamado_fechado', now()->month)
-                                     ->whereYear('chamado_fechado', now()->year)
-                                     ->whereNotNull('chamado_fechado')
+                                     ->where('status_chamado_id', 3) // Status fechado
+                                     ->whereMonth('chamado_abertura', now()->month) // Abertos no mês vigente
+                                     ->whereYear('chamado_abertura', now()->year)
                                      ->count();
         
         $percentualFechadosMes = $chamadosMesAtual > 0 ? round(($chamadosFechadosMes / $chamadosMesAtual) * 100, 1) : 0;
