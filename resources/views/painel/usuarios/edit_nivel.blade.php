@@ -29,6 +29,12 @@
                         @foreach($nivel_usuarios as $nivel)
                             @php
                                 $nivelAtual = $usuario->nivelUsuarios->first();
+                                $usuarioLogadoNivel = auth()->user()->nivelUsuarios->first();
+                                
+                                // Se o usuário logado for gestor (nível 2), não mostrar Super Usuário (nível 1)
+                                if ($usuarioLogadoNivel && $usuarioLogadoNivel->nivel_id == 2 && $nivel->nivel_id == 1) {
+                                    continue;
+                                }
                             @endphp
                             <option value="{{ $nivel->nivel_id }}" 
                                 @if($nivelAtual && $nivelAtual->nivel_id == $nivel->nivel_id) selected @endif>
