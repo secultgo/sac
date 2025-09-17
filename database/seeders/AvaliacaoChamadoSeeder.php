@@ -12,27 +12,41 @@ class AvaliacaoChamadoSeeder extends Seeder
      */
     public function run(): void
     {
-        DB::table('avaliacao_chamado')->insert([
+        $avaliacoes = [
             [
                 'avaliacao_chamado_id' => 1,
                 'avaliacao_chamado_nome' => 'Ótimo',
-                'avaliacao_chamado_imagem' => '<img src="https://sag.go.gov.br/Imagens/Happy.png" alt="" style="padding-top: 5px; padding-bottom: 10px;">'
+                'avaliacao_chamado_imagem' => '<i class="fas fa-grin-stars fa-2x" style="color: #28a745;" title="Ótimo"></i>'
             ],
             [
                 'avaliacao_chamado_id' => 2,
                 'avaliacao_chamado_nome' => 'Bom',
-                'avaliacao_chamado_imagem' => '<i class="fa fa-smile-o fa-chamado" aria-hidden="true" style="color: #3c43ae;"></i>'
+                'avaliacao_chamado_imagem' => '<i class="fas fa-smile fa-2x" style="color: #20c997;" title="Bom"></i>'
             ],
             [
                 'avaliacao_chamado_id' => 3,
                 'avaliacao_chamado_nome' => 'Regular',
-                'avaliacao_chamado_imagem' => '<i class="fa fa-meh-o fa-chamado" aria-hidden="true" style="color: #458620;"></i>'
+                'avaliacao_chamado_imagem' => '<i class="fas fa-meh fa-2x" style="color: #ffc107;" title="Regular"></i>'
             ],
             [
                 'avaliacao_chamado_id' => 4,
                 'avaliacao_chamado_nome' => 'Ruim',
-                'avaliacao_chamado_imagem' => '<i class="fa fa-frown-o fa-chamado" aria-hidden="true" style="color: #c22828;"></i>'
+                'avaliacao_chamado_imagem' => '<i class="fas fa-frown fa-2x" style="color: #fd7e14;" title="Ruim"></i>'
             ]
-        ]);
+        ];
+
+        foreach ($avaliacoes as $avaliacao) {
+            DB::table('avaliacao_chamado')
+                ->updateOrInsert(
+                    ['avaliacao_chamado_id' => $avaliacao['avaliacao_chamado_id']],
+                    $avaliacao
+                );
+        }
+
+        $this->command->info('Ícones de avaliação atualizados com sucesso!');
+        $this->command->info('- Ótimo: Emoji com estrelas (verde)');
+        $this->command->info('- Bom: Sorriso (verde água)');
+        $this->command->info('- Regular: Neutro (amarelo)');
+        $this->command->info('- Ruim: Triste (laranja)');
     }
 }
