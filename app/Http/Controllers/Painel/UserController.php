@@ -370,6 +370,9 @@ class UserController extends Controller
             'responsavel',
             'avaliacaoChamado',
             'departamentoLotacao',
+            'comentarios' => function($query) {
+                $query->where('comentario_chamado_comentario', 'LIKE', 'Avaliação do usuário:%');
+            }
         ])
         ->where('departamento_id', $departamentoId)
         ->whereIn('avaliacao_chamado_id', [3, 4])
@@ -411,7 +414,16 @@ class UserController extends Controller
 
     public function cientes()
     {
-        $cientes = Chamado::with(['usuario','responsavel','local','departamentoLotacao','avaliacaoChamado'])
+        $cientes = Chamado::with([
+            'usuario',
+            'responsavel',
+            'local',
+            'departamentoLotacao',
+            'avaliacaoChamado',
+            'comentarios' => function($query) {
+                $query->where('comentario_chamado_comentario', 'LIKE', 'Avaliação do usuário:%');
+            }
+        ])
             ->whereNotNull('avaliacao_chamado_id')
             ->whereIn('avaliacao_chamado_id', [3,4]) // Ruim / Regular
             ->where('chamado_ciente_gestor', 1)

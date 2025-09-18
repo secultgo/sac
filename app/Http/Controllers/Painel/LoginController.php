@@ -85,8 +85,8 @@ class LoginController extends Controller
                 ->with('info', 'Para utilizar o sistema, você precisa completar as informações do seu perfil.');
         }
         
-        // Verifica se é gestor e se há avaliações pendentes
-        if ($user->isGestor()) {
+        // Verifica se é gestor (não super admin) e se há avaliações pendentes
+        if ($user->isGestor() && !$user->isSuperAdmin()) {
             $avaliacoesPendentes = Chamado::where('departamento_id', $user->departamento_id)
                 ->whereIn('avaliacao_chamado_id', [3, 4])
                 ->whereNotNull('avaliacao_chamado_id')
