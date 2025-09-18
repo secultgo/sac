@@ -55,16 +55,51 @@
                 
                 // Adiciona comentários
                 foreach($chamado->comentarios as $comentario) {
+                    // Verifica se é um comentário de avaliação
+                    $isAvaliacao = str_starts_with($comentario->comentario_chamado_comentario, 'Avaliação do usuário: ');
+                    
                     $eventos->push([
-                        'tipo' => 'comentario',
+                        'tipo' => $isAvaliacao ? 'avaliacao' : 'comentario',
                         'data' => is_string($comentario->comentario_chamado_data) ? \Carbon\Carbon::parse($comentario->comentario_chamado_data) : $comentario->comentario_chamado_data,
                         'usuario' => $comentario->usuario,
-                        'comentario' => $comentario
+                        'comentario' => $comentario,
+                        'comentario_limpo' => $isAvaliacao ? str_replace('Avaliação do usuário: ', '', $comentario->comentario_chamado_comentario) : $comentario->comentario_chamado_comentario
                     ]);
                 }
                 
                 // Ordena por data
                 $eventos = $eventos->sortBy('data');
+                
+                // Consolida eventos que ocorrem na mesma data/hora
+                $eventosConsolidados = collect();
+                $dataAnterior = null;
+                $eventoAnterior = null;
+                
+                foreach($eventos as $evento) {
+                    $dataAtual = $evento['data']->format('Y-m-d H:i:s');
+                    
+                    // Se é a mesma data/hora do evento anterior e é um caso de consolidação
+                    if ($dataAnterior === $dataAtual && $eventoAnterior && 
+                        (($eventoAnterior['tipo'] === 'resolvido' && $evento['tipo'] === 'comentario') ||
+                         ($eventoAnterior['tipo'] === 'fechado' && $evento['tipo'] === 'comentario'))) {
+                        
+                        // Consolida os eventos
+                        $eventoConsolidado = $eventoAnterior;
+                        $eventoConsolidado['comentario_consolidado'] = $evento['comentario'];
+                        $eventoConsolidado['tipo_consolidado'] = $evento['tipo'];
+                        
+                        // Remove o evento anterior e adiciona o consolidado
+                        $eventosConsolidados->pop();
+                        $eventosConsolidados->push($eventoConsolidado);
+                    } else {
+                        $eventosConsolidados->push($evento);
+                    }
+                    
+                    $dataAnterior = $dataAtual;
+                    $eventoAnterior = $evento;
+                }
+                
+                $eventos = $eventosConsolidados;
             @endphp
 
             @foreach($eventos as $evento)
@@ -80,10 +115,13 @@
                             <h6><i class="fas fa-pause-circle text-orange"></i> Chamado Pendente</h6>
                             @break
                         @case('resolvido')
-                            <h6><i class="fas fa-check-circle text-info"></i> Chamado Não Avaliado</h6>
+                            <h6><i class="fas fa-check-circle text-success"></i> Chamado Fechado</h6>
                             @break
                         @case('fechado')
                             <h6><i class="fas fa-times-circle text-success"></i> Chamado Fechado</h6>
+                            @break
+                        @case('avaliacao')
+                            <h6><i class="fas fa-star text-warning"></i> Chamado Avaliado</h6>
                             @break
                         @case('comentario')
                             <h6><i class="fas fa-comment text-primary"></i> Comentário Adicionado</h6>
@@ -103,6 +141,34 @@
                                     <i class="fas fa-paperclip text-muted"></i>
                                     <a href="{{ asset('uploads/chamado/' . $evento['comentario']->comentario_chamado_anexo) }}" target="_blank" class="text-primary">
                                         {{ $evento['comentario']->comentario_chamado_anexo }}
+                                    </a>
+                                </div>
+                            @endif
+                        </div>
+                    @elseif($evento['tipo'] == 'avaliacao')
+                        <div class="mt-2 p-3 bg-warning bg-opacity-10 border-left border-warning rounded">
+                            <div class="d-flex align-items-center mb-2">
+                                @if($chamado->avaliacaoChamado)
+                                    @if(file_exists(public_path('images/avaliacoes/' . $chamado->avaliacaoChamado->avaliacao_chamado_imagem)))
+                                        <img src="{{ asset('images/avaliacoes/' . $chamado->avaliacaoChamado->avaliacao_chamado_imagem) }}" 
+                                             alt="{{ $chamado->avaliacaoChamado->avaliacao_chamado_nome }}" 
+                                             width="24" height="24" class="me-2">
+                                    @endif
+                                    <strong class="text-warning">{{ $chamado->avaliacaoChamado->avaliacao_chamado_nome }}</strong>
+                                @else
+                                    <strong class="text-warning">Avaliação</strong>
+                                @endif
+                            </div>
+                            <p class="mb-1 font-italic">"{{ $evento['comentario_limpo'] }}"</p>
+                        </div>
+                    @elseif(isset($evento['comentario_consolidado']))
+                        <div class="mt-2 p-2 bg-light rounded">
+                            <p class="mb-1">{{ $evento['comentario_consolidado']->comentario_chamado_comentario }}</p>
+                            @if($evento['comentario_consolidado']->comentario_chamado_anexo)
+                                <div class="mt-2">
+                                    <i class="fas fa-paperclip text-muted"></i>
+                                    <a href="{{ asset('uploads/chamado/' . $evento['comentario_consolidado']->comentario_chamado_anexo) }}" target="_blank" class="text-primary">
+                                        {{ $evento['comentario_consolidado']->comentario_chamado_anexo }}
                                     </a>
                                 </div>
                             @endif
