@@ -299,7 +299,6 @@ use Illuminate\Support\Facades\Auth;
 @stop
 
 @section('css')
-<link rel="stylesheet" href="/css/admin_custom.css">
 @include('painel.chamados.modals._styles')
 @stop
 
