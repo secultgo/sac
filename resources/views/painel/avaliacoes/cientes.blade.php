@@ -30,12 +30,11 @@
                                     <th>Descrição</th>
                                     <th>Solicitante</th>
                                     <th>Lotação</th>
-                                    <th>Local</th>
-                                    <th>Telefone</th>
                                     <th>Atendente</th>
                                     <th>Data de Criação</th>
                                     <th>Data Atendimento</th>
                                     <th>Avaliação</th>
+                                    <th>Motivo da Avaliação</th>
                                     <th>Ciência</th>
                                     <th>Ação</th>
                                 </tr>
@@ -47,8 +46,6 @@
                                     <td>{{ Str::limit($chamado->chamado_descricao, 50) }}</td>
                                     <td>{{ $chamado->usuario->usuario_nome ?? '-' }}</td>
                                     <td>{{ $chamado->departamentoLotacao->departamento_nome ?? '-' }}</td>
-                                    <td>{{ $chamado->local->local_nome ?? '-' }}</td>
-                                    <td>{{ $chamado->usuario->usuario_celular ?? '-' }}</td>
                                     <td>{{ $chamado->responsavel->usuario_nome ?? '-' }}</td>
                                     <td>{{ $chamado->chamado_abertura ? $chamado->chamado_abertura->format('d/m/Y H:i') : '-' }}</td>
                                     <td>{{ $chamado->chamado_atendimento ? $chamado->chamado_atendimento->format('d/m/Y H:i') : '-' }}</td>
@@ -56,6 +53,13 @@
                                         <span class="badge {{ $chamado->avaliacao_chamado_id == 4 ? 'badge-danger' : 'badge-warning' }}">
                                             {{ $chamado->avaliacaoChamado->avaliacao_chamado_nome ?? '-' }}
                                         </span>
+                                    </td>
+                                    <td>
+                                        @php
+                                            $comentarioAvaliacao = $chamado->comentarios->where('comentario_chamado_comentario', 'LIKE', 'Avaliação do usuário:%')->first();
+                                            $motivo = $comentarioAvaliacao ? str_replace('Avaliação do usuário: ', '', $comentarioAvaliacao->comentario_chamado_comentario) : '-';
+                                        @endphp
+                                        {{ $motivo !== '-' ? Str::limit($motivo, 50) : '-' }}
                                     </td>
                                     <td>
                                         <span class="badge badge-success">Ciente</span>
@@ -174,11 +178,11 @@
 #cientesTable th:nth-child(2), #cientesTable td:nth-child(2) { width: 25%; min-width: 200px; }  /* Descrição */
 #cientesTable th:nth-child(3), #cientesTable td:nth-child(3) { width: 12%; min-width: 120px; }  /* Solicitante */
 #cientesTable th:nth-child(4), #cientesTable td:nth-child(4) { width: 12%; min-width: 120px; }  /* Departamento */
-#cientesTable th:nth-child(5), #cientesTable td:nth-child(5) { width: 10%; min-width: 100px; }  /* Local */
-#cientesTable th:nth-child(6), #cientesTable td:nth-child(6) { width: 10%; min-width: 100px; }  /* Responsável */
-#cientesTable th:nth-child(7), #cientesTable td:nth-child(7) { width: 8%; min-width: 90px; }  /* Data Criação */
-#cientesTable th:nth-child(8), #cientesTable td:nth-child(8) { width: 8%; min-width: 90px; }  /* Data Atendimento */
-#cientesTable th:nth-child(9), #cientesTable td:nth-child(9) { width: 7%; min-width: 80px; }  /* Avaliação */
+#cientesTable th:nth-child(5), #cientesTable td:nth-child(5) { width: 10%; min-width: 100px; }  /* Responsável */
+#cientesTable th:nth-child(6), #cientesTable td:nth-child(6) { width: 8%; min-width: 90px; }  /* Data Criação */
+#cientesTable th:nth-child(7), #cientesTable td:nth-child(7) { width: 8%; min-width: 90px; }  /* Data Atendimento */
+#cientesTable th:nth-child(8), #cientesTable td:nth-child(8) { width: 7%; min-width: 80px; }  /* Avaliação */
+#cientesTable th:nth-child(9), #cientesTable td:nth-child(9) { width: 15%; min-width: 150px; }  /* Motivo da Avaliação */
 #cientesTable th:nth-child(10), #cientesTable td:nth-child(10) { width: 7%; min-width: 80px; }  /* Ciência */
 #cientesTable th:nth-child(11), #cientesTable td:nth-child(11) { width: 12%; min-width: 120px; white-space: nowrap; } /* Ações */
 

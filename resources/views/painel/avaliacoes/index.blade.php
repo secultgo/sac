@@ -96,6 +96,7 @@
                             <th>Data de Criação</th>
                             <th>Data Atendimento</th>
                             <th>Avaliação</th>
+                            <th>Motivo da Avaliação</th>
                             <th>Ciência</th>
                             <th>Ação</th>
                         </tr>
@@ -114,6 +115,19 @@
                                 <span class="badge {{ $chamado->avaliacao_chamado_id == 4 ? 'badge-danger' : 'badge-warning' }}">
                                     {{ $chamado->avaliacaoChamado->avaliacao_chamado_nome ?? '-' }}
                                 </span>
+                            </td>
+                            <td>
+                                @php
+                                    $comentarioAvaliacao = $chamado->comentarios->first();
+                                    $motivoAvaliacao = $comentarioAvaliacao ? str_replace('Avaliação do usuário: ', '', $comentarioAvaliacao->comentario_chamado_comentario) : '';
+                                @endphp
+                                @if($motivoAvaliacao)
+                                    <span class="text-muted" title="{{ $motivoAvaliacao }}">
+                                        {{ Str::limit($motivoAvaliacao, 50) }}
+                                    </span>
+                                @else
+                                    <span class="text-muted">-</span>
+                                @endif
                             </td>
                             <td>
                                 @if(!$chamado->chamado_ciente_gestor)
