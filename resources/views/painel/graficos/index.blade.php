@@ -209,20 +209,26 @@
                             </div>
                         </div>
                         <div class="col-lg-4">
-                            <div class="info-box bg-gradient-success">
+                            <div class="info-box bg-gradient-success clickable-card" id="card-tempo-minimo" style="cursor: pointer;">
                                 <span class="info-box-icon"><i class="fas fa-tachometer-alt"></i></span>
                                 <div class="info-box-content">
                                     <span class="info-box-text"><strong>Tempo Mínimo</strong></span>
                                     <span class="info-box-number" id="tempo-minimo" style="font-size: 14px;">-- </span>
+                                    <div class="chamado-info" id="chamado-minimo" style="font-size: 11px; opacity: 0.9; margin-top: 2px;">
+                                        <i class="fas fa-ticket-alt"></i> Clique para ver o chamado
+                                    </div>
                                 </div>
                             </div>
                         </div>
                         <div class="col-lg-4">
-                            <div class="info-box bg-gradient-warning">
+                            <div class="info-box bg-gradient-warning clickable-card" id="card-tempo-maximo" style="cursor: pointer;">
                                 <span class="info-box-icon"><i class="fas fa-hourglass-end"></i></span>
                                 <div class="info-box-content">
                                     <span class="info-box-text"><strong>Tempo Máximo</strong></span>
                                     <span class="info-box-number" id="tempo-maximo" style="font-size: 14px;">-- </span>
+                                    <div class="chamado-info" id="chamado-maximo" style="font-size: 11px; opacity: 0.9; margin-top: 2px;">
+                                        <i class="fas fa-ticket-alt"></i> Clique para ver o chamado
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -311,6 +317,21 @@
     /* Ajustes para gráficos de barras horizontais */
     #grafico-atendentes {
         max-height: 600px !important;
+    }
+    
+    /* Estilos para cards clicáveis */
+    .clickable-card {
+        transition: all 0.3s ease;
+    }
+    
+    .clickable-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    }
+    
+    .chamado-info {
+        color: rgba(255, 255, 255, 0.9) !important;
+        font-weight: 500;
     }
 </style>
 @stop
@@ -947,6 +968,29 @@ function criarGraficos(dados) {
             <div class="tempo-principal">${formatarTempo(performance.tempo_maximo_minutos)}</div>
             <div class="tempo-secundario">(${performance.tempo_maximo_horas}h)</div>
         `);
+        
+        // Atualizar informações dos chamados específicos
+        if (performance.chamado_minimo_id) {
+            $('#chamado-minimo').html(`
+                <i class="fas fa-ticket-alt"></i> Chamado #${performance.chamado_minimo_id}
+            `);
+            
+            // Adicionar evento de clique para chamado mínimo
+            $('#card-tempo-minimo').off('click').on('click', function() {
+                window.open(`{{ url('/painel/chamados') }}/${performance.chamado_minimo_id}`, '_blank');
+            });
+        }
+        
+        if (performance.chamado_maximo_id) {
+            $('#chamado-maximo').html(`
+                <i class="fas fa-ticket-alt"></i> Chamado #${performance.chamado_maximo_id}
+            `);
+            
+            // Adicionar evento de clique para chamado máximo
+            $('#card-tempo-maximo').off('click').on('click', function() {
+                window.open(`{{ url('/painel/chamados') }}/${performance.chamado_maximo_id}`, '_blank');
+            });
+        }
     }
     
     // 7. Gráfico de Avaliações (Barras Verticais)

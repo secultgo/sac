@@ -168,6 +168,20 @@ class GraficoController extends Controller
             ->havingRaw('tempo_minimo_minutos >= 0') // Garantir que não há tempos negativos
             ->first();
             
+        // Buscar chamado com tempo mínimo
+        $chamadoMinimo = (clone $query)
+            ->whereNotNull('chamado_resolvido')
+            ->whereRaw('chamado_resolvido >= chamado_abertura')
+            ->orderByRaw('TIMESTAMPDIFF(MINUTE, chamado_abertura, chamado_resolvido) ASC')
+            ->first();
+            
+        // Buscar chamado com tempo máximo
+        $chamadoMaximo = (clone $query)
+            ->whereNotNull('chamado_resolvido')
+            ->whereRaw('chamado_resolvido >= chamado_abertura')
+            ->orderByRaw('TIMESTAMPDIFF(MINUTE, chamado_abertura, chamado_resolvido) DESC')
+            ->first();
+            
         // Garantir valores não negativos
         $tempoMedio = max(0, round($dados->tempo_medio_minutos ?? 0));
         $tempoMinimo = max(0, $dados->tempo_minimo_minutos ?? 0);
@@ -180,7 +194,9 @@ class GraficoController extends Controller
             'total_resolvidos' => $dados->total_resolvidos ?? 0,
             'tempo_medio_horas' => round($tempoMedio / 60, 1),
             'tempo_minimo_horas' => round($tempoMinimo / 60, 1),
-            'tempo_maximo_horas' => round($tempoMaximo / 60, 1)
+            'tempo_maximo_horas' => round($tempoMaximo / 60, 1),
+            'chamado_minimo_id' => $chamadoMinimo->chamado_id ?? null,
+            'chamado_maximo_id' => $chamadoMaximo->chamado_id ?? null
         ];
     }
     
