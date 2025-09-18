@@ -92,8 +92,6 @@
                             <th>Descrição</th>
                             <th>Solicitante</th>
                             <th>Lotação</th>
-                            <th>Local</th>
-                            <th>Telefone</th>
                             <th>Atendente</th>
                             <th>Data de Criação</th>
                             <th>Data Atendimento</th>
@@ -109,8 +107,6 @@
                             <td>{{ Str::limit($chamado->chamado_descricao, 50) }}</td>
                             <td>{{ $chamado->usuario->usuario_nome ?? '-' }}</td>
                             <td>{{ $chamado->departamentoLotacao->departamento_nome ?? '-' }}</td>
-                            <td>{{ $chamado->local->local_nome ?? '-' }}</td>
-                            <td>{{ $chamado->usuario->usuario_celular ?? '-' }}</td>
                             <td>{{ $chamado->responsavel->usuario_nome ?? '-' }}</td>
                             <td>{{ $chamado->chamado_abertura ? $chamado->chamado_abertura->format('d/m/Y H:i') : '-' }}</td>
                             <td>{{ $chamado->chamado_atendimento ? $chamado->chamado_atendimento->format('d/m/Y H:i') : '-' }}</td>
