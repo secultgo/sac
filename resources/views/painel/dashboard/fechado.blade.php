@@ -159,7 +159,7 @@ use Illuminate\Support\Facades\Auth;
                         <td>{{ $chamado->local->local_nome ?? 'N/A' }}</td>
                         <td>
                             @if($chamado->responsavel)
-                                @switch($chamado->responsavel->usuario_cor)
+                                @switch($chamado->responsavel->usuario_cor_id)
                                     @case(1)<span class="badge badge-primary">{{ $chamado->responsavel->usuario_nome }}</span>@break
                                     @case(2)<span class="badge badge-danger">{{ $chamado->responsavel->usuario_nome }}</span>@break
                                     @case(3)<span class="badge badge-success">{{ $chamado->responsavel->usuario_nome }}</span>@break
