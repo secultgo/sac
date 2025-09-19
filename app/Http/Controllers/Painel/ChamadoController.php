@@ -41,7 +41,10 @@ class ChamadoController extends Controller
         }
 
         $problemas = Problema::where('status_id', 1)->orderBy('problema_nome')->get();
-        $departamentos = Departamento::where('excluido_id', 2)->orderBy('departamento_nome')->get();
+        $departamentos = Departamento::where('excluido_id', 2)
+            ->where('departamento_chamado', true)
+            ->orderBy('departamento_nome')
+            ->get();
         $locais = Local::orderBy('local_nome')->get();
         $servicos = ServicoChamado::orderBy('servico_chamado_nome')->get();
 
