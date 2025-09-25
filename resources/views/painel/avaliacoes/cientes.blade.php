@@ -56,10 +56,23 @@
                                     </td>
                                     <td>
                                         @php
-                                            $comentarioAvaliacao = $chamado->comentarios->where('comentario_chamado_comentario', 'LIKE', 'Avaliação do usuário:%')->first();
-                                            $motivo = $comentarioAvaliacao ? str_replace('Avaliação do usuário: ', '', $comentarioAvaliacao->comentario_chamado_comentario) : '-';
+                                            // Pega apenas o comentário que começa com "Avaliação do usuário:"
+                                            $comentarioAvaliacao = $chamado->comentarios
+                                                ->filter(fn($c) => str_starts_with($c->comentario_chamado_comentario, 'Avaliação do usuário:'))
+                                                ->first();
+
+                                            $motivoAvaliacao = $comentarioAvaliacao
+                                                ? str_replace('Avaliação do usuário: ', '', $comentarioAvaliacao->comentario_chamado_comentario)
+                                                : '';
                                         @endphp
-                                        {{ $motivo !== '-' ? Str::limit($motivo, 50) : '-' }}
+
+                                        @if($motivoAvaliacao)
+                                            <span class="text-muted" title="{{ $motivoAvaliacao }}">
+                                                {{ \Illuminate\Support\Str::limit($motivoAvaliacao, 50) }}
+                                            </span>
+                                        @else
+                                            <span class="text-muted">-</span>
+                                        @endif
                                     </td>
                                     <td>
                                         <span class="badge badge-success">Ciente</span>
