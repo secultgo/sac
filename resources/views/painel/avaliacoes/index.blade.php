@@ -118,17 +118,25 @@
                             </td>
                             <td>
                                 @php
-                                    $comentarioAvaliacao = $chamado->comentarios->first();
-                                    $motivoAvaliacao = $comentarioAvaliacao ? str_replace('Avaliação do usuário: ', '', $comentarioAvaliacao->comentario_chamado_comentario) : '';
+                                    // Pega apenas o comentário que começa com "Avaliação do usuário:"
+                                    $comentarioAvaliacao = $chamado->comentarios
+                                        ->filter(fn($c) => str_starts_with($c->comentario_chamado_comentario, 'Avaliação do usuário:'))
+                                        ->first();
+
+                                    $motivoAvaliacao = $comentarioAvaliacao
+                                        ? str_replace('Avaliação do usuário: ', '', $comentarioAvaliacao->comentario_chamado_comentario)
+                                        : '';
                                 @endphp
+
                                 @if($motivoAvaliacao)
                                     <span class="text-muted" title="{{ $motivoAvaliacao }}">
-                                        {{ Str::limit($motivoAvaliacao, 50) }}
+                                        {{ \Illuminate\Support\Str::limit($motivoAvaliacao, 50) }}
                                     </span>
                                 @else
                                     <span class="text-muted">-</span>
                                 @endif
                             </td>
+
                             <td>
                                 @if(!$chamado->chamado_ciente_gestor)
                                     <span class="badge badge-secondary">Pendente</span>
