@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Auth;
 
 @section('title', 'Dashboard')
 @section('content_header')
-    <h1>Dashboard Painel de Controle</h1>
+    <h1>Painel de Controle - {{ Auth::user()->departamento->departamento_nome ?? 'Departamento não definido' }}</h1>
 @stop
 
 @section('css')
