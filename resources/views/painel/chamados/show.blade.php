@@ -113,11 +113,13 @@ use Illuminate\Support\Facades\Auth;
                     </button>
                     @endif
 
+                    @can('gestor')
                     @if(!in_array($chamado->status_chamado_id, [StatusChamado::FECHADO, StatusChamado::ABERTO, StatusChamado::RESOLVIDO]) && Auth::user()->departamento_id == $chamado->departamento_id)
                     <button class="btn btn-outline-primary btn-block mb-2" data-toggle="modal" data-target="#modalAlterarResponsavel">
                         <i class="fas fa-user-edit"></i> Alterar Responsável
                     </button>
                     @endif
+                    @endcan
 
                     @if($chamado->status_chamado_id == StatusChamado::RESOLVIDO && Auth::user()->usuario_id == $chamado->usuario_id)
                     <button class="btn btn-warning btn-block mb-2" data-toggle="modal" data-target="#modalAvaliarChamado">
