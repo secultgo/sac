@@ -615,6 +615,8 @@ class ChamadoController extends Controller
         // Atualiza o status para "Reaberto" 
         $chamado->status_chamado_id = StatusChamado::REABERTO;
         $chamado->chamado_resolvido = null; // Remove a data de resolução
+        $chamado->chamado_atendimento = null;
+        $chamado->chamado_abertura = now();
         $chamado->save();
 
         // Adiciona comentário da reabertura
@@ -625,7 +627,14 @@ class ChamadoController extends Controller
             'usuario_id' => Auth::user()->usuario_id
         ]);
 
-        return redirect()->back()->with('success', 'Chamado reaberto com sucesso! O departamento responsável foi notificado.');
+        $posicaoFila = Chamado::where('departamento_id', $chamado->departamento_id) 
+            ->whereIn('status_chamado_id', [1, 2, 6, 8]) 
+            ->count();
+
+        return redirect()->route('painel.dashboard')
+            ->with('success', 'Chamado reaberto com sucesso!')
+            ->with('chamado_id', $chamado->chamado_id)
+            ->with('posicao_fila', $posicaoFila);
     }
 
     /**

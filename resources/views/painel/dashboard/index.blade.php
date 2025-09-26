@@ -669,6 +669,34 @@ $(document).ready(function() {
     });
 @endif
 
+@if(session('chamado_id') && session('posicao_fila'))
+    // Verificamos se há a sessão 'success' e se ela contém a palavra 'Reaberto' para ajustar o título.
+    let title = '@if(str_contains(session('success'), 'reaberto')) Chamado Reaberto com Sucesso! @else Chamado Criado com Sucesso! @endif';
+    
+    // Isso é uma forma simples. Se sua mensagem de sucesso for padronizada, pode ser mais fácil.
+
+    Swal.fire({
+        title: title, // Título dinâmico
+        html: `
+            <div style="text-align: left; padding: 20px;">
+                <p><strong>Seu chamado foi adicionado à fila de espera</strong></p>
+                <p>Todas as atualizações sobre o andamento do seu chamado serão registradas diretamente no chamado no SAC.</p>
+                <hr>
+                <p><strong>Sua posição na fila de atendimento:</strong> 
+                    <span style="color: #007bff; font-size: 18px; font-weight: bold;">{{ session('posicao_fila') }}</span>
+                </p>
+                <p><strong>Número do chamado:</strong> #{{ session('chamado_id') }}</p>
+            </div>
+        `,
+        icon: 'success',
+        confirmButtonText: 'Entendi',
+        confirmButtonColor: '#28a745',
+        allowOutsideClick: false,
+        allowEscapeKey: false,
+        width: '500px'
+    });
+@endif
+
 @if(session('avaliacoes_pendentes'))
     Swal.fire({
         title: 'Avaliações Pendentes!',
