@@ -87,12 +87,12 @@ use Illuminate\Support\Facades\Auth;
         </div>
     </div>
     
-    <!-- Card 6: Percentual de Chamados Fechados no Mês -->
+    <!-- Card 6: Percentual de Chamados Fechados do Mês -->
     <div class="col-lg-2 col-6">
         <div class="small-box bg-purple">
             <div class="inner">
                 <h3>{{ $contadores['percentual_fechados_mes'] ?? 0 }}%</h3>
-                <p>% Fechados no Mês</p>
+                <p>% Fechados do Mês</p>
             </div>
             <div class="icon"><i class="fas fa-chart-pie"></i></div>
             <a href="{{ route('painel.dashboard', ['status' => 3]) }}" class="small-box-footer">
