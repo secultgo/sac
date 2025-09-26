@@ -159,19 +159,20 @@ class GraficoController extends Controller
         $dados = (clone $query)
             ->whereNotNull('chamado_resolvido')
             ->whereRaw('chamado_resolvido >= chamado_abertura')
+            ->whereRaw('TIMESTAMPDIFF(MINUTE, chamado_abertura, chamado_resolvido) > 0') // Garantir tempo positivo
             ->select(
                 DB::raw('AVG(TIMESTAMPDIFF(MINUTE, chamado_abertura, chamado_resolvido)) as tempo_medio_minutos'),
                 DB::raw('MIN(TIMESTAMPDIFF(MINUTE, chamado_abertura, chamado_resolvido)) as tempo_minimo_minutos'),
                 DB::raw('MAX(TIMESTAMPDIFF(MINUTE, chamado_abertura, chamado_resolvido)) as tempo_maximo_minutos'),
                 DB::raw('COUNT(*) as total_resolvidos')
             )
-            ->havingRaw('tempo_minimo_minutos >= 0') // Garantir que não há tempos negativos
             ->first();
             
         // Buscar chamado com tempo mínimo
         $chamadoMinimo = (clone $query)
             ->whereNotNull('chamado_resolvido')
             ->whereRaw('chamado_resolvido >= chamado_abertura')
+            ->whereRaw('TIMESTAMPDIFF(MINUTE, chamado_abertura, chamado_resolvido) > 0') // Garantir tempo positivo
             ->orderByRaw('TIMESTAMPDIFF(MINUTE, chamado_abertura, chamado_resolvido) ASC')
             ->first();
             
@@ -179,6 +180,7 @@ class GraficoController extends Controller
         $chamadoMaximo = (clone $query)
             ->whereNotNull('chamado_resolvido')
             ->whereRaw('chamado_resolvido >= chamado_abertura')
+            ->whereRaw('TIMESTAMPDIFF(MINUTE, chamado_abertura, chamado_resolvido) > 0') // Garantir tempo positivo
             ->orderByRaw('TIMESTAMPDIFF(MINUTE, chamado_abertura, chamado_resolvido) DESC')
             ->first();
             
