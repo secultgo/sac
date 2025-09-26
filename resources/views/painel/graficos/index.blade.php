@@ -200,11 +200,14 @@
                 <div class="card-body">
                     <div class="row">
                         <div class="col-lg-4">
-                            <div class="info-box bg-gradient-info">
+                            <div class="info-box bg-gradient-info clickable-card" id="card-tempo-medio" style="cursor: pointer;">
                                 <span class="info-box-icon"><i class="fas fa-chart-line"></i></span>
                                 <div class="info-box-content">
                                     <span class="info-box-text"><strong>Tempo Médio</strong></span>
                                     <span class="info-box-number" id="tempo-medio" style="font-size: 14px;">-- </span>
+                                    <div class="chamado-info" id="tempo-medio" style="font-size: 11px; opacity: 0.9; margin-top: 2px;">
+                                        <i class="fas fa-ticket-alt"></i> Média dos chamados.
+                                    </div>
                                 </div>
                             </div>
                         </div>
