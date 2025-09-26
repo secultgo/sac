@@ -207,7 +207,7 @@ use Illuminate\Support\Facades\Auth;
                     </div>
                     <div class="col-6">
                         @php
-                            $inicio = is_string($chamado->chamado_atendimento) ? \Carbon\Carbon::parse($chamado->chamado_atendimento) : $chamado->chamado_atendimento;
+                            $inicio = is_string($chamado->chamado_abertura) ? \Carbon\Carbon::parse($chamado->chamado_abertura) : $chamado->chamado_abertura;
                             $fim = $chamado->chamado_fechado ? 
                                 (is_string($chamado->chamado_fechado) ? \Carbon\Carbon::parse($chamado->chamado_fechado) : $chamado->chamado_fechado) : 
                                 now();
