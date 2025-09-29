@@ -652,7 +652,14 @@ class ChamadoController extends Controller
             'usuario_id' => Auth::user()->usuario_id
         ]);
 
-        return redirect()->back()->with('success', 'Chamado reaberto com sucesso! O departamento responsável foi notificado.');
+        $posicaoFila = Chamado::where('departamento_id', $chamado->departamento_id) 
+            ->whereIn('status_chamado_id', [1, 2, 6, 8]) 
+            ->count();
+
+        return redirect()->route('painel.dashboard')
+            ->with('success', 'Chamado reaberto com sucesso!')
+            ->with('chamado_id', $chamado->chamado_id)
+            ->with('posicao_fila', $posicaoFila);
     }
 
     /**
