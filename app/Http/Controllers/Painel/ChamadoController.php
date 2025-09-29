@@ -47,8 +47,18 @@ class ChamadoController extends Controller
             ->get();
         $locais = Local::orderBy('local_nome')->get();
         $servicos = ServicoChamado::orderBy('servico_chamado_nome')->get();
+        
+        // Carregar usuários ativos apenas para Super Admin e Gestor
+        $usuarios = collect();
+        if (Auth::user()->isSuperAdmin() || Auth::user()->isGestor()) {
+            $usuarios = User::where('status_id', 1) // Apenas usuários ativos
+                ->whereNotNull('departamento_id') // Apenas usuários com departamento definido
+                ->with('departamento') // Carregar relacionamento com departamento
+                ->orderBy('usuario_nome')
+                ->get();
+        }
 
-        return view('painel.chamados.create', compact('problemas', 'departamentos', 'locais', 'servicos'));
+        return view('painel.chamados.create', compact('problemas', 'departamentos', 'locais', 'servicos', 'usuarios'));
     }
 
     /**
@@ -70,11 +80,28 @@ class ChamadoController extends Controller
             'servico_chamado_id' => 'required|exists:servico_chamado,servico_chamado_id',
             'chamado_ip' => 'nullable|string|max:15',
             'chamado_anexo' => 'nullable|file|max:10240|mimes:pdf,doc,docx,jpg,jpeg,png,txt',
+            'usuario_id' => 'nullable|exists:usuario,usuario_id',
         ]);
 
         $chamado = new Chamado($validated);
-        $chamado->usuario_id = Auth::user()->usuario_id;
-        $chamado->lotacao_id = Auth::user()->departamento_id;
+        
+        // Determinar o usuário solicitante
+        if ((Auth::user()->isSuperAdmin() || Auth::user()->isGestor()) && $request->has('usuario_id')) {
+            $chamado->usuario_id = $request->usuario_id;
+            $solicitante = User::find($request->usuario_id);
+            $chamado->lotacao_id = $solicitante->departamento_id ?? Auth::user()->departamento_id;
+        } else {
+            $chamado->usuario_id = Auth::user()->usuario_id;
+            $chamado->lotacao_id = Auth::user()->departamento_id;
+        }
+        
+        // Verificar se lotacao_id ainda é null
+        if (!$chamado->lotacao_id) {
+            return redirect()->back()
+                ->withInput()
+                ->with('error', 'O usuário selecionado não possui departamento definido. Entre em contato com o administrador.');
+        }
+        
         $chamado->status_chamado_id = 1;
         $chamado->chamado_ip = $request->ip(); // Captura o IP do usuário
         $chamado->chamado_abertura = now();
