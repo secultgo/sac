@@ -113,7 +113,7 @@ $(document).ready(function() {
         },
         "responsive": true,
         "pageLength": 25,
-        "lengthMenu": [[10, 25, 50, 100], [10, 25, 50, 100]],
+        "lengthMenu": [[10, 25, 50, 100, -1], [10, 25, 50, 100, "Todos"]],
         "order": [[0, "desc"]],
         "columnDefs": [
             {

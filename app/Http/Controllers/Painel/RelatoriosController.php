@@ -125,8 +125,13 @@ class RelatoriosController extends Controller
         $orderColumn = $columns[$orderColumn] ?? 'chamado.chamado_id';
         $query->orderBy($orderColumn, $orderDir);
 
-        // Aplicar paginação
-        $data = $query->skip($start)->take($length)->get();
+        // Aplicar paginação (verificar se é "todos" os registros)
+        if ($length != -1) {
+            $data = $query->skip($start)->take($length)->get();
+        } else {
+            // Quando length é -1, carregar todos os registros
+            $data = $query->get();
+        }
 
         // Formatar dados para o DataTables
         $formattedData = $data->map(function($chamado) {
