@@ -139,15 +139,43 @@ $(document).ready(function() {
                 extend: 'pdfHtml5',
                 text: 'PDF',
                 orientation: 'landscape',
-                pageSize: 'A4',
+                pageSize: 'A3',
                 exportOptions: {
-                    columns: ':visible'
+                    columns: ':visible',
+                    format: {
+                        body: function (data, row, column, node) {
+                            // Limitar tamanho do texto para evitar estouro
+                            if (typeof data === 'string' && data.length > 50) {
+                                return data.substring(0, 47) + '...';
+                            }
+                            return data;
+                        }
+                    }
                 },
                 customize: function (doc) {
-                    doc.content[1].table.widths = ['5%', '8%', '8%', '8%', '8%', '10%', '8%', '8%', '8%', '8%', '8%', '10%', '10%', '8%', '5%'];
-                    doc.styles.tableHeader.fontSize = 9;
-                    doc.defaultStyle.fontSize = 8;
-                    doc.content[1].margin = [0, 0, 0, 0];
+                    // Ajustar larguras das colunas de forma mais equilibrada
+                    doc.content[1].table.widths = ['4%', '7%', '7%', '7%', '7%', '12%', '8%', '8%', '8%', '8%', '6%', '10%', '10%', '6%', '6%'];
+                    
+                    // Configurações de fonte
+                    doc.styles.tableHeader.fontSize = 8;
+                    doc.styles.tableHeader.bold = true;
+                    doc.defaultStyle.fontSize = 7;
+                    
+                    // Configurações da tabela
+                    doc.content[1].table.headerRows = 1;
+                    doc.content[1].table.dontBreakRows = true;
+                    
+                    // Margens da página
+                    doc.pageMargins = [20, 20, 20, 20];
+                    
+                    // Quebra de linha automática
+                    doc.content[1].table.widths.forEach(function(width, index) {
+                        doc.content[1].table.body.forEach(function(row) {
+                            if (row[index] && row[index].text) {
+                                row[index].style = { fontSize: 7 };
+                            }
+                        });
+                    });
                 }
             },
             {
