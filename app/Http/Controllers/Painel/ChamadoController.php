@@ -615,8 +615,6 @@ class ChamadoController extends Controller
         // Atualiza o status para "Reaberto" 
         $chamado->status_chamado_id = StatusChamado::REABERTO;
         $chamado->chamado_resolvido = null; // Remove a data de resolução
-        $chamado->chamado_atendimento = null;
-        $chamado->chamado_abertura = now();
         $chamado->save();
 
         // Adiciona comentário da reabertura
