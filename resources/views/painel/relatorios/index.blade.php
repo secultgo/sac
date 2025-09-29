@@ -34,29 +34,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @forelse($chamados as $chamado)
-                        <tr>
-                            <td>{{ $chamado->chamado_id }}</td>
-                            <td>{{ $chamado->chamado_abertura ? \Carbon\Carbon::parse($chamado->chamado_abertura)->format('d/m/Y H:i:s') : '' }}</td>
-                            <td>{{ $chamado->chamado_atendimento ? \Carbon\Carbon::parse($chamado->chamado_atendimento)->format('d/m/Y H:i:s') : '' }}</td>
-                            <td>{{ $chamado->chamado_resolvido ? \Carbon\Carbon::parse($chamado->chamado_resolvido)->format('d/m/Y H:i:s') : '' }}</td>
-                            <td>{{ $chamado->chamado_fechado ? \Carbon\Carbon::parse($chamado->chamado_fechado)->format('d/m/Y H:i:s') : '' }}</td>
-                            <td>{{ $chamado->solicitante_nome ?? '' }}</td>
-                            <td>{{ $chamado->lotacao_nome ?? '' }}</td>
-                            <td>{{ $chamado->local_nome ?? '' }}</td>
-                            <td>{{ $chamado->problema_nome ?? '' }}</td>
-                            <td>{{ $chamado->servico_chamado_nome ?? '' }}</td>
-                            <td>{{ $chamado->usuario_fone_residencial ?? '' }}</td>
-                            <td>{{ $chamado->responsavel_nome ?? '' }}</td>
-                            <td>{{ $chamado->departamento_sigla ?? '' }}</td>
-                            <td>{{ $chamado->status_chamado_nome ?? '' }}</td>
-                            <td>{{ $chamado->avaliacao_chamado_nome ?? '' }}</td>
-                        </tr>
-                    @empty
-                        <tr>
-                            <td colspan="15" class="text-center">{{ $mensagem_vazia ?? 'Nenhum chamado encontrado.' }}</td>
-                        </tr>
-                    @endforelse
+                    <!-- Dados carregados via AJAX -->
                 </tbody>
             </table>
         </div>
@@ -87,7 +65,24 @@
 
 <script>
 $(document).ready(function() {
+    // Determinar a URL da API baseada no tipo de relatório
+    let ajaxUrl;
+    @if($tipo === 'todos')
+        ajaxUrl = '{{ route("relatorios.api.todos") }}';
+    @else
+        ajaxUrl = '{{ route("relatorios.api.departamento", $departamento_id) }}';
+    @endif
+
     $('#chamadosTable').DataTable({
+        "processing": true,
+        "serverSide": true,
+        "ajax": {
+            "url": ajaxUrl,
+            "type": "POST",
+            "headers": {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        },
         "language": {
             "decimal": "",
             "emptyTable": "Nenhum registro encontrado",
@@ -117,7 +112,7 @@ $(document).ready(function() {
             }
         },
         "responsive": true,
-        "pageLength": 10,
+        "pageLength": 25,
         "lengthMenu": [[10, 25, 50, 100, -1], [10, 25, 50, 100, "Todos"]],
         "order": [[0, "desc"]],
         "columnDefs": [
@@ -133,21 +128,43 @@ $(document).ready(function() {
             'pageLength',
             {
                 extend: 'excelHtml5',
-                text: 'Excel'
+                text: 'Excel',
+                exportOptions: {
+                    columns: ':visible'
+                }
             },
             {
                 extend: 'pdfHtml5',
                 text: 'PDF',
                 orientation: 'landscape',
-                pageSize: 'A4',
+                pageSize: 'A3',
                 exportOptions: {
                     columns: ':visible'
                 },
                 customize: function (doc) {
-                    doc.content[1].table.widths = ['5%', '8%', '8%', '8%', '8%', '10%', '8%', '8%', '8%', '8%', '8%', '10%', '10%', '8%', '5%'];
-                    doc.styles.tableHeader.fontSize = 9;
-                    doc.defaultStyle.fontSize = 8;
-                    doc.content[1].margin = [0, 0, 0, 0];
+                    // Ajustar larguras das colunas de forma mais equilibrada
+                    doc.content[1].table.widths = ['4%', '7%', '7%', '7%', '7%', '12%', '8%', '8%', '8%', '8%', '6%', '10%', '10%', '6%', '6%'];
+                    
+                    // Configurações de fonte
+                    doc.styles.tableHeader.fontSize = 8;
+                    doc.styles.tableHeader.bold = true;
+                    doc.defaultStyle.fontSize = 7;
+                    
+                    // Configurações da tabela
+                    doc.content[1].table.headerRows = 1;
+                    doc.content[1].table.dontBreakRows = true;
+                    
+                    // Margens da página
+                    doc.pageMargins = [20, 20, 20, 20];
+                    
+                    // Quebra de linha automática
+                    doc.content[1].table.widths.forEach(function(width, index) {
+                        doc.content[1].table.body.forEach(function(row) {
+                            if (row[index] && row[index].text) {
+                                row[index].style = { fontSize: 7 };
+                            }
+                        });
+                    });
                 }
             },
             {
