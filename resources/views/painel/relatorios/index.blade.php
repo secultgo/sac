@@ -48,7 +48,7 @@
                             <td>{{ $chamado->servico_chamado_nome ?? '' }}</td>
                             <td>{{ $chamado->usuario_fone_residencial ?? '' }}</td>
                             <td>{{ $chamado->responsavel_nome ?? '' }}</td>
-                            <td>{{ $chamado->departamento_sigla ?? '' }}</td>
+                            <td>{{ $chamado->departamento_nome ?? '' }}</td>
                             <td>{{ $chamado->status_chamado_nome ?? '' }}</td>
                             <td>{{ $chamado->avaliacao_chamado_nome ?? '' }}</td>
                         </tr>
