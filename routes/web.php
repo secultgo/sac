@@ -101,4 +101,8 @@ Route::prefix('painel')
         // Rotas de Relatórios
         Route::get('relatorios/todos', [RelatoriosController::class, 'todos'])->name('relatorios.todos')->middleware('can:super-admin');
         Route::get('relatorios/departamento/{departamento_id}', [RelatoriosController::class, 'departamento'])->name('relatorios.departamento')->middleware('can:gestor');
+        
+        // APIs para DataTables
+        Route::post('relatorios/api/todos', [RelatoriosController::class, 'apiTodos'])->name('relatorios.api.todos')->middleware('can:super-admin');
+        Route::post('relatorios/api/departamento/{departamento_id}', [RelatoriosController::class, 'apiDepartamento'])->name('relatorios.api.departamento')->middleware('can:gestor');
      });
