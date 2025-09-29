@@ -13,7 +13,25 @@
             <div class="col-md-12">
                 <div class="form-group">
                     <label for="usuario_nome">Solicitante</label>
-                    <input type="text" name="usuario_nome" id="usuario_nome" class="form-control" readonly value="{{ Auth::user()->usuario_nome }}">
+                    @if(Auth::user()->isSuperAdmin() || Auth::user()->isGestor())
+                        <select name="usuario_id" id="usuario_id" class="form-control select2" required>
+                            @foreach($usuarios as $usuario)
+                                <option value="{{ $usuario->usuario_id }}" 
+                                    {{ $usuario->usuario_id == Auth::user()->usuario_id ? 'selected' : '' }}>
+                                    {{ $usuario->usuario_nome }} - {{ $usuario->usuario_email }} 
+                                    @if($usuario->departamento)
+                                        ({{ $usuario->departamento->departamento_nome }})
+                                    @endif
+                                </option>
+                            @endforeach
+                        </select>
+                        <small class="form-text text-muted">
+                            <i class="fas fa-info-circle"></i> Você pode abrir chamado em nome de outro usuário. Por padrão, você está selecionado.
+                        </small>
+                    @else
+                        <input type="hidden" name="usuario_id" value="{{ Auth::user()->usuario_id }}">
+                        <input type="text" name="usuario_nome" id="usuario_nome" class="form-control" readonly value="{{ Auth::user()->usuario_nome }}">
+                    @endif
                 </div>
             </div>
         </div>
@@ -74,9 +92,25 @@
     </form>
 @endsection
 
+@section('css')
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/select2-bootstrap4-theme@1.5.2/dist/select2-bootstrap4.min.css" rel="stylesheet" />
+@endsection
+
 @section('js')
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 <script>
     document.addEventListener('DOMContentLoaded', function() {
+        // Inicializar Select2 para o campo de usuário (se existir)
+        if (document.getElementById('usuario_id')) {
+            $('#usuario_id').select2({
+                theme: 'bootstrap4',
+                placeholder: 'Buscar usuário...',
+                allowClear: false,
+                width: '100%'
+            });
+        }
+
         const departamentoSelect = document.getElementById('departamento_id');
         const problemaSelect = document.getElementById('problema_id');
         const servicoSelect = document.getElementById('servico_chamado_id');
