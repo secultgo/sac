@@ -141,16 +141,7 @@ $(document).ready(function() {
                 orientation: 'landscape',
                 pageSize: 'A3',
                 exportOptions: {
-                    columns: ':visible',
-                    format: {
-                        body: function (data, row, column, node) {
-                            // Limitar tamanho do texto para evitar estouro
-                            if (typeof data === 'string' && data.length > 50) {
-                                return data.substring(0, 47) + '...';
-                            }
-                            return data;
-                        }
-                    }
+                    columns: ':visible'
                 },
                 customize: function (doc) {
                     // Ajustar larguras das colunas de forma mais equilibrada
