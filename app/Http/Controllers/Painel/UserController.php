@@ -414,6 +414,7 @@ class UserController extends Controller
 
     public function cientes()
     {
+        $departamentoId = auth()->user()->departamento_id;
         $cientes = Chamado::with([
             'usuario',
             'responsavel',
@@ -424,6 +425,7 @@ class UserController extends Controller
                 $query->where('comentario_chamado_comentario', 'LIKE', 'Avaliação do usuário:%');
             }
         ])
+            ->where('departamento_id', $departamentoId)
             ->whereNotNull('avaliacao_chamado_id')
             ->whereIn('avaliacao_chamado_id', [3,4]) // Ruim / Regular
             ->where('chamado_ciente_gestor', 1)
