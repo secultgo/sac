@@ -151,10 +151,10 @@ $(document).ready(function() {
                     // Ajustar larguras das colunas de forma mais equilibrada
                     @if($tipo === 'todos')
                     // Com coluna Departamento (15 colunas)
-                    doc.content[1].table.widths = ['4%', '7%', '7%', '7%', '7%', '12%', '8%', '8%', '8%', '8%', '6%', '10%', '10%', '6%', '6%'];
+                    doc.content[1].table.widths = ['3%', '6%', '6%', '6%', '6%', '12%', '7%', '7%', '7%', '7%', '5%', '9%', '9%', '5%', '5%'];
                     @else
-                    // Sem coluna Departamento (14 colunas) - redistribuir o espaço
-                    doc.content[1].table.widths = ['4%', '7%', '7%', '7%', '7%', '13%', '9%', '9%', '9%', '9%', '6%', '11%', '6%', '6%'];
+                    // Sem coluna Departamento (14 colunas)
+                    doc.content[1].table.widths = ['3%', '6%', '6%', '6%', '6%', '13%', '8%', '8%', '8%', '8%', '5%', '10%', '6%', '7%'];
                     @endif
                     
                     // Configurações de fonte
