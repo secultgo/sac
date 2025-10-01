@@ -219,12 +219,14 @@ use Illuminate\Support\Facades\Auth;
                                 </a>
                                 @endif
 
-                                <!-- Alterar Responsável - não disponível para FECHADO (3), ABERTO (1) e NÃO AVALIADO (5) -->
-                                @if(!in_array($chamado->status_chamado_id, [3, 1, 5]))
-                                <a href="{{ route('chamados.show', $chamado->chamado_id) }}" class="btn btn-sm btn-outline-primary mr-1 mb-1" title="Alterar Responsável">
-                                    <i class="fas fa-user-edit"></i>
-                                </a>
-                                @endif
+                                <!-- Alterar Responsável - não disponível para FECHADO (3), ABERTO (1) e NÃO AVALIADO (5) - apenas para super admin e gestor -->
+                                @can('gestor')
+                                    @if(!in_array($chamado->status_chamado_id, [3, 1, 5]))
+                                    <a href="{{ route('chamados.show', $chamado->chamado_id) }}" class="btn btn-sm btn-outline-primary mr-1 mb-1" title="Alterar Responsável">
+                                        <i class="fas fa-user-edit"></i>
+                                    </a>
+                                    @endif
+                                @endcan
                             </div>
                         </td>
                     </tr>
