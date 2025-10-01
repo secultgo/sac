@@ -94,11 +94,17 @@ class RelatoriosController extends Controller
             'problema.problema_nome',
             'servico_chamado.servico_chamado_nome',
             'chamado.usuario_fone_residencial',
-            'resp.usuario_nome',
-            'departamento.departamento_nome',
-            'status_chamado.status_chamado_nome',
-            'avaliacao_chamado.avaliacao_chamado_nome'
+            'resp.usuario_nome'
         ];
+        
+        // Adicionar coluna Departamento apenas para relatório "todos"
+        if (!$departamento_id) {
+            $columns[] = 'departamento.departamento_nome';
+        }
+        
+        // Adicionar colunas finais
+        $columns[] = 'status_chamado.status_chamado_nome';
+        $columns[] = 'avaliacao_chamado.avaliacao_chamado_nome';
 
         $query = $this->buildBaseQuery($departamento_id);
 
@@ -134,8 +140,8 @@ class RelatoriosController extends Controller
         }
 
         // Formatar dados para o DataTables
-        $formattedData = $data->map(function($chamado) {
-            return [
+        $formattedData = $data->map(function($chamado) use ($departamento_id) {
+            $row = [
                 $chamado->chamado_id,
                 $chamado->chamado_abertura ? \Carbon\Carbon::parse($chamado->chamado_abertura)->format('d/m/Y H:i:s') : '',
                 $chamado->chamado_atendimento ? \Carbon\Carbon::parse($chamado->chamado_atendimento)->format('d/m/Y H:i:s') : '',
@@ -147,11 +153,19 @@ class RelatoriosController extends Controller
                 $chamado->problema_nome ?? '',
                 $chamado->servico_chamado_nome ?? '',
                 $chamado->usuario_fone_residencial ?? '',
-                $chamado->responsavel_nome ?? '',
-                $chamado->departamento_nome ?? '',
-                $chamado->status_chamado_nome ?? '',
-                $chamado->avaliacao_chamado_nome ?? ''
+                $chamado->responsavel_nome ?? ''
             ];
+            
+            // Adicionar coluna Departamento apenas para relatório "todos"
+            if (!$departamento_id) {
+                $row[] = $chamado->departamento_nome ?? '';
+            }
+            
+            // Adicionar colunas finais
+            $row[] = $chamado->status_chamado_nome ?? '';
+            $row[] = $chamado->avaliacao_chamado_nome ?? '';
+            
+            return $row;
         });
 
         return response()->json([

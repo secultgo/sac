@@ -28,7 +28,9 @@
                         <th>Serviço</th>
                         <th>Telefone</th>
                         <th>Responsável</th>
+                        @if($tipo === 'todos')
                         <th>Departamento</th>
+                        @endif
                         <th>Status</th>
                         <th>Avaliação</th>
                     </tr>
@@ -117,7 +119,11 @@ $(document).ready(function() {
         "order": [[0, "desc"]],
         "columnDefs": [
             {
-                "targets": [14],
+                @if($tipo === 'todos')
+                "targets": [14], // Avaliação (com coluna Departamento)
+                @else
+                "targets": [13], // Avaliação (sem coluna Departamento)
+                @endif
                 "orderable": false,
                 "searchable": false
             }
@@ -143,7 +149,13 @@ $(document).ready(function() {
                 },
                 customize: function (doc) {
                     // Ajustar larguras das colunas de forma mais equilibrada
+                    @if($tipo === 'todos')
+                    // Com coluna Departamento (15 colunas)
                     doc.content[1].table.widths = ['4%', '7%', '7%', '7%', '7%', '12%', '8%', '8%', '8%', '8%', '6%', '10%', '10%', '6%', '6%'];
+                    @else
+                    // Sem coluna Departamento (14 colunas) - redistribuir o espaço
+                    doc.content[1].table.widths = ['4%', '7%', '7%', '7%', '7%', '13%', '9%', '9%', '9%', '9%', '6%', '11%', '6%', '6%'];
+                    @endif
                     
                     // Configurações de fonte
                     doc.styles.tableHeader.fontSize = 8;
